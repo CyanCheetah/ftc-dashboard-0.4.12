@@ -118,7 +118,6 @@ public class CyanCheetahOp extends LinearOpMode {
 
         servo1 = hardwareMap.get(Servo.class, "Bucket");
         Arm = hardwareMap.get(Servo.class, "Arm");
-        //    shooter= hardwareMap.get(DcMotor.class, "shooter");
 
         frontl.setDirection(DcMotor.Direction.FORWARD);
         frontr.setDirection(DcMotor.Direction.REVERSE);
@@ -199,6 +198,18 @@ public class CyanCheetahOp extends LinearOpMode {
             if (gamepad2.right_trigger > 0.5) {
                 rightLift.setPower(1);
                 leftLift.setPower(1);
+            }
+            if (gamepad1.left_bumper){
+                Arm.setPosition(OutPosition);
+            }
+            if (gamepad1.right_bumper){
+                Arm.setPosition(InPosition);
+            }
+            if (gamepad2.left_bumper){
+                servo1.setPosition(DropPosition);
+            }
+            if (gamepad2.right_bumper){
+                servo1.setPosition(RestPosition);
             }
 
 /*
