@@ -52,14 +52,14 @@ public class CyanCheetahOp extends LinearOpMode {
     private static DcMotor frontr = null;
     private static DcMotor bottoml = null;
     private static DcMotor bottomr = null;
-    private static DcMotor rightLift = null;
+   /* private static DcMotor rightLift = null;
     private static DcMotor leftLift = null;
     /*private static DcMotor leftLift = null;
     private static DcMotor leftLift = null;*/
 
-    private static Servo Turn = null;
+   /* private static Servo Turn = null;
     private static Servo servo1 = null;
-    private static Servo Swing = null;
+    private static Servo Swing = null;*/
     /*private static Servo Arm = null;
     private static Servo Arm = null;
     private static Servo Arm = null;*/
@@ -103,23 +103,23 @@ public class CyanCheetahOp extends LinearOpMode {
         PowerLevel powerLevel = PowerLevel.HALF.QUARTER;
         //double initialServoPosition = ServoArm.getPosition();//Starts the robot wheels at MAX power level
         frontl = hardwareMap.get(DcMotor.class, "leftUpper");
-        frontr = hardwareMap.get(DcMotor.class, "rigthUpper");
+        frontr = hardwareMap.get(DcMotor.class, "rightUpper");
         bottoml = hardwareMap.get(DcMotor.class, "leftLower");
-        bottomr = hardwareMap.get(DcMotor.class, "rightUpper");
-        leftLift = hardwareMap.get(DcMotor.class,"leftLift");
+        bottomr = hardwareMap.get(DcMotor.class, "rightLower");
+       /* leftLift = hardwareMap.get(DcMotor.class,"leftLift");
         rightLift = hardwareMap.get(DcMotor.class,"rightLift");
         Turn = hardwareMap.get(Servo.class, "Turn");
 
         servo1 = hardwareMap.get(Servo.class, "Bucket");
-        Swing = hardwareMap.get(Servo.class, "Swing");
+        Swing = hardwareMap.get(Servo.class, "Swing");*/
 
         //Setting Directions of motors.
         frontl.setDirection(DcMotor.Direction.REVERSE);
         frontr.setDirection(DcMotor.Direction.FORWARD);
         bottoml.setDirection(DcMotor.Direction.REVERSE);
         bottomr.setDirection(DcMotor.Direction.FORWARD);
-        leftLift.setDirection(DcMotor.Direction.FORWARD);
-        rightLift.setDirection(DcMotor.Direction.FORWARD);
+        //leftLift.setDirection(DcMotor.Direction.FORWARD);
+       // rightLift.setDirection(DcMotor.Direction.FORWARD);
 
 
 
@@ -128,8 +128,8 @@ public class CyanCheetahOp extends LinearOpMode {
         frontr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bottoml.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bottomr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //---
 
 
@@ -154,7 +154,7 @@ public class CyanCheetahOp extends LinearOpMode {
         double frontrPower = 0;
         double bottomlPower = 0;
         double bottomrPower = 0;
-        double OutPosition = 1;
+        /*double OutPosition = 1;
         double InPosition = 0;
         double DropPosition = 0;
         double RestPosition = 1;
@@ -162,7 +162,7 @@ public class CyanCheetahOp extends LinearOpMode {
         double TurnPo = .75;
         double turnP = Turn.getPosition();
         double rightLiftPower = 0;
-        double leftLiftPower = 0;
+        double leftLiftPower = 0;*/
 
         double triggerPowerAdjust = 1;
 
@@ -177,7 +177,7 @@ public class CyanCheetahOp extends LinearOpMode {
 
 
              //During initalization the servo goes to the set position of 1.
-            Turn.setPosition(TurnPosition);
+           /* Turn.setPosition(TurnPosition);
 
              //When you press x on gamepad1 you are able to
             while (gamepad1.x) {
@@ -211,7 +211,7 @@ public class CyanCheetahOp extends LinearOpMode {
             //
             if (gamepad2.right_bumper) {
                 servo1.setPosition(RestPosition);
-            }
+            }*/
 
             //See the Desmos for an explanation, this is code that's basically modified from what they (FTC) gave us
             double r = Math.hypot(-gamepad1.left_stick_x, gamepad1.left_stick_y);

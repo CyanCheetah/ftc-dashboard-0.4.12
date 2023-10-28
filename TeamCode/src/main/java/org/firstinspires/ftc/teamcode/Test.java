@@ -24,7 +24,7 @@ public final class Test extends LinearOpMode {
             waitForStart();
                 Actions.runBlocking(
                         drive.actionBuilder(drive.pose)
-                                .splineTo(new Vector2d(15, 0), 0)
+                                .lineToX(30)
                                 .build());
         } else {
             throw new AssertionError();
