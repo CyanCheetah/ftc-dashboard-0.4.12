@@ -52,13 +52,17 @@ public class CyanCheetahOp extends LinearOpMode {
     private static DcMotor frontr = null;
     private static DcMotor bottoml = null;
     private static DcMotor bottomr = null;
-   /* private static DcMotor rightLift = null;
+    private static DcMotor rightLift = null;
     private static DcMotor leftLift = null;
+    private static Servo servoOne = null;
+    private static Servo servoTwo = null;
+    private static Servo Bucket = null;
+    private static Servo Swing = null;
     /*private static DcMotor leftLift = null;
     private static DcMotor leftLift = null;*/
 
-   /* private static Servo Turn = null;
-    private static Servo servo1 = null;
+    private static Servo Turn = null;
+    /*private static Servo servo1 = null;
     private static Servo Swing = null;*/
     /*private static Servo Arm = null;
     private static Servo Arm = null;
@@ -95,6 +99,10 @@ public class CyanCheetahOp extends LinearOpMode {
     private boolean xPressed = false;
     private boolean ypressed = false;
     //double initialServoPosition = ServoArm.getPosition();
+    public void moveServos (Servo right, Servo left, double position){
+        left.setPosition(.5 + position);
+        right.setPosition(.51 - position);
+    }
 
 
     @Override
@@ -106,20 +114,22 @@ public class CyanCheetahOp extends LinearOpMode {
         frontr = hardwareMap.get(DcMotor.class, "rightUpper");
         bottoml = hardwareMap.get(DcMotor.class, "leftLower");
         bottomr = hardwareMap.get(DcMotor.class, "rightLower");
-       /* leftLift = hardwareMap.get(DcMotor.class,"leftLift");
+        leftLift = hardwareMap.get(DcMotor.class,"leftLift");
         rightLift = hardwareMap.get(DcMotor.class,"rightLift");
         Turn = hardwareMap.get(Servo.class, "Turn");
+        Servo servoOne = hardwareMap.servo.get("servoOne");
+        Servo servoTwo = hardwareMap.servo.get("servoTwo");
 
-        servo1 = hardwareMap.get(Servo.class, "Bucket");
-        Swing = hardwareMap.get(Servo.class, "Swing");*/
+        Bucket = hardwareMap.get(Servo.class, "Bucket");
+        Swing = hardwareMap.get(Servo.class, "Swing");
 
         //Setting Directions of motors.
         frontl.setDirection(DcMotor.Direction.REVERSE);
         frontr.setDirection(DcMotor.Direction.FORWARD);
         bottoml.setDirection(DcMotor.Direction.REVERSE);
         bottomr.setDirection(DcMotor.Direction.FORWARD);
-        //leftLift.setDirection(DcMotor.Direction.FORWARD);
-       // rightLift.setDirection(DcMotor.Direction.FORWARD);
+        leftLift.setDirection(DcMotor.Direction.FORWARD);
+        rightLift.setDirection(DcMotor.Direction.FORWARD);
 
 
 
@@ -128,8 +138,8 @@ public class CyanCheetahOp extends LinearOpMode {
         frontr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bottoml.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bottomr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //---
 
 
@@ -154,64 +164,69 @@ public class CyanCheetahOp extends LinearOpMode {
         double frontrPower = 0;
         double bottomlPower = 0;
         double bottomrPower = 0;
-        /*double OutPosition = 1;
+        double OutPosition = .325;
         double InPosition = 0;
-        double DropPosition = 0;
-        double RestPosition = 1;
+        double DropPosition = .3;
+        double RestPosition = .4;
         double TurnPosition = 1;
-        double TurnPo = .75;
+        double TurnPo = .95;
+        double TurnP = .75;
         double turnP = Turn.getPosition();
         double rightLiftPower = 0;
-        double leftLiftPower = 0;*/
+        double leftLiftPower = 0;
 
         double triggerPowerAdjust = 1;
 
         while (opModeIsActive()) {  //While Teleop is in session
+            Servo Turn = hardwareMap.servo.get("Turn");
 
 
 //          ************************************************ GAMEPAD 2 CONTROLS ************************************************
 
 
             //3 touch// 440 =  optimum pickup// 200 = bottom// 400 = optimum travel height/ 1880 drop height// 2958 drop height l
-
-
-
-             //During initalization the servo goes to the set position of 1.
-           /* Turn.setPosition(TurnPosition);
-
-             //When you press x on gamepad1 you are able to
-            while (gamepad1.x) {
-            Turn.setPosition(TurnPo);
-            }
-            while (gamepad1.b) {
-                Turn.setPosition(TurnPosition);
-            }
             //Press the left trigger for the lift to go up/down.
-            if (gamepad2.left_trigger > 0.5) {
-                rightLift.setPower(-1);
-                leftLift.setPower(-1);
+            if (gamepad1.dpad_down) {
+                rightLift.setPower(.5);
+                leftLift.setPower(-.5);
             }
             //Press the right trigger for the lift to go up/down.
-            if (gamepad2.right_trigger > 0.5) {
-                rightLift.setPower(1);
-                leftLift.setPower(1);
+            if (gamepad1.dpad_up) {
+                rightLift.setPower(-.5);
+                leftLift.setPower(.5);
             }
-            //
-            if (gamepad1.left_bumper){
-                Swing.setPosition(OutPosition);
+            while (gamepad2.x) {
+                Turn.setPosition(TurnPo);
             }
-            //
-            if (gamepad1.right_bumper){
-                Swing.setPosition(InPosition);
+            while (gamepad2.y) {
+                Turn.setPosition(TurnPosition);
+            }
+            while (gamepad1.y) {
+                Turn.setPosition(TurnP);
+            }
+            if (gamepad2.a){
+                moveServos(servoOne, servoTwo, .2);
+            }
+            if (gamepad2.b){
+              // picking up top on stack of 5  moveServos(servoOne, servoTwo, -.3);
+                moveServos(servoOne, servoTwo, -.4);
             }
             //
             if (gamepad2.left_bumper){
-                servo1.setPosition(DropPosition);
+                Swing.setPosition(OutPosition);
             }
             //
-            if (gamepad2.right_bumper) {
-                servo1.setPosition(RestPosition);
-            }*/
+            if (gamepad2.right_bumper){
+                Swing.setPosition(InPosition);
+            }
+            //
+            if (gamepad2.left_trigger > 0.5){
+                Bucket.setPosition(DropPosition);
+            }
+            //
+            if (gamepad2.right_trigger > 0.5) {
+                Bucket.setPosition(RestPosition);
+            }
 
             //See the Desmos for an explanation, this is code that's basically modified from what they (FTC) gave us
             double r = Math.hypot(-gamepad1.left_stick_x, gamepad1.left_stick_y);
