@@ -164,10 +164,10 @@ public class CyanCheetahOp extends LinearOpMode {
         double frontrPower = 0;
         double bottomlPower = 0;
         double bottomrPower = 0;
-        double OutPosition = .325;
-        double InPosition = 0;
-        double DropPosition = .3;
-        double RestPosition = .4;
+        double InPosition = .325;
+        double OutPosition = 0;
+        double DropPosition = .2;
+        double RestPosition = .34;
         double TurnPosition = 1;
         double TurnPo = .95;
         double TurnP = .75;
@@ -191,22 +191,30 @@ public class CyanCheetahOp extends LinearOpMode {
                 leftLift.setPower(-.5);
             }
             //Press the right trigger for the lift to go up/down.
-            if (gamepad1.dpad_up) {
+            else if (gamepad1.dpad_up) {
                 rightLift.setPower(-.5);
                 leftLift.setPower(.5);
+            } else {
+                rightLift.setPower(0);
+                leftLift.setPower(0);
             }
+            //This opens the claw so that we can drop the pixels into the bucket.
             while (gamepad2.x) {
                 Turn.setPosition(TurnPo);
             }
+            //This closed the claw fully.
             while (gamepad2.y) {
                 Turn.setPosition(TurnPosition);
             }
+            //This opens the claw so that you can intake a pixels.
             while (gamepad1.y) {
                 Turn.setPosition(TurnP);
             }
+            //This moved the two servos that move the claw back and forth, to the place to intake.
             if (gamepad2.a){
                 moveServos(servoOne, servoTwo, .2);
             }
+            //This moved the two servos that move the claw back and forth, to the place to deposite.
             if (gamepad2.b){
               // picking up top on stack of 5  moveServos(servoOne, servoTwo, -.3);
                 moveServos(servoOne, servoTwo, -.4);
