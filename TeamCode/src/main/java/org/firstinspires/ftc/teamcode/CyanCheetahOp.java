@@ -30,10 +30,15 @@ import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 
 
+
+
 //------------------------------------------------------------------------------//
 @TeleOp(name="TeleOpTest", group="Linear Opmode")
 
+
 public class CyanCheetahOp extends LinearOpMode {
+
+
 
 
     double getBatteryVoltage() {
@@ -46,7 +51,9 @@ public class CyanCheetahOp extends LinearOpMode {
         }
         return result;
 
+
     }
+
 
     private static DcMotor frontl = null;
     private static DcMotor frontr = null;
@@ -58,20 +65,24 @@ public class CyanCheetahOp extends LinearOpMode {
     private static Servo servoTwo = null;
     private static Servo Bucket = null;
     private static Servo Swing = null;
-    /*private static DcMotor leftLift = null;
-    private static DcMotor leftLift = null;*/
+   /*private static DcMotor leftLift = null;
+   private static DcMotor leftLift = null;*/
+
 
     private static Servo Turn = null;
-    /*private static Servo servo1 = null;
-    private static Servo Swing = null;*/
-    /*private static Servo Arm = null;
-    private static Servo Arm = null;
-    private static Servo Arm = null;*/
+   /*private static Servo servo1 = null;
+   private static Servo Swing = null;*/
+   /*private static Servo Arm = null;
+   private static Servo Arm = null;
+   private static Servo Arm = null;*/
 
-//-------------------------------------------------------------------------------//
+
+    //-------------------------------------------------------------------------------//
     enum PowerLevel {MAX, HALF, QUARTER, STOP}
 
+
     ;
+
 
     // Declare OpMode members/constants.
     private ElapsedTime runtime = new ElapsedTime();
@@ -105,8 +116,11 @@ public class CyanCheetahOp extends LinearOpMode {
     }
 
 
+
+
     @Override
     public void runOpMode() {
+
 
         PowerLevel powerLevel = PowerLevel.HALF.QUARTER;
         //double initialServoPosition = ServoArm.getPosition();//Starts the robot wheels at MAX power level
@@ -120,8 +134,10 @@ public class CyanCheetahOp extends LinearOpMode {
         Servo servoOne = hardwareMap.servo.get("servoOne");
         Servo servoTwo = hardwareMap.servo.get("servoTwo");
 
+
         Bucket = hardwareMap.get(Servo.class, "Bucket");
         Swing = hardwareMap.get(Servo.class, "Swing");
+
 
         //Setting Directions of motors.
         frontl.setDirection(DcMotor.Direction.REVERSE);
@@ -130,6 +146,9 @@ public class CyanCheetahOp extends LinearOpMode {
         bottomr.setDirection(DcMotor.Direction.FORWARD);
         leftLift.setDirection(DcMotor.Direction.FORWARD);
         rightLift.setDirection(DcMotor.Direction.FORWARD);
+
+
+
 
 
 
@@ -143,6 +162,8 @@ public class CyanCheetahOp extends LinearOpMode {
         //---
 
 
+
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 //------------------------------------------------------------------ Start of Match ---------------------------------------------------
@@ -153,10 +174,14 @@ public class CyanCheetahOp extends LinearOpMode {
         bottomr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
+
+
         frontl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bottoml.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bottomr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
 
 
         // Setup a variable for each drive wheel
@@ -164,78 +189,101 @@ public class CyanCheetahOp extends LinearOpMode {
         double frontrPower = 0;
         double bottomlPower = 0;
         double bottomrPower = 0;
-        double OutPosition = .325;
-        double InPosition = 0;
-        double DropPosition = .3;
-        double RestPosition = .4;
-        double TurnPosition = 1;
-        double TurnPo = .95;
-        double TurnP = .75;
-        double turnP = Turn.getPosition();
+        double OutPosition = 0;
+        double InPosition = 0.31;
+        double DropPosition = .15;
+        double RestPosition = .34;
+        double clawClose = 1;
+        double clawSemiOpen = .95;
+        double clawFullOpen = .76;
+        //double clawFullOpen = Turn.getPosition();
         double rightLiftPower = 0;
         double leftLiftPower = 0;
 
+
+
         double triggerPowerAdjust = 1;
+
 
         while (opModeIsActive()) {  //While Teleop is in session
             Servo Turn = hardwareMap.servo.get("Turn");
 
 
+
+
 //          ************************************************ GAMEPAD 2 CONTROLS ************************************************
+
+
 
 
             //3 touch// 440 =  optimum pickup// 200 = bottom// 400 = optimum travel height/ 1880 drop height// 2958 drop height l
             //Press the left trigger for the lift to go up/down.
-            if (gamepad1.dpad_down) {
+            if (gamepad2.dpad_down) {
                 rightLift.setPower(.5);
                 leftLift.setPower(-.5);
             }
             //Press the right trigger for the lift to go up/down.
-            if (gamepad1.dpad_up) {
+            else if (gamepad2.dpad_up) {
                 rightLift.setPower(-.5);
                 leftLift.setPower(.5);
+            } else {
+                rightLift.setPower(0);
+                leftLift.setPower(0);
             }
-            while (gamepad2.x) {
-                Turn.setPosition(TurnPo);
+
+            if (gamepad2.x) {
+                moveServos(servoOne, servoTwo, -.375);
             }
-            while (gamepad2.y) {
-                Turn.setPosition(TurnPosition);
+            if (gamepad2.y) {
+                moveServos(servoOne, servoTwo, -.325);
             }
-            while (gamepad1.y) {
-                Turn.setPosition(TurnP);
-            }
-            if (gamepad2.a){
-                moveServos(servoOne, servoTwo, .2);
-            }
-            if (gamepad2.b){
-              // picking up top on stack of 5  moveServos(servoOne, servoTwo, -.3);
+            if (gamepad2.b) {
                 moveServos(servoOne, servoTwo, -.4);
             }
-            //
+            if (gamepad2.dpad_left){
+                if(Turn.getPosition() > .94){
+                    moveServos(servoOne, servoTwo, .2);
+                    sleep(350);
+                    Turn.setPosition(clawSemiOpen);
+                    sleep(350);
+                    moveServos(servoOne, servoTwo, -.4);
+                    sleep(500);
+                    Turn.setPosition(clawFullOpen);
+                }
+
+            }
+
+            if (gamepad2.a){
+                Turn.setPosition(clawClose);
+            }//might be a while
+            if (gamepad2.right_trigger > .5){
+                Swing.setPosition(OutPosition);
+                sleep(350);
+                Bucket.setPosition(DropPosition);
+            }
+            if (gamepad2.left_trigger > .5){
+                Bucket.setPosition(RestPosition);
+                sleep(100);
+                Swing.setPosition(InPosition);
+            }
             if (gamepad2.left_bumper){
                 Swing.setPosition(OutPosition);
             }
-            //
-            if (gamepad2.right_bumper){
-                Swing.setPosition(InPosition);
-            }
-            //
-            if (gamepad2.left_trigger > 0.5){
+            if (gamepad2.right_bumper) {
                 Bucket.setPosition(DropPosition);
             }
-            //
-            if (gamepad2.right_trigger > 0.5) {
-                Bucket.setPosition(RestPosition);
-            }
+
+
 
             //See the Desmos for an explanation, this is code that's basically modified from what they (FTC) gave us
             double r = Math.hypot(-gamepad1.left_stick_x, gamepad1.left_stick_y);
             double robotAngle = Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4;
             double rightX = -gamepad1.right_stick_x * 0.5;
-            double v1 = r * Math.cos(robotAngle) + rightX;
-            double v2 = r * Math.sin(robotAngle) - rightX;
-            double v3 = r * Math.sin(robotAngle) + rightX;
-            double v4 = r * Math.cos(robotAngle) - rightX;
+            double v1 = r * Math.cos(robotAngle) - rightX;
+            double v2 = r * Math.sin(robotAngle) + rightX;
+            double v3 = r * Math.sin(robotAngle) - rightX;
+            double v4 = r * Math.cos(robotAngle) + rightX;
+
 
             v1 = v1 * MOTOR_ADJUST * triggerPowerAdjust;
             v2 = v2 * MOTOR_ADJUST * triggerPowerAdjust;
@@ -249,23 +297,38 @@ public class CyanCheetahOp extends LinearOpMode {
             //  telemetry.addData("R","%.2f",r);
 
 
+
+
 //          ************************************************ GAMEPAD 2 CONTROLS ************************************************
+
+
 
 
             //Telemetry
             telemetry.addData("FrontL", -1 * frontl.getCurrentPosition());
             telemetry.addData("FrontR", -1 * frontr.getCurrentPosition());
 
+
             telemetry.addData("BackL", -1 * bottoml.getCurrentPosition());
             telemetry.addData("BackR", -1 * bottomr.getCurrentPosition());
+
+
 
 
             telemetry.addData("Battery Voltage", getBatteryVoltage());
             telemetry.update();
 
+
         }//While opMode
     }//void runOpMode
 }
+
+
+
+
+
+
+
 
 
 
