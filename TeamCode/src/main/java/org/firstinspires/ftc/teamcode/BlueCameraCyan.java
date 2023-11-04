@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2020 OpenFTC Team
  *
@@ -21,44 +22,44 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
+        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+        import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+        import com.acmerobotics.roadrunner.Pose2d;
+        import com.acmerobotics.roadrunner.Vector2d;
 
 // TODO: remove Actions from the core module?
-import com.acmerobotics.roadrunner.ftc.Actions;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.TankDrive;
-import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvWebcam;
-import org.openftc.easyopencv.OpenCvPipeline;
+        import com.acmerobotics.roadrunner.ftc.Actions;
+        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+        import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+        import org.firstinspires.ftc.teamcode.MecanumDrive;
+        import org.firstinspires.ftc.teamcode.TankDrive;
+        import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
+        import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+        import org.opencv.core.Core;
+        import org.opencv.core.Mat;
+        import org.opencv.core.Point;
+        import org.opencv.core.Rect;
+        import org.opencv.core.Scalar;
+        import org.opencv.imgproc.Imgproc;
+        import org.openftc.easyopencv.OpenCvCamera;
+        import org.openftc.easyopencv.OpenCvCameraFactory;
+        import org.openftc.easyopencv.OpenCvCameraRotation;
+        import org.openftc.easyopencv.OpenCvInternalCamera;
+        import org.openftc.easyopencv.OpenCvWebcam;
+        import org.openftc.easyopencv.OpenCvPipeline;
 
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
+        import com.acmerobotics.roadrunner.Pose2d;
+        import com.acmerobotics.roadrunner.Vector2d;
 
 // TODO: remove Actions from the core module?
-import com.acmerobotics.roadrunner.ftc.Actions;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.TankDrive;
-import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
+        import com.acmerobotics.roadrunner.ftc.Actions;
+        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+        import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+        import org.firstinspires.ftc.teamcode.MecanumDrive;
+        import org.firstinspires.ftc.teamcode.TankDrive;
+        import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
 
 /*
  * This sample demonstrates a basic (but battle-tested and essentially
@@ -66,10 +67,11 @@ import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
  * the sample regions over the first 3 stones.
  */
 @Autonomous
-public class BlueCameraCyan extends LinearOpMode
+public class BlueCamera1 extends LinearOpMode
 {
     //ooh
     OpenCvWebcam webcam;
+
 
     //dang so this works huh, thats wild
     //yoo
@@ -152,7 +154,9 @@ public class BlueCameraCyan extends LinearOpMode
             }
         });
 
-
+        region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
+        region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
+        region3_Cb = Cb.submat(new Rect(region3_pointA, region3_pointB));
         waitForStart();
         SkystoneDeterminationPipeline pipeline = new SkystoneDeterminationPipeline();
         SkystoneDeterminationPipeline.SkystonePosition position;
