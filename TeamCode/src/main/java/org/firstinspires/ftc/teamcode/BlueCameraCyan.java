@@ -76,8 +76,6 @@ public class BlueCamera1 extends LinearOpMode
     //dang so this works huh, thats wild
     //yoo
     SkystoneDeterminationPipeline pipeline;
-    static final Scalar BLUE = new Scalar(0, 0, 255);
-    static final Scalar GREEN = new Scalar(0, 255, 0);
 
     /*
      * The core values which define the location and size of the sample regions
