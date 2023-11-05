@@ -65,18 +65,57 @@ import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
  * 100% accurate) method of detecting the skystone when lined up with
  * the sample regions over the first 3 stones.
  */
-@TeleOp
-public class BlueCamera1 extends LinearOpMode
+@Autonomous
+public class BlueCameraCyan extends LinearOpMode
 {
     //ooh
     OpenCvWebcam webcam;
+
     //dang so this works huh, thats wild
     //yoo
     SkystoneDeterminationPipeline pipeline;
+    static final Scalar BLUE = new Scalar(0, 0, 255);
+    static final Scalar GREEN = new Scalar(0, 255, 0);
+
+    /*
+     * The core values which define the location and size of the sample regions
+     */
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(200,550);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(925,450);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1550,550);
+    static final int REGION_WIDTH = 150;
+    static final int REGION_HEIGHT = 150;
+    Point region1_pointA = new Point(
+            REGION1_TOPLEFT_ANCHOR_POINT.x,
+            REGION1_TOPLEFT_ANCHOR_POINT.y);
+    Point region1_pointB = new Point(
+            REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+            REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+    Point region2_pointA = new Point(
+            REGION2_TOPLEFT_ANCHOR_POINT.x,
+            REGION2_TOPLEFT_ANCHOR_POINT.y);
+    Point region2_pointB = new Point(
+            REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+            REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+    Point region3_pointA = new Point(
+            REGION3_TOPLEFT_ANCHOR_POINT.x,
+            REGION3_TOPLEFT_ANCHOR_POINT.y);
+    Point region3_pointB = new Point(
+            REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+            REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+
+    /*
+     * Working variables
+     */
+    Mat region1_Cb, region2_Cb, region3_Cb;
+    Mat Cb = new Mat();
+    int avg1, avg2, avg3;
+
+
+
     //higgfhhj
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
         /**
          * NOTE: Many comments have been omitted from this sample for the
          * sake of conciseness. If you're just starting out with EasyOpenCv,
@@ -94,69 +133,64 @@ public class BlueCamera1 extends LinearOpMode
         // landscape orientation, though.
         webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
-                webcam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+            public void onOpened() {
+                webcam.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
                 /*
                  * This will be called if the camera could not be opened
                  */
             }
         });
-        boolean found = false;
+        region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
+        region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
+        region3_Cb = Cb.submat(new Rect(region3_pointA, region3_pointB));
 
         waitForStart();
         SkystoneDeterminationPipeline pipeline = new SkystoneDeterminationPipeline();
-        SkystoneDeterminationPipeline.SkystonePosition position = pipeline.getAnalysis();
-        while (found == false)
-        while (opModeIsActive()){
-            position = pipeline.getAnalysis();
-            if (position == SkystoneDeterminationPipeline.SkystonePosition.LEFT){
-                found = true;
-                MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+        SkystoneDeterminationPipeline.SkystonePosition position;
+        while (opModeIsActive()) {
+            avg1 = (int) Core.mean(region1_Cb).val[0];
+            avg2 = (int) Core.mean(region2_Cb).val[0];
+            avg3 = (int) Core.mean(region3_Cb).val[0];
+            int maxOneTwo = Math.max(avg1, avg2);
+            int max = Math.max(maxOneTwo, avg3);
+            if (max == avg1) {
+                position = pipeline.getAnalysis();
+                if (position == SkystoneDeterminationPipeline.SkystonePosition.LEFT) {
+                    MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+                    Actions.runBlocking(
+                            drive.actionBuilder(drive.pose)
+                                    .lineToX(5)
+                                    .build());
+                } else if (max == avg2) {
+                    MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+                    Actions.runBlocking(
+                            drive.actionBuilder(drive.pose)
+                                    .lineToY(30)
+                                    .build());
+                } else if (max == avg3) {
+                    MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+                    Actions.runBlocking(
+                            drive.actionBuilder(drive.pose)
+                                    .lineToY(-30)
+                                    .build());
+                } else {
+                    telemetry.addData("Not found", position);
+                }
+                telemetry.addData("Analysis", position);
+                telemetry.update();
 
-                waitForStart();
-                Actions.runBlocking(
-                        drive.actionBuilder(drive.pose)
-                                .lineToX(30)
-                                .build());
+                // Don't burn CPU cycles busy-looping in this sample
+                sleep(50);
+
+                telemetry.update();
             }
-            else if  (position == SkystoneDeterminationPipeline.SkystonePosition.CENTER){
-                found = true;
-                MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-
-                waitForStart();
-                Actions.runBlocking(
-                        drive.actionBuilder(drive.pose)
-                                .lineToY(30)
-                                .build());
-            }
-            else if (position == SkystoneDeterminationPipeline.SkystonePosition.RIGHT){
-                found = true;
-                MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-
-                waitForStart();
-                Actions.runBlocking(
-                        drive.actionBuilder(drive.pose)
-                                .lineToY(-30)
-                                .build());
-            }
-            else{
-
-            }
-            telemetry.addData("Analysis", pipeline.getAnalysis());
-            telemetry.update();
-
-            // Don't burn CPU cycles busy-looping in this sample
-            sleep(50);
-
+            telemetry.addData("Pipelinr npy founf", 5);
             telemetry.update();
         }
     }
@@ -182,11 +216,11 @@ public class BlueCamera1 extends LinearOpMode
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(109,98);
-        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(181,98);
-        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(253,98);
-        static final int REGION_WIDTH = 20;
-        static final int REGION_HEIGHT = 20;
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(200,550);
+        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(925,450);
+        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1550,550);
+        static final int REGION_WIDTH = 150;
+        static final int REGION_HEIGHT = 150;
 
         /*
          * Points which actually define the sample region rectangles, derived from above values
@@ -234,6 +268,7 @@ public class BlueCamera1 extends LinearOpMode
 
         // Volatile since accessed by OpMode thread w/o synchronization
         private volatile SkystonePosition position = SkystonePosition.LEFT;
+        private boolean found = false;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -370,6 +405,8 @@ public class BlueCamera1 extends LinearOpMode
             if(max == avg1) // Was it from region 1?
             {
                 position = SkystonePosition.LEFT; // Record our analysis
+                found = true;
+
 
 
                 /*
@@ -386,6 +423,7 @@ public class BlueCamera1 extends LinearOpMode
             else if(max == avg2) // Was it from region 2?
             {
                 position = SkystonePosition.CENTER; // Record our analysis
+                found = true;
 
                 /*
                  * Draw a solid rectangle on top of the chosen region.
@@ -401,6 +439,7 @@ public class BlueCamera1 extends LinearOpMode
             else if(max == avg3) // Was it from region 3?
             {
                 position = SkystonePosition.RIGHT; // Record our analysis
+                found = true;
 
                 /*
                  * Draw a solid rectangle on top of the chosen region.
@@ -428,6 +467,9 @@ public class BlueCamera1 extends LinearOpMode
         public SkystonePosition getAnalysis()
         {
             return position;
+        }
+        public boolean ifFound() {
+            return found;
         }
     }
 
