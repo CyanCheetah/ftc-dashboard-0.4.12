@@ -68,7 +68,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class BCam extends LinearOpMode
 {
     OpenCvWebcam webcam;
-    BlueCamera.SkystoneDeterminationPipeline pipeline;
+    BCam.SkystoneDeterminationPipeline pipeline = new BCam.SkystoneDeterminationPipeline();
+
 
     @Override
     public void runOpMode()
@@ -85,7 +86,7 @@ public class BCam extends LinearOpMode
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cameraMonitorViewId"), cameraMonitorViewId);
-        pipeline = new BlueCamera.SkystoneDeterminationPipeline();
+        pipeline = new BCam.SkystoneDeterminationPipeline();
         webcam.setPipeline(pipeline);
         // OR...  Do Not Activate the Camera Monitor View
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
@@ -127,7 +128,7 @@ public class BCam extends LinearOpMode
                  * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
                  * away from the user.
                  */
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -146,47 +147,71 @@ public class BCam extends LinearOpMode
          * Wait for the user to press start on the Driver Station
          */
         waitForStart();
+        int first,second,third;
 
-        while (opModeIsActive())
+        if (opModeIsActive())
         {
-            SkystoneDeterminationPipeline j = new SkystoneDeterminationPipeline();
-            if (j.isPos1()) {
-                if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
-                    MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+            while (pipeline.isPos1() == 0 && pipeline.isPos2() == 0 && pipeline.isPos3() == 0)  {
 
-                    waitForStart();
-                    Actions.runBlocking(
-                            drive.actionBuilder(drive.pose)
-                                    .lineToX(30)
-                                    .build());
-                } else {
-                    throw new AssertionError();
-                }
-            } else if (j.isPos2()) {
-                if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
-                    MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+                sleep(1000);
 
-                    waitForStart();
-                    Actions.runBlocking(
-                            drive.actionBuilder(drive.pose)
-                                    .lineToX(10)
-                                    .build());
-                } else {
-                    throw new AssertionError();
-                }
-            } else {
-                if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
-                    MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+                first = pipeline.isPos1();
+                second = pipeline.isPos2();
+                third = pipeline.isPos3();
+                telemetry.addData("1", first);
+                telemetry.addData("2", second);
+                telemetry.addData("3", third);
+                telemetry.update();
 
-                    waitForStart();
-                    Actions.runBlocking(
-                            drive.actionBuilder(drive.pose)
-                                    .lineToX(3)
-                                    .build());
+            }
+            first = pipeline.isPos1();
+            second = pipeline.isPos2();
+            third = pipeline.isPos3();
+            boolean ran = true;
+            if (ran) {
+                if (first > second && (first > third)) {
+                    if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
+                        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+                        telemetry.addData("First", first);
+                        Actions.runBlocking(
+                                drive.actionBuilder(drive.pose)
+                                        .splineTo(new Vector2d(10,15), Math.PI/2)
+                                        .build());
+                        ran = false;
+                    } else {
+                        throw new AssertionError();
+                    }
+                } else if (second > first && (second > third)) {
+                    telemetry.addData("2", second);
+                    if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
+                        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+                        telemetry.addData("2", second);
+
+                        Actions.runBlocking(
+                                drive.actionBuilder(drive.pose)
+                                        .lineToX(35)
+                                        .build());
+                        ran = false;
+                    } else {
+                        throw new AssertionError();
+                    }
                 } else {
-                    throw new AssertionError();
+                    if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
+                        telemetry.addData("third", third);
+                        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+                        telemetry.addData("third", third);
+
+                        Actions.runBlocking(
+                                drive.actionBuilder(drive.pose)
+                                        //.lineToX(35)
+                                        .build());
+                        ran= false;
+                    } else {
+                        throw new AssertionError();
+                    }
                 }
             }
+
         }
     }
 
@@ -226,11 +251,11 @@ public class BCam extends LinearOpMode
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(109,98);
-        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(181,98);
-        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(253,98);
-        static final int REGION_WIDTH = 20;
-        static final int REGION_HEIGHT = 20;
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(230, 500);
+        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(925, 450);
+        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1550, 500);
+        static final int REGION_WIDTH = 150;
+        static final int REGION_HEIGHT = 150;
 
 
         /*
@@ -480,14 +505,14 @@ public class BCam extends LinearOpMode
             return position;
         }
 
-        public boolean isPos1() {
-            return pos1;
+        public int isPos1() {
+            return avg1;
         }
-        public boolean isPos2() {
-            return pos2;
+        public int isPos2() {
+            return avg2;
         }
-        public boolean isPos3() {
-            return pos3;
+        public int isPos3() {
+            return avg3;
         }
     }
 
