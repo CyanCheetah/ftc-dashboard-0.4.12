@@ -1,3 +1,5 @@
+
+
 package org.firstinspires.ftc.teamcode;//Hollow World
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -28,14 +30,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
-
-
 //------------------------------------------------------------------------------//
-@TeleOp(name="TeleOpTest", group="Linear Opmode")
-
+@TeleOp
 public class CyanCheetahOp extends LinearOpMode {
-
-
     double getBatteryVoltage() {
         double result = Double.POSITIVE_INFINITY;
         for (VoltageSensor sensor : hardwareMap.voltageSensor) {
@@ -45,9 +42,7 @@ public class CyanCheetahOp extends LinearOpMode {
             }
         }
         return result;
-
     }
-
     private static DcMotor frontl = null;
     private static DcMotor frontr = null;
     private static DcMotor bottoml = null;
@@ -58,26 +53,11 @@ public class CyanCheetahOp extends LinearOpMode {
     private static Servo servoTwo = null;
     private static Servo Bucket = null;
     private static Servo Swing = null;
-    /*private static DcMotor leftLift = null;
-    private static DcMotor leftLift = null;*/
-
     private static Servo Turn = null;
-    /*private static Servo servo1 = null;
-    private static Servo Swing = null;*/
-    /*private static Servo Arm = null;
-    private static Servo Arm = null;
-    private static Servo Arm = null;*/
-
-//-------------------------------------------------------------------------------//
-    enum PowerLevel {MAX, HALF, QUARTER, STOP}
-
-    ;
-
-    // Declare OpMode members/constants.
+    //-------------------------------------------------------------------------------//
+    enum PowerLevel {MAX, HALF, QUARTER, STOP}     // Declare OpMode members/constants.
     private ElapsedTime runtime = new ElapsedTime();
-    //private static final double ADJUST_DIAGONAL = 0.40; ***Not used anymore***
-    private static double MOTOR_ADJUST = 0.75;
-    //Defining Motor Arm Movement
+    private static double MOTOR_ADJUST = 0.9;
     private static double SMALL_GEAR_TEETH = 40; //Smaller gear is directly on the motor
     private static double LARGE_GEAR_TEETH = 120; //Larger gear is connected to the arm
     private static double GEAR_RATIO = (LARGE_GEAR_TEETH / SMALL_GEAR_TEETH); //States the gear ratio based on the teeth of gears used
@@ -103,13 +83,9 @@ public class CyanCheetahOp extends LinearOpMode {
         left.setPosition(.5 + position);
         right.setPosition(.51 - position);
     }
-
-
     @Override
     public void runOpMode() {
-
         PowerLevel powerLevel = PowerLevel.HALF.QUARTER;
-        //double initialServoPosition = ServoArm.getPosition();//Starts the robot wheels at MAX power level
         frontl = hardwareMap.get(DcMotor.class, "leftUpper");
         frontr = hardwareMap.get(DcMotor.class, "rightUpper");
         bottoml = hardwareMap.get(DcMotor.class, "leftLower");
@@ -119,20 +95,15 @@ public class CyanCheetahOp extends LinearOpMode {
         Turn = hardwareMap.get(Servo.class, "Turn");
         Servo servoOne = hardwareMap.servo.get("servoOne");
         Servo servoTwo = hardwareMap.servo.get("servoTwo");
-
         Bucket = hardwareMap.get(Servo.class, "Bucket");
         Swing = hardwareMap.get(Servo.class, "Swing");
-
         //Setting Directions of motors.
-        frontl.setDirection(DcMotor.Direction.REVERSE);
-        frontr.setDirection(DcMotor.Direction.FORWARD);
-        bottoml.setDirection(DcMotor.Direction.REVERSE);
-        bottomr.setDirection(DcMotor.Direction.FORWARD);
+        frontl.setDirection(DcMotor.Direction.FORWARD);
+        frontr.setDirection(DcMotor.Direction.REVERSE);
+        bottoml.setDirection(DcMotor.Direction.FORWARD);
+        bottomr.setDirection(DcMotor.Direction.REVERSE);
         leftLift.setDirection(DcMotor.Direction.FORWARD);
         rightLift.setDirection(DcMotor.Direction.FORWARD);
-
-
-
         //Brake immedietly after joystick hits 0 instead of coasting down
         frontl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -140,10 +111,7 @@ public class CyanCheetahOp extends LinearOpMode {
         bottomr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //---
 
-
-        // Wait for the game to start (driver presses PLAY)
         waitForStart();
 //------------------------------------------------------------------ Start of Match ---------------------------------------------------
         runtime.reset();
@@ -151,91 +119,88 @@ public class CyanCheetahOp extends LinearOpMode {
         frontr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bottoml.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bottomr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
         frontl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bottoml.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bottomr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
         // Setup a variable for each drive wheel
         double frontlPower = 0;
         double frontrPower = 0;
         double bottomlPower = 0;
         double bottomrPower = 0;
-        double InPosition = .325;
-        double OutPosition = 0;
-        double DropPosition = .2;
-        double RestPosition = .34;
-        double TurnPosition = 1;
-        double TurnPo = .95;
-        double TurnP = .75;
-        double turnP = Turn.getPosition();
-        double rightLiftPower = 0;
-        double leftLiftPower = 0;
-
+        // -------
+        double SwingOutPosition = 0;
+        double SwingInPosition = 0.3;
+        double BucketOutPosition = .145;
+        double BucketInPosition = .325;
+        // ------ the values above may change often
+        double clawClose = 1;
+        double clawSemiOpen = .95;
+        double clawFullOpen = .775;
         double triggerPowerAdjust = 1;
-
         while (opModeIsActive()) {  //While Teleop is in session
             Servo Turn = hardwareMap.servo.get("Turn");
-
-
 //          ************************************************ GAMEPAD 2 CONTROLS ************************************************
-
-
-            //3 touch// 440 =  optimum pickup// 200 = bottom// 400 = optimum travel height/ 1880 drop height// 2958 drop height l
-            //Press the left trigger for the lift to go up/down.
-            if (gamepad1.dpad_down) {
+            if (gamepad2.dpad_down) {
                 rightLift.setPower(.5);
                 leftLift.setPower(-.5);
             }
-            //Press the right trigger for the lift to go up/down.
-            else if (gamepad1.dpad_up) {
+            else if (gamepad2.dpad_up) {
                 rightLift.setPower(-.5);
                 leftLift.setPower(.5);
             } else {
                 rightLift.setPower(0);
                 leftLift.setPower(0);
             }
-            //This opens the claw so that we can drop the pixels into the bucket.
-            while (gamepad2.x) {
-                Turn.setPosition(TurnPo);
+            if (gamepad2.x) {
+                moveServos(servoOne, servoTwo, -.375);
             }
-            //This closed the claw fully.
-            while (gamepad2.y) {
-                Turn.setPosition(TurnPosition);
+            if (gamepad2.b) {
+                moveServos(servoOne, servoTwo, -.3);
             }
-            //This opens the claw so that you can intake a pixels.
-            while (gamepad1.y) {
-                Turn.setPosition(TurnP);
+            if (gamepad2.y) {
+                moveServos(servoOne, servoTwo, -.32);
             }
-            //This moved the two servos that move the claw back and forth, to the place to intake.
-            if (gamepad2.a){
-                moveServos(servoOne, servoTwo, .2);
+            if (gamepad2.a) {
+                moveServos(servoOne, servoTwo, -.44);
             }
-            //This moved the two servos that move the claw back and forth, to the place to deposite.
-            if (gamepad2.b){
-              // picking up top on stack of 5  moveServos(servoOne, servoTwo, -.3);
-                moveServos(servoOne, servoTwo, -.4);
+            if (gamepad2.dpad_left){
+                if(Turn.getPosition() > .94){
+                    moveServos(servoOne, servoTwo, .2);
+                    sleep(275);
+                    Turn.setPosition(clawSemiOpen);
+                    sleep(200);
+                    moveServos(servoOne, servoTwo, -.3);
+                    sleep(300);
+                    Turn.setPosition(clawFullOpen);
+                }
             }
-            //
+            if (gamepad2.dpad_right){
+                Turn.setPosition(clawClose);
+            }
+            //if (gamepad2.right_trigger > .5){
+            //    Swing.setPosition(SwingOutPosition);
+            //    sleep(350);
+            //    Bucket.setPosition(BucketOutPosition);
+            //}
+            if (gamepad2.left_trigger > .5){
+                Bucket.setPosition(BucketInPosition);
+                sleep(100);
+                Swing.setPosition(SwingInPosition);
+            }
             if (gamepad2.left_bumper){
-                Swing.setPosition(OutPosition);
+                Swing.setPosition(SwingOutPosition);
             }
-            //
-            if (gamepad2.right_bumper){
-                Swing.setPosition(InPosition);
+            if (gamepad2.right_bumper) {
+                Bucket.setPosition(BucketOutPosition);
             }
-            //
-            if (gamepad2.left_trigger > 0.5){
-                Bucket.setPosition(DropPosition);
+            //          ************************************************ GAMEPAD 1 CONTROLS ************************************************
+            if (gamepad1.right_trigger > 0) {
+                triggerPowerAdjust = .3
+                ;
+            } else {
+                triggerPowerAdjust = 1;
             }
-            //
-            if (gamepad2.right_trigger > 0.5) {
-                Bucket.setPosition(RestPosition);
-            }
-
             //See the Desmos for an explanation, this is code that's basically modified from what they (FTC) gave us
             double r = Math.hypot(-gamepad1.left_stick_x, gamepad1.left_stick_y);
             double robotAngle = Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4;
@@ -244,43 +209,24 @@ public class CyanCheetahOp extends LinearOpMode {
             double v2 = r * Math.sin(robotAngle) - rightX;
             double v3 = r * Math.sin(robotAngle) + rightX;
             double v4 = r * Math.cos(robotAngle) - rightX;
-
             v1 = v1 * MOTOR_ADJUST * triggerPowerAdjust;
             v2 = v2 * MOTOR_ADJUST * triggerPowerAdjust;
             v3 = v3 * MOTOR_ADJUST * triggerPowerAdjust;
             v4 = v4 * MOTOR_ADJUST * triggerPowerAdjust;
-            frontl.setPower(v1 * .95);
-            frontr.setPower(v2 * .95);
-            bottoml.setPower(v3 * .95);
-            bottomr.setPower(v4 * .95);
-            //  telemetry.addData("Motor Power", "v1 (%.2f), v2 (%.2f) v3 (%.2f) v4 (%.2f)", v1,v2,v3,v4);
-            //  telemetry.addData("R","%.2f",r);
-
-
-//          ************************************************ GAMEPAD 2 CONTROLS ************************************************
-
-
-            //Telemetry
+            frontl.setPower(v1 * 1);
+            frontr.setPower(v2 * 1);
+            bottoml.setPower(v3 * 1);
+            bottomr.setPower(v4 * 1);
+//          ************************************************ Telemetry ************************************************
             telemetry.addData("FrontL", -1 * frontl.getCurrentPosition());
             telemetry.addData("FrontR", -1 * frontr.getCurrentPosition());
-
             telemetry.addData("BackL", -1 * bottoml.getCurrentPosition());
             telemetry.addData("BackR", -1 * bottomr.getCurrentPosition());
-
-
             telemetry.addData("Battery Voltage", getBatteryVoltage());
             telemetry.update();
-
         }//While opMode
     }//void runOpMode
 }
-
-
-
-
-
-
-
-/*
-Final Notes from Andy: Apressed sets the slide puller to optimum pickup, Bpressed sets slide puller to optimum travel and same concept with elevator motors just with Xpressed and Ypressed. Just need to do cleanup and redo elevator motors since we added another one
-*/
+    /*
+    Final Notes from Andy: Apressed sets the slide puller to optimum pickup, Bpressed sets slide puller to optimum travel and same concept with elevator motors just with Xpressed and Ypressed. Just need to do cleanup and redo elevator motors since we added another one
+    */
