@@ -36,6 +36,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
@@ -67,13 +68,20 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous
 public class BCam extends LinearOpMode
 {
+    private static Servo servoOne = null;
+    private static Servo Turn = null;
+    private static Servo servoTwo = null;
     OpenCvWebcam webcam;
     BCam.SkystoneDeterminationPipeline pipeline = new BCam.SkystoneDeterminationPipeline();
 
 
     @Override
     public void runOpMode()
+
     {
+        Servo servoOne = hardwareMap.servo.get("servoOne");
+        Servo servoTwo = hardwareMap.servo.get("servoTwo");
+        Servo Turn = hardwareMap.servo.get("Turn");
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using.
          * In this sample, we're using a webcam. Note that you will need to
@@ -177,7 +185,9 @@ public class BCam extends LinearOpMode
                                 drive.actionBuilder(drive.pose)
                                         .splineTo(new Vector2d(10,15), Math.PI/2)
                                         .build());
+
                         ran = false;
+                        Turn.setPosition(.95);
                     } else {
                         throw new AssertionError();
                     }
@@ -189,8 +199,9 @@ public class BCam extends LinearOpMode
 
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .lineToX(35)
+                                        .lineToX(40)
                                         .build());
+                        Turn.setPosition(.75);
                         ran = false;
                     } else {
                         throw new AssertionError();
@@ -205,6 +216,7 @@ public class BCam extends LinearOpMode
                                 drive.actionBuilder(drive.pose)
                                         //.lineToX(35)
                                         .build());
+                        Turn.setPosition(.95);
                         ran= false;
                     } else {
                         throw new AssertionError();
