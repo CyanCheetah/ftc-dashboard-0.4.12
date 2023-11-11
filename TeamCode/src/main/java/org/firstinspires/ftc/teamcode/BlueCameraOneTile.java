@@ -20,6 +20,10 @@
  */
 
 package org.firstinspires.ftc.teamcode;
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
@@ -44,6 +48,35 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 import org.openftc.easyopencv.OpenCvPipeline;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.Servo.Direction;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.CRServo;
+import java.util.logging.Level;
+import com.qualcomm.robotcore.hardware.configuration.UnspecifiedMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.Light;
+import com.qualcomm.robotcore.hardware.LightSensor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 
 @Autonomous
 public class BlueCameraOneTile extends LinearOpMode
@@ -61,7 +94,7 @@ public class BlueCameraOneTile extends LinearOpMode
     {
         Servo servoOne = hardwareMap.servo.get("servoOne");
         Servo servoTwo = hardwareMap.servo.get("servoTwo");
-        Servo Turn = hardwareMap.servo.get("Turn");
+        Turn = hardwareMap.servo.get("Turn");
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using.
          * In this sample, we're using a webcam. Note that you will need to
@@ -138,7 +171,9 @@ public class BlueCameraOneTile extends LinearOpMode
         int first,second,third;
 
         if (opModeIsActive())
+
         {
+            Servo Spin2 = hardwareMap.get(Servo.class, "Turn");
             while (pipeline.isPos1() == 0 && pipeline.isPos2() == 0 && pipeline.isPos3() == 0)  {
 
                 sleep(1000);
@@ -171,18 +206,21 @@ public class BlueCameraOneTile extends LinearOpMode
                         throw new AssertionError();
                     }
                 } else if (second > first && (second > third)) {
+                    Turn = hardwareMap.get(Servo.class, "Turn");
                     telemetry.addData("2", second);
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                         telemetry.addData("2", second);
-
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .lineToX(42)
+                                        .lineToX(45)
+
                                         .build());
-                        Turn.setPosition(.75);
+
+                        Turn.setPosition(.95);
+                        sleep(100);
                         ran = false;
-                    } else {
+                        Turn.setPosition(.95); } else {
                         throw new AssertionError();
                     }
                 } else {
