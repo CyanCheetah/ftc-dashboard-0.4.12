@@ -257,6 +257,7 @@ public class BlueCameraOneTile extends LinearOpMode
      * if you're doing something weird where you do need it synchronized with your OpMode thread,
      * then you will need to account for that accordingly.
      */
+    //wow its cyancheetah
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
         /*
