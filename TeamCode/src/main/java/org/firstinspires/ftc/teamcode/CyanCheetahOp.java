@@ -68,7 +68,7 @@ public class CyanCheetahOp extends LinearOpMode {
     private static Servo Arm = null;
     private static Servo Arm = null;*/
 
-    //-------------------------------------------------------------------------------//
+//-------------------------------------------------------------------------------//
     enum PowerLevel {MAX, HALF, QUARTER, STOP}
 
     ;
@@ -216,7 +216,7 @@ public class CyanCheetahOp extends LinearOpMode {
             }
             //This moved the two servos that move the claw back and forth, to the place to deposite.
             if (gamepad2.b){
-                // picking up top on stack of 5  moveServos(servoOne, servoTwo, -.3);
+              // picking up top on stack of 5  moveServos(servoOne, servoTwo, -.3);
                 moveServos(servoOne, servoTwo, -.4);
             }
             //
