@@ -170,6 +170,8 @@ public class BlueCameraOneTile extends LinearOpMode
         Turn.setPosition(1);
         waitForStart();
         int first,second,third;
+        turnServo g = new turnServo(hardwareMap);
+
 
         if (opModeIsActive())
 
@@ -196,7 +198,7 @@ public class BlueCameraOneTile extends LinearOpMode
 
 
             if (ran) {
-                if (first > second && (first > third)) {
+                if (first > second && first > third) {
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                         telemetry.addData("First", first);
@@ -212,7 +214,7 @@ public class BlueCameraOneTile extends LinearOpMode
                     } else {
                         throw new AssertionError();
                     }
-                } else if (second > first && (second > third)) {
+                } else if (second > first && second > third) {
                     Turn = hardwareMap.get(Servo.class, "Turn");
                     telemetry.addData("2", second);
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
@@ -221,22 +223,19 @@ public class BlueCameraOneTile extends LinearOpMode
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
                                         .splineTo(new Vector2d(45,0),0)
-                                        //.lineToX(45)
-                                        .build());
-
-                        Turn.setPosition(.95);
-                        Actions.runBlocking(
-                                drive.actionBuilder(drive.pose)
+                                        .stopAndAdd(g.turnStuff())
                                         .lineToX(50)
-                                       // .lineToY(96)
-                                        //.lineToY(108)
+                                        //.lineToX(45)
+
                                         .build());
+                        Turn.setPosition(.95);
+
                         ran = false;
 
                     } else {
                         throw new AssertionError();
                     }
-                } else {
+                } else if (third > second && third > first) {
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         telemetry.addData("third", third);
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
@@ -365,7 +364,6 @@ public class BlueCameraOneTile extends LinearOpMode
             Core.extractChannel(YCrCb, Cb, 2);
         }
 
-        @Override
         public void init(Mat firstFrame)
         {
             /*
@@ -566,3 +564,26 @@ public class BlueCameraOneTile extends LinearOpMode
 
 
 }//
+public class turnServo {
+    Servo turnServ;
+    public turnServo(HardwareMap hw) {
+        turnServ = hw.get(Servo.class, "Turn");
+    }
+    public class turnH implements Action{
+
+        @Override
+        public void init() {
+            turnServ.setPosition(.95);
+        }
+        @Override
+        public boolean run(TelemetryPacket t) {
+            double f = turnServ.getPosition();
+            t.put("Pos", f);
+            return f < .95;
+        }
+    }
+    public Action turnStuff() {
+        return new turnH();
+
+    }
+}
