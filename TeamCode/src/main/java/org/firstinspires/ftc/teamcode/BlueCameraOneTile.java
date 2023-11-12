@@ -92,8 +92,6 @@ public class BlueCameraOneTile extends LinearOpMode
     public void runOpMode()
 
     {
-        Servo servoOne = hardwareMap.servo.get("servoOne");
-        Servo servoTwo = hardwareMap.servo.get("servoTwo");
         Turn = hardwareMap.servo.get("Turn");
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using.
@@ -204,11 +202,17 @@ public class BlueCameraOneTile extends LinearOpMode
                         telemetry.addData("First", first);
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .lineToX(10)
-                                        .splineToConstantHeading(new Vector2d(42,15), Math.PI/8)
-                                        .splineTo(new Vector2d(42,15), 0)
+                                        .lineToX(25)
+                                        .turn(-Math.PI/5.2)
                                         .build());
-                        Turn.setPosition(.75);
+                        Actions.runBlocking(
+                                drive.actionBuilder(drive.pose)
+                                        .lineToX(30.23)
+                                        .build());
+                        Turn.setPosition(.95);
+
+
+
                         ran = false;
 
                     } else {
@@ -220,16 +224,21 @@ public class BlueCameraOneTile extends LinearOpMode
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                         telemetry.addData("2", second);
+                        Turn.setPosition(1);
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .splineTo(new Vector2d(45,0),0)
-                                        .stopAndAdd(g.turnStuff())
-                                        .lineToX(50)
-                                        //.lineToX(45)
-
+                                        .splineTo(new Vector2d(44,0),0)
                                         .build());
                         Turn.setPosition(.95);
-
+                        Actions.runBlocking(
+                                drive.actionBuilder(drive.pose)
+                                        .lineToX(53)
+                                        .turn(Math.PI/4.8)
+                                        .build());
+                        Actions.runBlocking(
+                                drive.actionBuilder(new Pose2d(0,0,Math.PI/4.8))
+                                        .lineToX(27)
+                                        .build());
                         ran = false;
 
                     } else {
@@ -246,9 +255,12 @@ public class BlueCameraOneTile extends LinearOpMode
                         Turn.setPosition(.95);
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .lineToX(50)
-                                        .lineToXLinearHeading(50,10)
-                                        //.splineTo(new Vector2d(50,10),Math.PI/2)
+                                        .lineToX(52.5)
+                                        .turn(Math.PI/4.8)
+                                        .build());
+                        Actions.runBlocking(
+                                drive.actionBuilder(drive.pose)
+                                        .lineToX(4)
                                         .build());
                         ran= false;
                     } else {
@@ -363,7 +375,7 @@ public class BlueCameraOneTile extends LinearOpMode
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(YCrCb, Cb, 2);
         }
-
+        @Override
         public void init(Mat firstFrame)
         {
             /*
@@ -564,26 +576,3 @@ public class BlueCameraOneTile extends LinearOpMode
 
 
 }//
-public class turnServo {
-    Servo turnServ;
-    public turnServo(HardwareMap hw) {
-        turnServ = hw.get(Servo.class, "Turn");
-    }
-    public class turnH implements Action{
-
-        @Override
-        public void init() {
-            turnServ.setPosition(.95);
-        }
-        @Override
-        public boolean run(TelemetryPacket t) {
-            double f = turnServ.getPosition();
-            t.put("Pos", f);
-            return f < .95;
-        }
-    }
-    public Action turnStuff() {
-        return new turnH();
-
-    }
-}
