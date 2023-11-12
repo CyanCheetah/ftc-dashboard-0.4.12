@@ -167,6 +167,7 @@ public class BlueCameraOneTile extends LinearOpMode
         /*
          * Wait for the user to press start on the Driver Station
          */
+        Turn.setPosition(1);
         waitForStart();
         int first,second,third;
 
@@ -191,6 +192,9 @@ public class BlueCameraOneTile extends LinearOpMode
             second = pipeline.isPos2();
             third = pipeline.isPos3();
             boolean ran = true;
+
+
+
             if (ran) {
                 if (first > second && (first > third)) {
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
@@ -198,10 +202,13 @@ public class BlueCameraOneTile extends LinearOpMode
                         telemetry.addData("First", first);
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
+                                        .lineToX(10)
+                                        .splineToConstantHeading(new Vector2d(42,15), Math.PI/8)
                                         .splineTo(new Vector2d(42,15), 0)
                                         .build());
                         Turn.setPosition(.75);
                         ran = false;
+
                     } else {
                         throw new AssertionError();
                     }
@@ -213,14 +220,20 @@ public class BlueCameraOneTile extends LinearOpMode
                         telemetry.addData("2", second);
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .lineToX(45)
-
+                                        .splineTo(new Vector2d(45,0),0)
+                                        //.lineToX(45)
                                         .build());
 
                         Turn.setPosition(.95);
-                        sleep(100);
+                        Actions.runBlocking(
+                                drive.actionBuilder(drive.pose)
+                                        .lineToX(50)
+                                       // .lineToY(96)
+                                        //.lineToY(108)
+                                        .build());
                         ran = false;
-                        Turn.setPosition(.95); } else {
+
+                    } else {
                         throw new AssertionError();
                     }
                 } else {
@@ -229,9 +242,15 @@ public class BlueCameraOneTile extends LinearOpMode
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .splineTo(new Vector2d(42,-15), 0)
+                                        .splineTo(new Vector2d(42,-8), 0)
                                         .build());
                         Turn.setPosition(.95);
+                        Actions.runBlocking(
+                                drive.actionBuilder(drive.pose)
+                                        .lineToX(50)
+                                        .lineToXLinearHeading(50,10)
+                                        //.splineTo(new Vector2d(50,10),Math.PI/2)
+                                        .build());
                         ran= false;
                     } else {
                         throw new AssertionError();
