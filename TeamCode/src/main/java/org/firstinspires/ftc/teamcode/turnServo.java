@@ -10,9 +10,13 @@ public class turnServo {
 
     public turnServo(HardwareMap hw) {
         turnServ = hw.get(Servo.class, "Turn");
+        turnServ.setPosition(1);
     }
 
     public class turnH implements Action {
+        public void init() {
+            turnServ.setPosition(1);
+        }
         @Override
         public boolean run(TelemetryPacket t) {
             double f = turnServ.getPosition();
@@ -23,7 +27,6 @@ public class turnServo {
     }
 
     public Action turnStuff() {
-        turnServ.setPosition(1);
         turnServ.setPosition(.95);
         return new turnH();
 

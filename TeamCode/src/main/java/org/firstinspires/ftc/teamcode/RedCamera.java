@@ -1,5 +1,6 @@
+
 /*
- * Copyright (c) 2020 OpenFTC Team
+ * Copyright (c) 2019 OpenFTC Team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,110 +21,134 @@
  */
 
 package org.firstinspires.ftc.teamcode;
+        import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+        import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+        import com.acmerobotics.roadrunner.Action;
+        import com.acmerobotics.roadrunner.Pose2d;
+        import com.acmerobotics.roadrunner.Vector2d;
 
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvPipeline;
+// TODO: remove Actions from the core module?
+        import com.acmerobotics.roadrunner.ftc.Actions;
+        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+        import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
 
-//roadrunner imports
+        import com.qualcomm.robotcore.hardware.Servo;
 
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.*;
-import com.acmerobotics.roadrunner.AngularVelConstraint;
-import com.acmerobotics.roadrunner.DualNum;
-import com.acmerobotics.roadrunner.HolonomicController;
-import com.acmerobotics.roadrunner.MecanumKinematics;
-import com.acmerobotics.roadrunner.MinVelConstraint;
-import com.acmerobotics.roadrunner.MotorFeedforward;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Pose2dDual;
-import com.acmerobotics.roadrunner.ProfileAccelConstraint;
-import com.acmerobotics.roadrunner.Time;
-import com.acmerobotics.roadrunner.TimeTrajectory;
-import com.acmerobotics.roadrunner.TimeTurn;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.TurnConstraints;
-import com.acmerobotics.roadrunner.Twist2dDual;
-import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.VelConstraint;
-import com.acmerobotics.roadrunner.ftc.Encoder;
-import com.acmerobotics.roadrunner.ftc.FlightRecorder;
-import com.acmerobotics.roadrunner.ftc.LynxFirmware;
-import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
-import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
-import com.acmerobotics.roadrunner.ftc.RawEncoder;
-import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
-import java.lang.Math;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-/*
- * This sample demonstrates a basic (but battle-tested and essentially
- * 100% accurate) method of detecting the skystone when lined up with
- * the sample regions over the first 3 stones.
- */
+        import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+        import org.opencv.core.Core;
+        import org.opencv.core.Mat;
+        import org.opencv.core.Point;
+        import org.opencv.core.Rect;
+        import org.opencv.core.Scalar;
+        import org.opencv.imgproc.Imgproc;
+        import org.openftc.easyopencv.OpenCvCamera;
+        import org.openftc.easyopencv.OpenCvCameraFactory;
+        import org.openftc.easyopencv.OpenCvCameraRotation;
+        import org.openftc.easyopencv.OpenCvWebcam;
+        import org.openftc.easyopencv.OpenCvPipeline;
+        import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+        import com.qualcomm.robotcore.hardware.VoltageSensor;
+        import com.qualcomm.robotcore.hardware.DistanceSensor;
+        import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+        import com.qualcomm.robotcore.hardware.Servo;
+        import com.qualcomm.robotcore.hardware.Servo.Direction;
+        import com.qualcomm.hardware.bosch.BNO055IMU;
+        import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+        import com.qualcomm.robotcore.hardware.DcMotorSimple;
+        import com.qualcomm.robotcore.hardware.CRServo;
+        import java.util.logging.Level;
+        import com.qualcomm.robotcore.hardware.configuration.UnspecifiedMotor;
+        import com.qualcomm.robotcore.hardware.Servo;
+        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+        import com.qualcomm.robotcore.util.ElapsedTime;
+        import com.qualcomm.robotcore.hardware.DcMotor;
+        import com.qualcomm.robotcore.util.Range;
+        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+        import com.qualcomm.robotcore.hardware.HardwareMap;
+        import com.qualcomm.robotcore.hardware.ColorSensor;
+        import com.qualcomm.robotcore.hardware.Light;
+        import com.qualcomm.robotcore.hardware.LightSensor;
+        import com.qualcomm.robotcore.hardware.DigitalChannel;
+        import org.firstinspires.ftc.robotcore.external.navigation.Position;
+        import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+        import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+        import com.qualcomm.robotcore.util.Range;
+        import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 
 @Autonomous
 public class RedCamera extends LinearOpMode
 {
-    OpenCvInternalCamera camera;
-    //dang so this works huh, thats wild
-    //yoo
-    SkystoneDeterminationPipeline pipeline;
+    private static Servo servoOne = null;
+    private static Servo Turn = null;
+    private static Servo servoTwo = null;
+    OpenCvWebcam webcam;
+    BlueCameraOneTile.SkystoneDeterminationPipeline pipeline = new BlueCameraOneTile.SkystoneDeterminationPipeline();
+
 
     @Override
     public void runOpMode()
+
     {
-        /**
-         * NOTE: Many comments have been omitted from this sample for the
-         * sake of conciseness. If you're just starting out with EasyOpenCv,
-         * you should take a look at {@link InternalCamera1Example} or its
-         * webcam counterpart, {@link WebcamExample} first.
+        Turn = hardwareMap.servo.get("Turn");
+        /*
+         * Instantiate an OpenCvCamera object for the camera we'll be using.
+         * In this sample, we're using a webcam. Note that you will need to
+         * make sure you have added the webcam to your configuration file and
+         * adjusted the name here to match what you named it in said config file.
+         *
+         * We pass it the view that we wish to use for camera monitor (on
+         * the RC phone). If no camera monitor is desired, use the alternate
+         * single-parameter constructor instead (commented out below)
+         */
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cameraMonitorViewId"), cameraMonitorViewId);
+        pipeline = new BlueCameraOneTile.SkystoneDeterminationPipeline();
+        webcam.setPipeline(pipeline);
+        // OR...  Do Not Activate the Camera Monitor View
+        //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
+
+        /*
+         * Specify the image processing pipeline we wish to invoke upon receipt
+         * of a frame from the camera. Note that switching pipelines on-the-fly
+         * (while a streaming session is in flight) *IS* supported.
          */
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-        pipeline = new SkystoneDeterminationPipeline();
-        camera.setPipeline(pipeline);
-
-        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
-        // out when the RC activity is in portrait. We do our actual image processing assuming
-        // landscape orientation, though.
-        camera.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
-
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        /*
+         * Open the connection to the camera device. New in v1.4.0 is the ability
+         * to open the camera asynchronously, and this is now the recommended way
+         * to do it. The benefits of opening async include faster init time, and
+         * better behavior when pressing stop during init (i.e. less of a chance
+         * of tripping the stuck watchdog)
+         *
+         * If you really want to open synchronously, the old method is still available.
+         */
+        webcam.setMillisecondsPermissionTimeout(5000); // Timeout for obtaining permission is configurable. Set before opening.
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                camera.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                /*
+                 * Tell the webcam to start streaming images to us! Note that you must make sure
+                 * the resolution you specify is supported by the camera. If it is not, an exception
+                 * will be thrown.
+                 *
+                 * Keep in mind that the SDK's UVC driver (what OpenCvWebcam uses under the hood) only
+                 * supports streaming from the webcam in the uncompressed YUV image format. This means
+                 * that the maximum resolution you can stream at and still get up to 30FPS is 480p (640x480).
+                 * Streaming at e.g. 720p will limit you to up to 10FPS and so on and so forth.
+                 *
+                 * Also, we specify the rotation that the webcam is used in. This is so that the image
+                 * from the camera sensor can be rotated such that it is always displayed with the image upright.
+                 * For a front facing camera, rotation is defined assuming the user is looking at the screen.
+                 * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
+                 * away from the user.
+                 */
+                webcam.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -135,18 +160,149 @@ public class RedCamera extends LinearOpMode
             }
         });
 
+        telemetry.addLine("Waiting for start");
+        telemetry.update();
+
+        /*
+         * Wait for the user to press start on the Driver Station
+         */
+        int first,second,third;
+        Turn.setPosition(1);
         waitForStart();
 
-        while (opModeIsActive())
-        {
-            telemetry.addData("Analysis", pipeline.getAnalysis());
-            telemetry.update();
+        turnServo g = new turnServo(hardwareMap);
 
-            // Don't burn CPU cycles busy-looping in this sample
-            sleep(50);
+
+        if (opModeIsActive())
+
+        {
+            while (pipeline.isPos1() == 0 && pipeline.isPos2() == 0 && pipeline.isPos3() == 0)  {
+
+                sleep(1000);
+
+                first = pipeline.isPos1();
+                second = pipeline.isPos2();
+                third = pipeline.isPos3();
+                telemetry.addData("1", first);
+                telemetry.addData("2", second);
+                telemetry.addData("3", third);
+                telemetry.update();
+
+            }
+            int sum1 = 0, sum2 = 0, sum3 = 0;
+            for (int i = 0; i < 4; i++) {
+                first = pipeline.isPos1();
+                second = pipeline.isPos2();
+                third = pipeline.isPos3();
+                sum1 += first;
+                sum2 += second;
+                sum3 += third;
+                sleep(500);
+            }
+            first = sum1 / 4;
+            second = sum2 / 4;
+            third = sum3 / 4;
+            telemetry.addData("1", first);
+            telemetry.addData("2", second);
+            telemetry.addData("3", third);
+
+            int maxOneTwo = Math.max(first, second);
+            int max = Math.max(maxOneTwo, third);
+            boolean ran = true;
+
+
+
+            if (ran) {
+                if (max == first) {
+                    if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
+                        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+                        telemetry.addData("First", first);
+                        com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
+                                drive.actionBuilder(drive.pose)
+                                        .lineToX(25)
+                                        .turn(-Math.PI/5.2)
+                                        .build());
+                        com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
+                                drive.actionBuilder(drive.pose)
+                                        .lineToX(30.23)
+                                        .afterTime(7, g.turnStuff())
+                                        .build());
+                        Turn.setPosition(.95);
+                        ran = false;
+
+                    } else {
+                        throw new AssertionError();
+                    }
+                } else if (max == second) {
+                    Turn = hardwareMap.get(Servo.class, "Turn");
+                    telemetry.addData("2", second);
+                    if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
+                        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+                        telemetry.addData("2", second);
+                        Turn.setPosition(1);
+                        com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
+                                drive.actionBuilder(drive.pose)
+                                        .splineTo(new Vector2d(44,0),0)
+                                        .build());
+                        Turn.setPosition(.95);
+                        com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
+                                drive.actionBuilder(drive.pose)
+                                        .lineToX(53)
+                                        .turn(Math.PI/4.8)
+                                        .build());
+                        com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
+                                drive.actionBuilder(new Pose2d(0,0,Math.PI/4.8))
+                                        .lineToX(27)
+                                        .build());
+                        ran = false;
+
+                    } else {
+                        throw new AssertionError();
+                    }
+                } else if (max == third) {
+                    if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
+                        telemetry.addData("third", third);
+                        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+                        com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
+                                drive.actionBuilder(drive.pose)
+                                        .splineTo(new Vector2d(42,-8), 0)
+                                        .build());
+                        Turn.setPosition(.95);
+                        com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
+                                drive.actionBuilder(drive.pose)
+                                        .lineToX(52.5)
+                                        .turn(Math.PI/4.8)
+                                        .build());
+                        Actions.runBlocking(
+                                drive.actionBuilder(drive.pose)
+                                        .lineToX(4)
+                                        .build());
+                        ran= false;
+                    } else {
+                        throw new AssertionError();
+                    }
+                }
+            }
+
         }
     }
 
+    /*
+     * An example image processing pipeline to be run upon receipt of each frame from the camera.
+     * Note that the processFrame() method is called serially from the frame worker thread -
+     * that is, a new camera frame will not come in while you're still processing a previous one.
+     * In other words, the processFrame() method will never be called multiple times simultaneously.
+     *
+     * However, the rendering of your processed image to the viewport is done in parallel to the
+     * frame worker thread. That is, the amount of time it takes to render the image to the
+     * viewport does NOT impact the amount of frames per second that your pipeline can process.
+     *
+     * IMPORTANT NOTE: this pipeline is NOT invoked on your OpMode thread. It is invoked on the
+     * frame worker thread. This should not be a problem in the vast majority of cases. However,
+     * if you're doing something weird where you do need it synchronized with your OpMode thread,
+     * then you will need to account for that accordingly.
+     */
+    //wow its cyancheetah
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
         /*
@@ -162,17 +318,18 @@ public class RedCamera extends LinearOpMode
         /*
          * Some color constants
          */
-        static final Scalar RED = new Scalar(0, 0, 255);
-        static final Scalar ORANGE = new Scalar(0, 128, 255);
+        static final Scalar BLUE = new Scalar(0, 0, 255);
+        static final Scalar GREEN = new Scalar(0, 255, 0);
 
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(109,98);
-        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(181,98);
-        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(253,98);
-        static final int REGION_WIDTH = 20;
-        static final int REGION_HEIGHT = 20;
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(230, 500);
+        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(925, 450);
+        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1550, 500);
+        static final int REGION_WIDTH = 150;
+        static final int REGION_HEIGHT = 150;
+
 
         /*
          * Points which actually define the sample region rectangles, derived from above values
@@ -217,9 +374,12 @@ public class RedCamera extends LinearOpMode
         Mat YCrCb = new Mat();
         Mat Cb = new Mat();
         int avg1, avg2, avg3;
+        boolean pos1 = false;
+        boolean pos2 = false;
+        boolean pos3 = false;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        private volatile SkystonePosition position = SkystonePosition.LEFT;
+        private volatile WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition position = WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition.LEFT;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -230,7 +390,6 @@ public class RedCamera extends LinearOpMode
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2Luv);
             Core.extractChannel(YCrCb, Cb, 2);
         }
-
         @Override
         public void init(Mat firstFrame)
         {
@@ -317,7 +476,7 @@ public class RedCamera extends LinearOpMode
                     input, // Buffer to draw on
                     region1_pointA, // First point which defines the rectangle
                     region1_pointB, // Second point which defines the rectangle
-                    RED, // The color the rectangle is drawn in
+                    BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
             /*
@@ -328,7 +487,7 @@ public class RedCamera extends LinearOpMode
                     input, // Buffer to draw on
                     region2_pointA, // First point which defines the rectangle
                     region2_pointB, // Second point which defines the rectangle
-                    RED, // The color the rectangle is drawn in
+                    BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
             /*
@@ -339,7 +498,7 @@ public class RedCamera extends LinearOpMode
                     input, // Buffer to draw on
                     region3_pointA, // First point which defines the rectangle
                     region3_pointB, // Second point which defines the rectangle
-                    RED, // The color the rectangle is drawn in
+                    BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
 
@@ -355,8 +514,9 @@ public class RedCamera extends LinearOpMode
              */
             if(max == avg1) // Was it from region 1?
             {
-                position = SkystonePosition.LEFT; // Record our analysis
+                position = WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition.LEFT; // Record our analysis
 
+                pos1 = true;
                 /*
                  * Draw a solid rectangle on top of the chosen region.
                  * Simply a visual aid. Serves no functional purpose.
@@ -365,14 +525,13 @@ public class RedCamera extends LinearOpMode
                         input, // Buffer to draw on
                         region1_pointA, // First point which defines the rectangle
                         region1_pointB, // Second point which defines the rectangle
-                        ORANGE,// , // The color the rectangle is drawn in
+                        GREEN, // The color the rectangle is drawn in
                         -1); // Negative thickness means solid fill
-
             }
             else if(max == avg2) // Was it from region 2?
             {
-                position = SkystonePosition.CENTER; // Record our analysis
-
+                position = WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition.CENTER; // Record our analysis
+                pos2 = true;
                 /*
                  * Draw a solid rectangle on top of the chosen region.
                  * Simply a visual aid. Serves no functional purpose.
@@ -381,13 +540,13 @@ public class RedCamera extends LinearOpMode
                         input, // Buffer to draw on
                         region2_pointA, // First point which defines the rectangle
                         region2_pointB, // Second point which defines the rectangle
-                        ORANGE, // The color the rectangle is drawn in
+                        GREEN, // The color the rectangle is drawn in
                         -1); // Negative thickness means solid fill
             }
             else if(max == avg3) // Was it from region 3?
             {
-                position = SkystonePosition.RIGHT; // Record our analysis
-
+                position = WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition.RIGHT; // Record our analysis
+                pos3 = true;
                 /*
                  * Draw a solid rectangle on top of the chosen region.
                  * Simply a visual aid. Serves no functional purpose.
@@ -396,9 +555,10 @@ public class RedCamera extends LinearOpMode
                         input, // Buffer to draw on
                         region3_pointA, // First point which defines the rectangle
                         region3_pointB, // Second point which defines the rectangle
-                        ORANGE, // The color the rectangle is drawn in
+                        GREEN, // The color the rectangle is drawn in
                         -1); // Negative thickness means solid fill
             }
+
 
             /*
              * Render the 'input' buffer to the viewport. But note this is not
@@ -408,12 +568,26 @@ public class RedCamera extends LinearOpMode
             return input;
         }
 
+
         /*
          * Call this from the OpMode thread to obtain the latest analysis
          */
-        public SkystonePosition getAnalysis()
+        public WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition getAnalysis()
         {
             return position;
         }
+
+        public int isPos1() {
+            return avg1;
+        }
+        public int isPos2() {
+            return avg2;
+        }
+        public int isPos3() {
+            return avg3;
+        }
     }
-}
+
+
+
+}//
