@@ -21,11 +21,8 @@
  */
 
 package org.firstinspires.ftc.teamcode;
-        import androidx.annotation.NonNull;
 
-        import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-        import com.acmerobotics.roadrunner.Action;
-        import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Pose2d;
         import com.acmerobotics.roadrunner.Vector2d;
 
 // TODO: remove Actions from the core module?
@@ -49,44 +46,15 @@ package org.firstinspires.ftc.teamcode;
         import org.openftc.easyopencv.OpenCvCameraRotation;
         import org.openftc.easyopencv.OpenCvWebcam;
         import org.openftc.easyopencv.OpenCvPipeline;
-        import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-        import com.qualcomm.robotcore.hardware.VoltageSensor;
-        import com.qualcomm.robotcore.hardware.DistanceSensor;
-        import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-        import com.qualcomm.robotcore.hardware.Servo;
-        import com.qualcomm.robotcore.hardware.Servo.Direction;
-        import com.qualcomm.hardware.bosch.BNO055IMU;
-        import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-        import com.qualcomm.robotcore.hardware.DcMotorSimple;
-        import com.qualcomm.robotcore.hardware.CRServo;
-        import java.util.logging.Level;
-        import com.qualcomm.robotcore.hardware.configuration.UnspecifiedMotor;
-        import com.qualcomm.robotcore.hardware.Servo;
-        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-        import com.qualcomm.robotcore.util.ElapsedTime;
-        import com.qualcomm.robotcore.hardware.DcMotor;
-        import com.qualcomm.robotcore.util.Range;
-        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-        import com.qualcomm.robotcore.hardware.HardwareMap;
-        import com.qualcomm.robotcore.hardware.ColorSensor;
-        import com.qualcomm.robotcore.hardware.Light;
-        import com.qualcomm.robotcore.hardware.LightSensor;
-        import com.qualcomm.robotcore.hardware.DigitalChannel;
-        import org.firstinspires.ftc.robotcore.external.navigation.Position;
-        import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-        import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-        import com.qualcomm.robotcore.util.Range;
-        import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 
 @Autonomous
-public class RedCamera extends LinearOpMode
+public class RedCameraRight extends LinearOpMode
 {
     private static Servo servoOne = null;
     private static Servo Turn = null;
     private static Servo servoTwo = null;
     OpenCvWebcam webcam;
-    BlueCameraOneTile.SkystoneDeterminationPipeline pipeline = new BlueCameraOneTile.SkystoneDeterminationPipeline();
+    BlueCameraRight.SkystoneDeterminationPipeline pipeline = new BlueCameraRight.SkystoneDeterminationPipeline();
 
 
     @Override
@@ -106,7 +74,7 @@ public class RedCamera extends LinearOpMode
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cameraMonitorViewId"), cameraMonitorViewId);
-        pipeline = new BlueCameraOneTile.SkystoneDeterminationPipeline();
+        pipeline = new BlueCameraRight.SkystoneDeterminationPipeline();
         webcam.setPipeline(pipeline);
         // OR...  Do Not Activate the Camera Monitor View
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));

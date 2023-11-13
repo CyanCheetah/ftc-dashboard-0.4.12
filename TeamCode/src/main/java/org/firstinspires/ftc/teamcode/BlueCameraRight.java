@@ -165,16 +165,16 @@ public class BlueCameraOneTile extends LinearOpMode
         /*
          * Wait for the user to press start on the Driver Station
          */
+        int first,second,third;
         Turn.setPosition(1);
         waitForStart();
-        int first,second,third;
+
         turnServo g = new turnServo(hardwareMap);
 
 
         if (opModeIsActive())
 
         {
-            Servo Spin2 = hardwareMap.get(Servo.class, "Turn");
             while (pipeline.isPos1() == 0 && pipeline.isPos2() == 0 && pipeline.isPos3() == 0)  {
 
                 sleep(1000);
@@ -188,15 +188,31 @@ public class BlueCameraOneTile extends LinearOpMode
                 telemetry.update();
 
             }
-            first = pipeline.isPos1();
-            second = pipeline.isPos2();
-            third = pipeline.isPos3();
+            int sum1 = 0, sum2 = 0, sum3 = 0;
+            for (int i = 0; i < 4; i++) {
+                first = pipeline.isPos1();
+                second = pipeline.isPos2();
+                third = pipeline.isPos3();
+                sum1 += first;
+                sum2 += second;
+                sum3 += third;
+                sleep(500);
+            }
+            first = sum1 / 4;
+            second = sum2 / 4;
+            third = sum3 / 4;
+            telemetry.addData("1", first);
+            telemetry.addData("2", second);
+            telemetry.addData("3", third);
+
+            int maxOneTwo = Math.max(first, second);
+            int max = Math.max(maxOneTwo, third);
             boolean ran = true;
 
 
 
             if (ran) {
-                if (first > second && first > third) {
+                if (max == first) {
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                         telemetry.addData("First", first);
@@ -208,17 +224,15 @@ public class BlueCameraOneTile extends LinearOpMode
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
                                         .lineToX(30.23)
+                                        .afterTime(7, g.turnStuff())
                                         .build());
                         Turn.setPosition(.95);
-
-
-
                         ran = false;
 
                     } else {
                         throw new AssertionError();
                     }
-                } else if (second > first && second > third) {
+                } else if (max == second) {
                     Turn = hardwareMap.get(Servo.class, "Turn");
                     telemetry.addData("2", second);
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
@@ -244,7 +258,7 @@ public class BlueCameraOneTile extends LinearOpMode
                     } else {
                         throw new AssertionError();
                     }
-                } else if (third > second && third > first) {
+                } else if (max == third) {
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         telemetry.addData("third", third);
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
