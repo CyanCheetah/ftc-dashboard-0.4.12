@@ -49,6 +49,7 @@ public class CyanCheetahOp extends LinearOpMode {
     private static DcMotor bottomr = null;
     private static DcMotor rightLift = null;
     private static DcMotor leftLift = null;
+    private static DcMotor mainLift = null;
     private static Servo servoOne = null;
     private static Servo servoTwo = null;
     private static Servo Bucket = null;
@@ -92,6 +93,7 @@ public class CyanCheetahOp extends LinearOpMode {
         bottomr = hardwareMap.get(DcMotor.class, "rightLower");
         leftLift = hardwareMap.get(DcMotor.class,"leftLift");
         rightLift = hardwareMap.get(DcMotor.class,"rightLift");
+        mainLift = hardwareMap.get(DcMotor.class,"mainLift");
         Turn = hardwareMap.get(Servo.class, "Turn");
         Servo servoOne = hardwareMap.servo.get("servoOne");
         Servo servoTwo = hardwareMap.servo.get("servoTwo");
@@ -151,6 +153,14 @@ public class CyanCheetahOp extends LinearOpMode {
             } else {
                 rightLift.setPower(0);
                 leftLift.setPower(0);
+            }
+            if (gamepad1.dpad_down) {
+                mainLift.setPower(.5);
+            }
+            else if (gamepad1.dpad_up) {
+                mainLift.setPower(-.5);
+            } else {
+                mainLift.setPower(0);
             }
             if (gamepad2.x) {
                 moveServos(servoOne, servoTwo, -.375);
