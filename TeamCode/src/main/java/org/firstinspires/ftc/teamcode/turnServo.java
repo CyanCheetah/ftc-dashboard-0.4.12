@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class turnServo {
     Servo turnServ;
-
     public turnServo(HardwareMap hw) {
         turnServ = hw.get(Servo.class, "Turn");
         turnServ.setPosition(1);
@@ -25,7 +24,6 @@ public class turnServo {
         }
 
     }
-
     public Action turnStuff() {
         turnServ.setPosition(.95);
         return new turnH();
