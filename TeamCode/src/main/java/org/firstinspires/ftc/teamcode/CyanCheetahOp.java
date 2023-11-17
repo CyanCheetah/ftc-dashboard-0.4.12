@@ -102,10 +102,10 @@ public class CyanCheetahOp extends LinearOpMode {
         Bucket = hardwareMap.get(Servo.class, "Bucket");
         Swing = hardwareMap.get(Servo.class, "Swing");
         //Setting Directions of motors.
-        frontl.setDirection(DcMotor.Direction.FORWARD);
-        frontr.setDirection(DcMotor.Direction.REVERSE);
-        bottoml.setDirection(DcMotor.Direction.FORWARD);
-        bottomr.setDirection(DcMotor.Direction.REVERSE);
+        frontl.setDirection(DcMotor.Direction.REVERSE);
+        frontr.setDirection(DcMotor.Direction.FORWARD);
+        bottoml.setDirection(DcMotor.Direction.REVERSE);
+        bottomr.setDirection(DcMotor.Direction.FORWARD);
         leftLift.setDirection(DcMotor.Direction.FORWARD);
         rightLift.setDirection(DcMotor.Direction.FORWARD);
         //Brake immedietly after joystick hits 0 instead of coasting down
@@ -117,6 +117,7 @@ public class CyanCheetahOp extends LinearOpMode {
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightHang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftHang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         waitForStart();
 //------------------------------------------------------------------ Start of Match ---------------------------------------------------
