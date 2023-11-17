@@ -49,12 +49,13 @@ public class CyanCheetahOp extends LinearOpMode {
     private static DcMotor bottomr = null;
     private static DcMotor rightLift = null;
     private static DcMotor leftLift = null;
-    private static DcMotor mainLift = null;
+    private static DcMotor rightHang = null;
     private static Servo servoOne = null;
     private static Servo servoTwo = null;
     private static Servo Bucket = null;
     private static Servo Swing = null;
     private static Servo Turn = null;
+    private static DcMotor leftHang = null;
     //-------------------------------------------------------------------------------//
     enum PowerLevel {MAX, HALF, QUARTER, STOP}     // Declare OpMode members/constants.
     private ElapsedTime runtime = new ElapsedTime();
@@ -93,7 +94,8 @@ public class CyanCheetahOp extends LinearOpMode {
         bottomr = hardwareMap.get(DcMotor.class, "rightLower");
         leftLift = hardwareMap.get(DcMotor.class,"leftLift");
         rightLift = hardwareMap.get(DcMotor.class,"rightLift");
-        mainLift = hardwareMap.get(DcMotor.class,"mainLift");
+        rightHang = hardwareMap.get(DcMotor.class,"rightHang");
+        leftHang = hardwareMap.get(DcMotor.class,"leftHang");
         Turn = hardwareMap.get(Servo.class, "Turn");
         Servo servoOne = hardwareMap.servo.get("servoOne");
         Servo servoTwo = hardwareMap.servo.get("servoTwo");
@@ -113,6 +115,8 @@ public class CyanCheetahOp extends LinearOpMode {
         bottomr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightHang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftHang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
 //------------------------------------------------------------------ Start of Match ---------------------------------------------------
@@ -135,6 +139,7 @@ public class CyanCheetahOp extends LinearOpMode {
         double SwingInPosition = 0.3;
         double BucketOutPosition = .145;
         double BucketInPosition = .325;
+        double mainLiftPower = 0;
         // ------ the values above may change often
         double clawClose = 1;
         double clawSemiOpen = .95;
@@ -143,24 +148,37 @@ public class CyanCheetahOp extends LinearOpMode {
         while (opModeIsActive()) {  //While Teleop is in session
             Servo Turn = hardwareMap.servo.get("Turn");
 //          ************************************************ GAMEPAD 2 CONTROLS ************************************************
-            if (gamepad2.dpad_down) {
-                rightLift.setPower(.5);
-                leftLift.setPower(-.5);
+            /**
+            if (gamepad1.dpad_up) {
+                rightHang.setPower(.4);
+                leftHang.setPower(-.4);
             }
-            else if (gamepad2.dpad_up) {
-                rightLift.setPower(-.5);
-                leftLift.setPower(.5);
+            else if (gamepad1.dpad_down) {
+                rightHang.setPower(-.4);
+                leftHang.setPower(.4);
             } else {
-                rightLift.setPower(0);
-                leftLift.setPower(0);
+                rightHang.setPower(0);
+                leftHang.setPower(0);
             }
-            if (gamepad1.dpad_down) {
-                mainLift.setPower(.5);
+             **/
+            //Pushes the left hang up
+            if (gamepad1.a) {
+                leftHang.setPower(-.3);
+            } //pushes the left hang down
+            else if (gamepad1.x){
+                leftHang.setPower(.6);
             }
-            else if (gamepad1.dpad_up) {
-                mainLift.setPower(-.5);
+            else {
+                leftHang.setPower(0);
+            }
+            //Pushes the right hang up
+            if (gamepad1.b) {
+                rightHang.setPower(.3);
+            } //pushes the right hang down
+            else if (gamepad1.y){
+                rightHang.setPower(-.6);
             } else {
-                mainLift.setPower(0);
+                rightHang.setPower(0);
             }
             if (gamepad2.x) {
                 moveServos(servoOne, servoTwo, -.375);
