@@ -56,10 +56,9 @@ public class BlueCameraLeft extends LinearOpMode
     private static Servo servoOne = null;
     private static Servo Turn = null;
     private static Servo servoTwo = null;
-    private DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
     OpenCvWebcam webcam;
-    BlueCameraRight.SkystoneDeterminationPipeline pipeline = new BlueCameraRight.SkystoneDeterminationPipeline();
+    SkystoneDeterminationPipeline pipeline = new SkystoneDeterminationPipeline();
 
 
     @Override
@@ -79,7 +78,7 @@ public class BlueCameraLeft extends LinearOpMode
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cameraMonitorViewId"), cameraMonitorViewId);
-        pipeline = new BlueCameraRight.SkystoneDeterminationPipeline();
+        pipeline = new SkystoneDeterminationPipeline();
         webcam.setPipeline(pipeline);
         // OR...  Do Not Activate the Camera Monitor View
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
@@ -142,20 +141,7 @@ public class BlueCameraLeft extends LinearOpMode
         int first,second,third;
         Turn.setPosition(1);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftUpper");
-        leftBack = hardwareMap.get(DcMotorEx.class, "leftLower");
-        rightBack = hardwareMap.get(DcMotorEx.class, "rightLower");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightUpper");
 
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();
 
         turnServo g = new turnServo(hardwareMap);
@@ -197,7 +183,7 @@ public class BlueCameraLeft extends LinearOpMode
             int maxOneTwo = Math.max(first, second);
             int max = Math.max(maxOneTwo, third);
             boolean ran = true;
-
+            double clawFullOpen = .775;
 
 
             if (ran) {
@@ -208,9 +194,9 @@ public class BlueCameraLeft extends LinearOpMode
                         telemetry.addData("First", first);
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
+
                                         .setTangent(0)
-                                        .splineToLinearHeading(new Pose2d(-10, 60, 0), Math.PI / 2)
-                                       // .turn(.85)
+                                        .splineTo(new Vector2d(46.5, 27), 1.15)
                                         .build());
                         Turn.setPosition(.95);
                         ran= false;
@@ -226,36 +212,28 @@ public class BlueCameraLeft extends LinearOpMode
                         telemetry.addData("2", second);
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .lineToX(60)
-                                        .build());
-                        Turn.setPosition(.95);
-                        Actions.runBlocking(
-                                drive.actionBuilder(drive.pose)
                                         .lineToX(65)
-                                        .turn(1)
                                         .build());
+                        Turn.setPosition(.775);
+                        telemetry.addData("turnPos: ",Turn.getPosition());
+                        Turn.setPosition(.95);
                         ran = false;
 
                     } else {
                         throw new AssertionError();
                     }
-                    leftFront.setPower(.5);
-                    rightFront.setPower(.5);
-                    leftBack.setPower(.5);
-                    rightBack.setPower(.5);
-                    sleep(1500);
-                    leftFront.setPower(0);
-                    rightFront.setPower(0);
-                    leftBack.setPower(0);
-                    rightBack.setPower(0);
                 } else if (max == third) {
+                    Turn = hardwareMap.get(Servo.class, "Turn");
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         telemetry.addData("third", third);
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .setTangent(0)
-                                        .splineTo(new Vector2d(44, 41), 1.1)
+                                       // .lineToX(44)
+                                        //.turn(-1)
+                                        //.lineToX(100 )
+                                        .lineToX(40)
+                                        .splineTo(new Vector2d(41,-6),-.9)
                                         .build());
                         Turn.setPosition(.95);
                         ran = false;
@@ -308,10 +286,10 @@ public class BlueCameraLeft extends LinearOpMode
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(230, 500);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(180, 470);
         static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(925, 450);
-        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1550, 500);
-        static final int REGION_WIDTH = 150;
+        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1720, 470);
+        static final int REGION_WIDTH = 250;
         static final int REGION_HEIGHT = 150;
 
 
@@ -348,7 +326,7 @@ public class BlueCameraLeft extends LinearOpMode
                 REGION3_TOPLEFT_ANCHOR_POINT.x,
                 REGION3_TOPLEFT_ANCHOR_POINT.y);
         Point region3_pointB = new Point(
-                REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                1920,
                 REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
         /*
