@@ -254,7 +254,7 @@ public class BlueCameraRight extends LinearOpMode
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
                                         .setTangent(0)
-                                        .splineTo(new Vector2d(44, -30), 0)
+                                        .splineTo(new Vector2d(44, -12), 0)
                                         .build());
                         Turn.setPosition(.95);
                         ran= false;
