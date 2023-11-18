@@ -31,6 +31,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -46,12 +49,15 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+
 @Autonomous
 public class BlueCameraRight extends LinearOpMode
 {
     private static Servo servoOne = null;
     private static Servo Turn = null;
     private static Servo servoTwo = null;
+    private DcMotorEx leftFront, leftBack, rightBack, rightFront;
+
     OpenCvWebcam webcam;
     BlueCameraRight.SkystoneDeterminationPipeline pipeline = new BlueCameraRight.SkystoneDeterminationPipeline();
 
@@ -135,6 +141,21 @@ public class BlueCameraRight extends LinearOpMode
          */
         int first,second,third;
         Turn.setPosition(1);
+
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftUpper");
+        leftBack = hardwareMap.get(DcMotorEx.class, "leftLower");
+        rightBack = hardwareMap.get(DcMotorEx.class, "rightLower");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightUpper");
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();
 
         turnServo g = new turnServo(hardwareMap);
@@ -181,73 +202,68 @@ public class BlueCameraRight extends LinearOpMode
 
             if (ran) {
                 if (max == first) {
+                    Turn = hardwareMap.get(Servo.class, "Turn");
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                         telemetry.addData("First", first);
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .lineToX(25)
-                                        .turn(-Math.PI/5.2)
-                                        .build());
-                        Actions.runBlocking(
-                                drive.actionBuilder(drive.pose)
-                                        .lineToX(30.23)
-                                        .afterTime(7, g.turnStuff())
+                                        .setTangent(0)
+                                        .splineTo(new Vector2d(44, 41), 1.1)
                                         .build());
                         Turn.setPosition(.95);
                         ran = false;
-
                     } else {
                         throw new AssertionError();
                     }
+
                 } else if (max == second) {
                     Turn = hardwareMap.get(Servo.class, "Turn");
                     telemetry.addData("2", second);
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                         telemetry.addData("2", second);
-                        Turn.setPosition(1);
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .splineTo(new Vector2d(44,0),0)
+                                        .lineToX(63)
                                         .build());
                         Turn.setPosition(.95);
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .lineToX(53)
-                                        .turn(Math.PI/4.8)
-                                        .build());
-                        Actions.runBlocking(
-                                drive.actionBuilder(new Pose2d(0,0,Math.PI/4.8))
-                                        .lineToX(27)
+                                        .lineToX(73)
+                                        .turn(1)
                                         .build());
                         ran = false;
 
                     } else {
                         throw new AssertionError();
                     }
+                    leftFront.setPower(.5);
+                    rightFront.setPower(.5);
+                    leftBack.setPower(.5);
+                    rightBack.setPower(.5);
+                    sleep(1500);
+                    leftFront.setPower(0);
+                    rightFront.setPower(0);
+                    leftBack.setPower(0);
+                    rightBack.setPower(0);
                 } else if (max == third) {
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         telemetry.addData("third", third);
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .splineTo(new Vector2d(42,-8), 0)
+                                        .setTangent(0)
+                                        .splineTo(new Vector2d(44, -30), 0)
                                         .build());
                         Turn.setPosition(.95);
-                        Actions.runBlocking(
-                                drive.actionBuilder(drive.pose)
-                                        .lineToX(52.5)
-                                        .turn(Math.PI/4.8)
-                                        .build());
-                        Actions.runBlocking(
-                                drive.actionBuilder(drive.pose)
-                                        .lineToX(4)
-                                        .build());
                         ran= false;
                     } else {
                         throw new AssertionError();
                     }
+
+
+
                 }
             }
 
