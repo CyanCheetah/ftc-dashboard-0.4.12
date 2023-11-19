@@ -209,7 +209,7 @@ public class RedCameraLeft extends LinearOpMode
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
                                         .setTangent(0)
-                                        .splineTo(new Vector2d(46.5, 27), 1.15)
+                                        .splineTo(new Vector2d(46.5, 0), 1.1)
                                         .build());
 
                         Turn.setPosition(.95);
@@ -226,7 +226,7 @@ public class RedCameraLeft extends LinearOpMode
                         telemetry.addData("2", second);
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .lineToX(65)
+                                        .splineTo(new Vector2d(65, 0), 0)
                                         .build());
                         Turn.setPosition(.95);
                         ran = false;
@@ -241,7 +241,7 @@ public class RedCameraLeft extends LinearOpMode
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
                                         .lineToX(40)
-                                        .splineTo(new Vector2d(41,-6),-.9)
+                                        .splineTo(new Vector2d(41,-4),-.8)
                                         .build());
                         Turn.setPosition(.95);
                         ran= false;

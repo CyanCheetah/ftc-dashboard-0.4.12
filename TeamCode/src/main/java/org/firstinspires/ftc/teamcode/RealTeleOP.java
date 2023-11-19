@@ -140,50 +140,52 @@ public class RealTeleOP extends LinearOpMode {
         double DronePower = 0;
         // -------
         double SwingOutPosition = 0;
+        double SwingScorePosition = 0.275;
         double SwingInPosition = 0.3;
-        double BucketOutPosition = .145;
-        double BucketInPosition = .325;
+        double BucketOutPosition = .19;
+        double BucketInPosition = BucketOutPosition + .18;
+        double BucketSuperUp = BucketInPosition + .025;
         double mainLiftPower = 0;
         // ------ the values above may change often
         double clawClose = 1;
         double clawSemiOpen = .95;
         double clawFullOpen = .775;
         double triggerPowerAdjust = 1;
+        double bucketPos = 0.37 ;
         while (opModeIsActive()) {  //While Teleop is in session
             Servo Turn = hardwareMap.servo.get("Turn");
 //          ************************************************ GAMEPAD 2 CONTROLS ************************************************
             /**
-             if (gamepad1.dpad_up) {
-             rightHang.setPower(.4);
-             leftHang.setPower(-.4);
-             }
-             else if (gamepad1.dpad_down) {
-             rightHang.setPower(-.4);
-             leftHang.setPower(.4);
-             } else {
-             rightHang.setPower(0);
-             leftHang.setPower(0);
-             }
-             **/
-            //Pushes the left hang up
-            if (gamepad1.a) {
-                leftHang.setPower(-.3);
-            } //pushes the left hang down
-            else if (gamepad1.x){
-                leftHang.setPower(.6);
+             * Gamepad 2 Controls:
+             * Dpad Up: Lift Up
+             * Dpad Down: Lift Down
+             * Dpad Left: NOTHING
+             * Dpad Right: NOTHING
+             * Left Joystick: NOTHING
+             * Right Joystick: NOTHING
+             * X: Claw Height
+             * Y: Claw Height
+             * A: Claw Height
+             * B: Claw Height
+             * Left Bumper: Bucket position to SuperUp
+             * Right Trigger: Bucket and Swing positions
+             * Right Bumper: Swing Position set to OutPosition
+             * Right Trigger: Bucket and Swing Positions
+             */
+            //lift up and down code
+            if (gamepad2.dpad_down) {
+                rightLift.setPower((.5));
+                leftLift.setPower((-.5));
+            }
+            else if (gamepad2.dpad_up) {
+                rightLift.setPower((-.5));
+                leftLift.setPower((.5));
             }
             else {
-                leftHang.setPower(0);
+                rightLift.setPower((0));
+                leftLift.setPower((0));
             }
-            //Pushes the right hang up
-            if (gamepad1.b) {
-                rightHang.setPower(.3);
-            } //pushes the right hang down
-            else if (gamepad1.y){
-                rightHang.setPower(-.6);
-            } else {
-                rightHang.setPower(0);
-            }
+            //movement to the bucket stuff
             if (gamepad2.x) {
                 moveServos(servoOne, servoTwo, -.375);
             }
@@ -196,6 +198,7 @@ public class RealTeleOP extends LinearOpMode {
             if (gamepad2.a) {
                 moveServos(servoOne, servoTwo, -.44);
             }
+            //places pixel from front claw to bucket
             if (gamepad2.dpad_left){
                 if(Turn.getPosition() > .94){
                     moveServos(servoOne, servoTwo, .2);
@@ -207,36 +210,94 @@ public class RealTeleOP extends LinearOpMode {
                     Turn.setPosition(clawFullOpen);
                 }
             }
-            if (gamepad1.left_bumper){
-                Drone.setPower(1);
-            }
+            //closes the claw
             if (gamepad2.dpad_right){
                 Turn.setPosition(clawClose);
             }
-            //if (gamepad2.right_trigger > .5){
-            //    Swing.setPosition(SwingOutPosition);
-            //    sleep(350);
-            //    Bucket.setPosition(BucketOutPosition);
-            //}
+            //Bucket algorithm
+            if (gamepad2.right_trigger > .5){
+                Bucket.setPosition(BucketOutPosition);
+                if(Swing.getPosition() < .29); {
+                    sleep(10);
+                    Swing.setPosition((SwingScorePosition));
+                }
+                bucketPos = BucketOutPosition;
+            }
+            //bucket and swing position
             if (gamepad2.left_trigger > .5){
                 Bucket.setPosition(BucketInPosition);
                 sleep(100);
                 Swing.setPosition(SwingInPosition);
+                bucketPos = BucketInPosition;
             }
+            //bucket position to superUp
             if (gamepad2.left_bumper){
+                Bucket.setPosition(BucketSuperUp);
+                bucketPos = BucketSuperUp;
+            }
+            //changes swing position to swing out
+            if (gamepad2.right_bumper) {
                 Swing.setPosition(SwingOutPosition);
             }
-            if (gamepad2.right_bumper) {
-                Bucket.setPosition(BucketOutPosition);
-            }
             //          ************************************************ GAMEPAD 1 CONTROLS ************************************************
+            /**
+             * Gamepad 1 Controls:
+             * Dpad Up: Drone Launcher
+             * Dpad Down: NOTHING
+             * Dpad Left: NOTHING
+             * Dpad Right: NOTHING
+             * Left Joystick: NOTHING
+             * - Up: Forward
+             * - Down: Backwards
+             * - Left: Strafe Left
+             * - Right: Strafe Right
+             * Right Joystick:
+             * - Left: Turn in position left
+             * - Right: Turn in position right
+             * X: Hang goes UP?? (Change if necessary)
+             * Y: Hang goes Down?? (Change if necessary)
+             * A: NOTHING
+             * B: NOTHING
+             * Left Bumper: Adjust Bucket
+             * Right Trigger: Trigger Power Adjust: Slows the robot down by given amount
+             * Right Bumper: Adjust Bucket
+             * Right Trigger: NOTHING
+             */
             if (gamepad1.right_trigger > 0) {
-                triggerPowerAdjust = .3
-                ;
+                triggerPowerAdjust = .4;
             } else {
                 triggerPowerAdjust = 1;
             }
-            //See the Desmos for an explanation, this is code that's basically modified from what they (FTC) gave us
+            //left and right hang code
+            if (gamepad1.y) {
+                leftHang.setPower(-.3);
+                rightHang.setPower(.3);
+            }
+            else if (gamepad1.x) {
+                leftHang.setPower(.6);
+                rightHang.setPower(-.6);
+            }
+            else {
+                leftHang.setPower(0);
+                rightHang.setPower(0);
+            }
+            //minute adjustions for the bucket angle. The bucketPos double variable
+            //despite the game controller 2's bucket movement. The values are updated.
+            if (gamepad1.left_bumper){
+                Bucket.setPosition(bucketPos + .01);
+                bucketPos=bucketPos+.001;
+
+            }
+            if (gamepad1.right_bumper) {
+                Bucket.setPosition(bucketPos - .01);
+                bucketPos=bucketPos-.001;
+            }
+            //drone launch code.
+            if(gamepad1.dpad_up ){
+                Drone.setPower(-1);
+                sleep(50);
+                Drone.setPower(0);
+            }
             double r = Math.hypot(-gamepad1.left_stick_x, gamepad1.left_stick_y);
             double robotAngle = Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4;
             double rightX = -gamepad1.right_stick_x * 0.5;
@@ -257,11 +318,13 @@ public class RealTeleOP extends LinearOpMode {
             telemetry.addData("FrontR", -1 * frontr.getCurrentPosition());
             telemetry.addData("BackL", -1 * bottoml.getCurrentPosition());
             telemetry.addData("BackR", -1 * bottomr.getCurrentPosition());
+            telemetry.addData("bucketPos", Bucket.getPosition());
             telemetry.addData("Battery Voltage", getBatteryVoltage());
             telemetry.update();
         }//While opMode
     }//void runOpMode
-}
+}//class bracket
     /*
     Final Notes from Andy: Apressed sets the slide puller to optimum pickup, Bpressed sets slide puller to optimum travel and same concept with elevator motors just with Xpressed and Ypressed. Just need to do cleanup and redo elevator motors since we added another one
+    Future ToDo for Tanuj: Make sure you get the Desmos stuff for showcasing since all the joystick algorithms are based on trignometric functions.
     */

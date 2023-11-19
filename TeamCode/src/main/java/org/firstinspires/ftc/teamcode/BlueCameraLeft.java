@@ -195,9 +195,10 @@ public class BlueCameraLeft extends LinearOpMode
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
                                         .setTangent(0)
-                                        .splineTo(new Vector2d(46.5, 27), 1.15)
+                                        .splineTo(new Vector2d(46.5, 0), 1.1)
                                         .build());
                         Turn.setPosition(.95);
+                        sleep(1000);
                         ran= false;
                     } else {
                         throw new AssertionError();
@@ -208,14 +209,13 @@ public class BlueCameraLeft extends LinearOpMode
                     telemetry.addData("2", second);
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-                        telemetry.addData("2", second);
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .lineToX(65)
+                                        //.lineToX(65)
+                                        .splineTo(new Vector2d(65, 1), 0)
                                         .build());
-                        Turn.setPosition(.775);
-                        telemetry.addData("turnPos: ",Turn.getPosition());
                         Turn.setPosition(.95);
+                        sleep(1000);
                         ran = false;
 
                     } else {
@@ -232,9 +232,10 @@ public class BlueCameraLeft extends LinearOpMode
                                         //.turn(-1)
                                         //.lineToX(100 )
                                         .lineToX(40)
-                                        .splineTo(new Vector2d(41,-6),-.9)
+                                        .splineTo(new Vector2d(41,-4),-.8)
                                         .build());
                         Turn.setPosition(.95);
+                        sleep(1000);
                         ran = false;
                     } else {
                         throw new AssertionError();
