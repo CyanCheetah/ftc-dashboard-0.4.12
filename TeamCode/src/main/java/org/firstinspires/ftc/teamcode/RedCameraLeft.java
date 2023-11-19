@@ -51,11 +51,12 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 
 @Autonomous
-public class BlueCameraLeft extends LinearOpMode
+public class RedCameraLeft extends LinearOpMode
 {
     private static Servo servoOne = null;
     private static Servo Turn = null;
     private static Servo servoTwo = null;
+    private DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
     OpenCvWebcam webcam;
     SkystoneDeterminationPipeline pipeline = new SkystoneDeterminationPipeline();
@@ -141,7 +142,20 @@ public class BlueCameraLeft extends LinearOpMode
         int first,second,third;
         Turn.setPosition(1);
 
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftUpper");
+        leftBack = hardwareMap.get(DcMotorEx.class, "leftLower");
+        rightBack = hardwareMap.get(DcMotorEx.class, "rightLower");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightUpper");
 
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();
 
         turnServo g = new turnServo(hardwareMap);
@@ -180,25 +194,26 @@ public class BlueCameraLeft extends LinearOpMode
             telemetry.addData("2", second);
             telemetry.addData("3", third);
 
-            int maxOneTwo = Math.max(first, second);
-            int max = Math.max(maxOneTwo, third);
+            int maxOneTwo = Math.min(first, second);
+            int max = Math.min(maxOneTwo, third);
             boolean ran = true;
-            double clawFullOpen = .775;
+
 
 
             if (ran) {
-                if (max == first) {
+                if (max == third) {
                     Turn = hardwareMap.get(Servo.class, "Turn");
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-                        telemetry.addData("First", first);
+                        telemetry.addData("Third", third);
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
                                         .setTangent(0)
                                         .splineTo(new Vector2d(46.5, 27), 1.15)
                                         .build());
+
                         Turn.setPosition(.95);
-                        ran= false;
+                        ran = false;
                     } else {
                         throw new AssertionError();
                     }
@@ -213,29 +228,23 @@ public class BlueCameraLeft extends LinearOpMode
                                 drive.actionBuilder(drive.pose)
                                         .lineToX(65)
                                         .build());
-                        Turn.setPosition(.775);
-                        telemetry.addData("turnPos: ",Turn.getPosition());
                         Turn.setPosition(.95);
                         ran = false;
 
                     } else {
                         throw new AssertionError();
                     }
-                } else if (max == third) {
-                    Turn = hardwareMap.get(Servo.class, "Turn");
+                } else if (max == first) {
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
-                        telemetry.addData("third", third);
+                        telemetry.addData("First", first);
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                       // .lineToX(44)
-                                        //.turn(-1)
-                                        //.lineToX(100 )
                                         .lineToX(40)
                                         .splineTo(new Vector2d(41,-6),-.9)
                                         .build());
                         Turn.setPosition(.95);
-                        ran = false;
+                        ran= false;
                     } else {
                         throw new AssertionError();
                     }
@@ -285,10 +294,10 @@ public class BlueCameraLeft extends LinearOpMode
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(180, 470);
-        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(925, 450);
-        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1720, 470);
-        static final int REGION_WIDTH = 250;
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(100, 520);
+        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(850, 520);
+        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1500, 520);
+        static final int REGION_WIDTH = 225;
         static final int REGION_HEIGHT = 150;
 
 
@@ -325,7 +334,7 @@ public class BlueCameraLeft extends LinearOpMode
                 REGION3_TOPLEFT_ANCHOR_POINT.x,
                 REGION3_TOPLEFT_ANCHOR_POINT.y);
         Point region3_pointB = new Point(
-                1920,
+                REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
                 REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
         /*
@@ -340,7 +349,6 @@ public class BlueCameraLeft extends LinearOpMode
         boolean pos3 = false;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        private volatile WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition position = WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition.LEFT;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -348,7 +356,7 @@ public class BlueCameraLeft extends LinearOpMode
          */
         void inputToCb(Mat input)
         {
-            Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
+            Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2Luv);
             Core.extractChannel(YCrCb, Cb, 2);
         }
         @Override
@@ -475,7 +483,6 @@ public class BlueCameraLeft extends LinearOpMode
              */
             if(max == avg1) // Was it from region 1?
             {
-                position = WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition.LEFT; // Record our analysis
 
                 pos1 = true;
                 /*
@@ -491,7 +498,6 @@ public class BlueCameraLeft extends LinearOpMode
             }
             else if(max == avg2) // Was it from region 2?
             {
-                position = WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition.CENTER; // Record our analysis
                 pos2 = true;
                 /*
                  * Draw a solid rectangle on top of the chosen region.
@@ -506,7 +512,6 @@ public class BlueCameraLeft extends LinearOpMode
             }
             else if(max == avg3) // Was it from region 3?
             {
-                position = WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition.RIGHT; // Record our analysis
                 pos3 = true;
                 /*
                  * Draw a solid rectangle on top of the chosen region.
@@ -533,10 +538,6 @@ public class BlueCameraLeft extends LinearOpMode
         /*
          * Call this from the OpMode thread to obtain the latest analysis
          */
-        public WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition getAnalysis()
-        {
-            return position;
-        }
 
         public int isPos1() {
             return avg1;

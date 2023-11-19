@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2019 OpenFTC Team
  *
@@ -23,29 +22,33 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.Pose2d;
-        import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.Vector2d;
 
 // TODO: remove Actions from the core module?
-        import com.acmerobotics.roadrunner.ftc.Actions;
-        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-        import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
+import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
 
-        import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
-        import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-        import org.opencv.core.Core;
-        import org.opencv.core.Mat;
-        import org.opencv.core.Point;
-        import org.opencv.core.Rect;
-        import org.opencv.core.Scalar;
-        import org.opencv.imgproc.Imgproc;
-        import org.openftc.easyopencv.OpenCvCamera;
-        import org.openftc.easyopencv.OpenCvCameraFactory;
-        import org.openftc.easyopencv.OpenCvCameraRotation;
-        import org.openftc.easyopencv.OpenCvWebcam;
-        import org.openftc.easyopencv.OpenCvPipeline;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
+import org.openftc.easyopencv.OpenCvPipeline;
+
 
 @Autonomous
 public class RedCameraRight extends LinearOpMode
@@ -53,8 +56,10 @@ public class RedCameraRight extends LinearOpMode
     private static Servo servoOne = null;
     private static Servo Turn = null;
     private static Servo servoTwo = null;
+    private DcMotorEx leftFront, leftBack, rightBack, rightFront;
+
     OpenCvWebcam webcam;
-    BlueCameraRight.SkystoneDeterminationPipeline pipeline = new BlueCameraRight.SkystoneDeterminationPipeline();
+    SkystoneDeterminationPipeline pipeline = new SkystoneDeterminationPipeline();
 
 
     @Override
@@ -74,7 +79,7 @@ public class RedCameraRight extends LinearOpMode
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cameraMonitorViewId"), cameraMonitorViewId);
-        pipeline = new BlueCameraRight.SkystoneDeterminationPipeline();
+        pipeline = new SkystoneDeterminationPipeline();
         webcam.setPipeline(pipeline);
         // OR...  Do Not Activate the Camera Monitor View
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
@@ -136,6 +141,21 @@ public class RedCameraRight extends LinearOpMode
          */
         int first,second,third;
         Turn.setPosition(1);
+
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftUpper");
+        leftBack = hardwareMap.get(DcMotorEx.class, "leftLower");
+        rightBack = hardwareMap.get(DcMotorEx.class, "rightLower");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightUpper");
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();
 
         turnServo g = new turnServo(hardwareMap);
@@ -174,81 +194,73 @@ public class RedCameraRight extends LinearOpMode
             telemetry.addData("2", second);
             telemetry.addData("3", third);
 
-            int maxOneTwo = Math.max(first, second);
-            int max = Math.max(maxOneTwo, third);
+            int maxOneTwo = Math.min(first, second);
+            int max = Math.min(maxOneTwo, third);
             boolean ran = true;
 
 
 
             if (ran) {
-                if (max == first) {
+                if (max == third) {
+                    Turn = hardwareMap.get(Servo.class, "Turn");
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-                        telemetry.addData("First", first);
-                        com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
+                        telemetry.addData("Third", third);
+                        Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .lineToX(25)
-                                        .turn(-Math.PI/5.2)
-                                        .build());
-                        com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
-                                drive.actionBuilder(drive.pose)
-                                        .lineToX(30.23)
-                                        .afterTime(7, g.turnStuff())
+                                        .lineToX(30)
+                                        .turn(.90)
+
+                                        /*.setTangent(0)
+                                        .splineTo(new Vector2d(44, 41), 1.1)
+                                        .lineToX(54)*/
                                         .build());
                         Turn.setPosition(.95);
                         ran = false;
-
                     } else {
                         throw new AssertionError();
                     }
+
                 } else if (max == second) {
                     Turn = hardwareMap.get(Servo.class, "Turn");
                     telemetry.addData("2", second);
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                         telemetry.addData("2", second);
-                        Turn.setPosition(1);
-                        com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
+                        Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .splineTo(new Vector2d(44,0),0)
+                                        .lineToX(64)
                                         .build());
                         Turn.setPosition(.95);
-                        com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
+                        Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .lineToX(53)
-                                        .turn(Math.PI/4.8)
-                                        .build());
-                        com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
-                                drive.actionBuilder(new Pose2d(0,0,Math.PI/4.8))
-                                        .lineToX(27)
+                                        .lineToX(73)
+                                        .turn(1)
                                         .build());
                         ran = false;
 
                     } else {
                         throw new AssertionError();
                     }
-                } else if (max == third) {
+                } else if (max == first) {
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
-                        telemetry.addData("third", third);
+                        telemetry.addData("First", first);
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-                        com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
-                                drive.actionBuilder(drive.pose)
-                                        .splineTo(new Vector2d(42,-8), 0)
-                                        .build());
-                        Turn.setPosition(.95);
-                        com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
-                                drive.actionBuilder(drive.pose)
-                                        .lineToX(52.5)
-                                        .turn(Math.PI/4.8)
-                                        .build());
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .lineToX(4)
+                                        .lineToX(35)
+                                        .turn(.85)
+                                        /*.setTangent(0)
+                                        .splineTo(new Vector2d(44, -12), 0)*/
                                         .build());
+                        Turn.setPosition(.95);
                         ran= false;
                     } else {
                         throw new AssertionError();
                     }
+
+
+
                 }
             }
 
@@ -292,10 +304,10 @@ public class RedCameraRight extends LinearOpMode
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(230, 500);
-        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(925, 450);
-        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1550, 500);
-        static final int REGION_WIDTH = 150;
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(100, 520);
+        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(850, 520);
+        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1500, 520);
+        static final int REGION_WIDTH = 225;
         static final int REGION_HEIGHT = 150;
 
 
@@ -347,7 +359,6 @@ public class RedCameraRight extends LinearOpMode
         boolean pos3 = false;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        private volatile WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition position = WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition.LEFT;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -482,7 +493,6 @@ public class RedCameraRight extends LinearOpMode
              */
             if(max == avg1) // Was it from region 1?
             {
-                position = WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition.LEFT; // Record our analysis
 
                 pos1 = true;
                 /*
@@ -498,7 +508,6 @@ public class RedCameraRight extends LinearOpMode
             }
             else if(max == avg2) // Was it from region 2?
             {
-                position = WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition.CENTER; // Record our analysis
                 pos2 = true;
                 /*
                  * Draw a solid rectangle on top of the chosen region.
@@ -513,7 +522,6 @@ public class RedCameraRight extends LinearOpMode
             }
             else if(max == avg3) // Was it from region 3?
             {
-                position = WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition.RIGHT; // Record our analysis
                 pos3 = true;
                 /*
                  * Draw a solid rectangle on top of the chosen region.
@@ -540,10 +548,6 @@ public class RedCameraRight extends LinearOpMode
         /*
          * Call this from the OpMode thread to obtain the latest analysis
          */
-        public WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition getAnalysis()
-        {
-            return position;
-        }
 
         public int isPos1() {
             return avg1;
