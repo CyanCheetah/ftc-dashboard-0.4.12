@@ -142,14 +142,14 @@ public class RealTeleOP extends LinearOpMode {
         double SwingOutPosition = 0;
         double SwingScorePosition = 0.275;
         double SwingInPosition = 0.3;
-        double BucketOutPosition = .19;
+        double BucketOutPosition = .13;
         double BucketInPosition = BucketOutPosition + .18;
         double BucketSuperUp = BucketInPosition + .025;
         double mainLiftPower = 0;
         // ------ the values above may change often
         double clawClose = 1;
         double clawSemiOpen = .95;
-        double clawFullOpen = .775;
+        double clawFullOpen = .8;
         double triggerPowerAdjust = 1;
         double bucketPos = 0.37 ;
         while (opModeIsActive()) {  //While Teleop is in session
@@ -170,7 +170,7 @@ public class RealTeleOP extends LinearOpMode {
              * Left Bumper: Bucket position to SuperUp
              * Right Trigger: Bucket and Swing positions
              * Right Bumper: Swing Position set to OutPosition
-             * Right Trigger: Bucket and Swing Positions
+             * left Trigger: Bucket and Swing Positions
              */
             //lift up and down code
             if (gamepad2.dpad_down) {
@@ -196,7 +196,7 @@ public class RealTeleOP extends LinearOpMode {
                 moveServos(servoOne, servoTwo, -.32);
             }
             if (gamepad2.a) {
-                moveServos(servoOne, servoTwo, -.44);
+                moveServos(servoOne, servoTwo, -.43);
             }
             //places pixel from front claw to bucket
             if (gamepad2.dpad_left){
@@ -217,7 +217,7 @@ public class RealTeleOP extends LinearOpMode {
             //Bucket algorithm
             if (gamepad2.right_trigger > .5){
                 Bucket.setPosition(BucketOutPosition);
-                if(Swing.getPosition() < .29); {
+                if(Swing.getPosition() > .29); {
                     sleep(10);
                     Swing.setPosition((SwingScorePosition));
                 }
@@ -232,13 +232,13 @@ public class RealTeleOP extends LinearOpMode {
             }
             //bucket position to superUp
             if (gamepad2.left_bumper){
-                Bucket.setPosition(BucketSuperUp);
-                bucketPos = BucketSuperUp;
+                Turn.setPosition(clawFullOpen);
             }
             //changes swing position to swing out
             if (gamepad2.right_bumper) {
                 Swing.setPosition(SwingOutPosition);
             }
+
             //          ************************************************ GAMEPAD 1 CONTROLS ************************************************
             /**
              * Gamepad 1 Controls:
@@ -261,8 +261,11 @@ public class RealTeleOP extends LinearOpMode {
              * Left Bumper: Adjust Bucket
              * Right Trigger: Trigger Power Adjust: Slows the robot down by given amount
              * Right Bumper: Adjust Bucket
-             * Right Trigger: NOTHING
+             * Left Trigger: NOTHING
              */
+            if (gamepad1.left_trigger > .5){
+                Bucket.setPosition(BucketOutPosition);
+            }
             if (gamepad1.right_trigger > 0) {
                 triggerPowerAdjust = .4;
             } else {

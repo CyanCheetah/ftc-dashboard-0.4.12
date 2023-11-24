@@ -56,16 +56,59 @@ public class RedCameraLeft extends LinearOpMode
     private static Servo servoOne = null;
     private static Servo Turn = null;
     private static Servo servoTwo = null;
+    private static DcMotor frontl = null;
+    private static DcMotor frontr = null;
+    private static DcMotor bottoml = null;
+    private static DcMotor bottomr = null;
     private DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
     OpenCvWebcam webcam;
-    SkystoneDeterminationPipeline pipeline = new SkystoneDeterminationPipeline();
+    SkystoneDeterminationPipeline pipeline;
 
+    public static void moveBack (double power, long duration, boolean stop) throws InterruptedException {
+        frontl.setPower(power);
+        frontr.setPower(power);
+        bottoml.setPower(power);
+        bottomr.setPower(power);
 
+        Thread.sleep(duration);
+        if(stop == true){
+            frontl.setPower(0);
+            frontr.setPower(0);
+            bottoml.setPower(0);
+            bottomr.setPower(0);
+        }
+
+    }
     @Override
     public void runOpMode()
 
     {
+        frontl = hardwareMap.get(DcMotor.class, "leftUpper");
+        frontr = hardwareMap.get(DcMotor.class, "rightUpper");
+        bottoml = hardwareMap.get(DcMotor.class, "leftLower");
+        bottomr = hardwareMap.get(DcMotor.class, "rightLower");
+        // leftLift = hardwareMap.get(DcMotor.class,"leftLift");
+       // rightLift = hardwareMap.get(DcMotor.class,"rightLift");
+        Turn = hardwareMap.get(Servo.class, "Turn");
+        Servo servoOne = hardwareMap.servo.get("servoOne");
+        Servo servoTwo = hardwareMap.servo.get("servoTwo");
+        //Bucket = hardwareMap.get(Servo.class, "Bucket");
+        //Swing = hardwareMap.get(Servo.class, "Swing");
+        //Setting Directions of motors.
+        frontl.setDirection(DcMotor.Direction.FORWARD);
+        frontr.setDirection(DcMotor.Direction.REVERSE);
+        bottoml.setDirection(DcMotor.Direction.FORWARD);
+        bottomr.setDirection(DcMotor.Direction.REVERSE);
+        //leftLift.setDirection(DcMotor.Direction.FORWARD);
+        //rightLift.setDirection(DcMotor.Direction.FORWARD);
+        //Brake immedietly after joystick hits 0 instead of coasting down
+        frontl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bottoml.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bottomr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+       // rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Turn = hardwareMap.servo.get("Turn");
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using.
@@ -142,26 +185,13 @@ public class RedCameraLeft extends LinearOpMode
         int first,second,third;
         Turn.setPosition(1);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftUpper");
-        leftBack = hardwareMap.get(DcMotorEx.class, "leftLower");
-        rightBack = hardwareMap.get(DcMotorEx.class, "rightLower");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightUpper");
 
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();
 
         turnServo g = new turnServo(hardwareMap);
 
 
-        if (opModeIsActive())
+        while (opModeIsActive())
 
         {
             while (pipeline.isPos1() == 0 && pipeline.isPos2() == 0 && pipeline.isPos3() == 0)  {
@@ -200,9 +230,10 @@ public class RedCameraLeft extends LinearOpMode
 
 
 
-            if (ran) {
+
                 if (max == third) {
                     Turn = hardwareMap.get(Servo.class, "Turn");
+                    /**
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                         telemetry.addData("Third", third);
@@ -218,23 +249,35 @@ public class RedCameraLeft extends LinearOpMode
                         throw new AssertionError();
                     }
 
+**/
+                    leftBack.setPower(.4);
+                    leftFront.setPower(.4);
+                    rightBack.setPower(.4);
+                    rightFront.setPower(.4);
+                    sleep(3500);
+                    leftBack.setPower(.0);
+                    leftFront.setPower(.0);
+                    rightBack.setPower(.0);
+                    rightFront.setPower(.0);
+                    Turn.setPosition(.95);
                 } else if (max == second) {
                     Turn = hardwareMap.get(Servo.class, "Turn");
                     telemetry.addData("2", second);
-                    if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
-                        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-                        telemetry.addData("2", second);
-                        Actions.runBlocking(
-                                drive.actionBuilder(drive.pose)
-                                        .splineTo(new Vector2d(65, 0), 0)
-                                        .build());
-                        Turn.setPosition(.95);
-                        ran = false;
+                    leftBack.setPower(.4);
+                    leftFront.setPower(.4);
+                    rightBack.setPower(.4);
+                    rightFront.setPower(.4);
+                    sleep(3500);
+                    leftBack.setPower(.0);
+                    leftFront.setPower(.0);
+                    rightBack.setPower(.0);
+                    rightFront.setPower(.0);
+                    Turn.setPosition(.95);
+                    ran = false;
 
-                    } else {
-                        throw new AssertionError();
-                    }
+
                 } else if (max == first) {
+                    /**
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         telemetry.addData("First", first);
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
@@ -248,11 +291,11 @@ public class RedCameraLeft extends LinearOpMode
                     } else {
                         throw new AssertionError();
                     }
+                     **/
 
 
 
                 }
-            }
 
         }
     }
