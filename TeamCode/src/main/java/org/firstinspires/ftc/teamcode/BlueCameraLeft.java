@@ -20,10 +20,7 @@
  */
 
 package org.firstinspires.ftc.teamcode;
-import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
@@ -34,6 +31,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -48,52 +48,24 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 import org.openftc.easyopencv.OpenCvPipeline;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.Servo.Direction;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.CRServo;
-import java.util.logging.Level;
-import com.qualcomm.robotcore.hardware.configuration.UnspecifiedMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.Light;
-import com.qualcomm.robotcore.hardware.LightSensor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
+
 
 @Autonomous
-public class BlueCameraOneTile extends LinearOpMode
+public class BlueCameraLeft extends LinearOpMode
 {
     private static Servo servoOne = null;
     private static Servo Turn = null;
     private static Servo servoTwo = null;
+    private DcMotorEx leftFront, leftBack, rightBack, rightFront;
+
     OpenCvWebcam webcam;
-    BlueCameraOneTile.SkystoneDeterminationPipeline pipeline = new BlueCameraOneTile.SkystoneDeterminationPipeline();
+    BlueCameraRight.SkystoneDeterminationPipeline pipeline = new BlueCameraRight.SkystoneDeterminationPipeline();
 
 
     @Override
     public void runOpMode()
 
     {
-        Servo servoOne = hardwareMap.servo.get("servoOne");
-        Servo servoTwo = hardwareMap.servo.get("servoTwo");
         Turn = hardwareMap.servo.get("Turn");
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using.
@@ -107,7 +79,7 @@ public class BlueCameraOneTile extends LinearOpMode
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cameraMonitorViewId"), cameraMonitorViewId);
-        pipeline = new BlueCameraOneTile.SkystoneDeterminationPipeline();
+        pipeline = new BlueCameraRight.SkystoneDeterminationPipeline();
         webcam.setPipeline(pipeline);
         // OR...  Do Not Activate the Camera Monitor View
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
@@ -167,13 +139,31 @@ public class BlueCameraOneTile extends LinearOpMode
         /*
          * Wait for the user to press start on the Driver Station
          */
-        waitForStart();
         int first,second,third;
+        Turn.setPosition(1);
+
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftUpper");
+        leftBack = hardwareMap.get(DcMotorEx.class, "leftLower");
+        rightBack = hardwareMap.get(DcMotorEx.class, "rightLower");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightUpper");
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        waitForStart();
+
+        turnServo g = new turnServo(hardwareMap);
+
 
         if (opModeIsActive())
 
         {
-            Servo Spin2 = hardwareMap.get(Servo.class, "Turn");
             while (pipeline.isPos1() == 0 && pipeline.isPos2() == 0 && pipeline.isPos3() == 0)  {
 
                 sleep(1000);
@@ -187,25 +177,48 @@ public class BlueCameraOneTile extends LinearOpMode
                 telemetry.update();
 
             }
-            first = pipeline.isPos1();
-            second = pipeline.isPos2();
-            third = pipeline.isPos3();
+            int sum1 = 0, sum2 = 0, sum3 = 0;
+            for (int i = 0; i < 4; i++) {
+                first = pipeline.isPos1();
+                second = pipeline.isPos2();
+                third = pipeline.isPos3();
+                sum1 += first;
+                sum2 += second;
+                sum3 += third;
+                sleep(500);
+            }
+            first = sum1 / 4;
+            second = sum2 / 4;
+            third = sum3 / 4;
+            telemetry.addData("1", first);
+            telemetry.addData("2", second);
+            telemetry.addData("3", third);
+
+            int maxOneTwo = Math.max(first, second);
+            int max = Math.max(maxOneTwo, third);
             boolean ran = true;
+
+
+
             if (ran) {
-                if (first > second && (first > third)) {
+                if (max == first) {
+                    Turn = hardwareMap.get(Servo.class, "Turn");
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                         telemetry.addData("First", first);
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .splineTo(new Vector2d(42,15), 0)
+                                        .setTangent(0)
+                                        .splineToLinearHeading(new Pose2d(-10, 60, 0), Math.PI / 2)
+                                       // .turn(.85)
                                         .build());
-                        Turn.setPosition(.75);
-                        ran = false;
+                        Turn.setPosition(.95);
+                        ran= false;
                     } else {
                         throw new AssertionError();
                     }
-                } else if (second > first && (second > third)) {
+
+                } else if (max == second) {
                     Turn = hardwareMap.get(Servo.class, "Turn");
                     telemetry.addData("2", second);
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
@@ -213,29 +226,45 @@ public class BlueCameraOneTile extends LinearOpMode
                         telemetry.addData("2", second);
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .lineToX(45)
-
+                                        .lineToX(60)
                                         .build());
-
                         Turn.setPosition(.95);
-                        sleep(100);
+                        Actions.runBlocking(
+                                drive.actionBuilder(drive.pose)
+                                        .lineToX(65)
+                                        .turn(1)
+                                        .build());
                         ran = false;
-                        Turn.setPosition(.95); } else {
+
+                    } else {
                         throw new AssertionError();
                     }
-                } else {
+                    leftFront.setPower(.5);
+                    rightFront.setPower(.5);
+                    leftBack.setPower(.5);
+                    rightBack.setPower(.5);
+                    sleep(1500);
+                    leftFront.setPower(0);
+                    rightFront.setPower(0);
+                    leftBack.setPower(0);
+                    rightBack.setPower(0);
+                } else if (max == third) {
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         telemetry.addData("third", third);
                         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                         Actions.runBlocking(
                                 drive.actionBuilder(drive.pose)
-                                        .splineTo(new Vector2d(42,-15), 0)
+                                        .setTangent(0)
+                                        .splineTo(new Vector2d(44, 41), 1.1)
                                         .build());
                         Turn.setPosition(.95);
-                        ran= false;
+                        ran = false;
                     } else {
                         throw new AssertionError();
                     }
+
+
+
                 }
             }
 
@@ -345,7 +374,6 @@ public class BlueCameraOneTile extends LinearOpMode
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(YCrCb, Cb, 2);
         }
-
         @Override
         public void init(Mat firstFrame)
         {
