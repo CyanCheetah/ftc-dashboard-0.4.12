@@ -56,10 +56,13 @@ public class BlueCameraLeft extends LinearOpMode
     private static Servo servoOne = null;
     private static Servo Turn = null;
     private static Servo servoTwo = null;
-    private DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
     OpenCvWebcam webcam;
-    BlueCameraRight.SkystoneDeterminationPipeline pipeline = new BlueCameraRight.SkystoneDeterminationPipeline();
+    private static DcMotor frontl = null;
+    private static DcMotor frontr = null;
+    private static DcMotor bottoml = null;
+    private static DcMotor bottomr = null;
+    SkystoneDeterminationPipeline pipeline = new SkystoneDeterminationPipeline();
 
 
     @Override
@@ -79,7 +82,7 @@ public class BlueCameraLeft extends LinearOpMode
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cameraMonitorViewId"), cameraMonitorViewId);
-        pipeline = new BlueCameraRight.SkystoneDeterminationPipeline();
+        pipeline = new SkystoneDeterminationPipeline();
         webcam.setPipeline(pipeline);
         // OR...  Do Not Activate the Camera Monitor View
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
@@ -135,27 +138,38 @@ public class BlueCameraLeft extends LinearOpMode
 
         telemetry.addLine("Waiting for start");
         telemetry.update();
-
+        frontl = hardwareMap.get(DcMotor.class, "leftUpper");
+        frontr = hardwareMap.get(DcMotor.class, "rightUpper");
+        bottoml = hardwareMap.get(DcMotor.class, "leftLower");
+        bottomr = hardwareMap.get(DcMotor.class, "rightLower");
+        // leftLift = hardwareMap.get(DcMotor.class,"leftLift");
+        // rightLift = hardwareMap.get(DcMotor.class,"rightLift");
+        Turn = hardwareMap.get(Servo.class, "Turn");
+        Servo servoOne = hardwareMap.servo.get("servoOne");
+        Servo servoTwo = hardwareMap.servo.get("servoTwo");
+        //Bucket = hardwareMap.get(Servo.class, "Bucket");
+        //Swing = hardwareMap.get(Servo.class, "Swing");
+        //Setting Directions of motors.
+        frontl.setDirection(DcMotor.Direction.FORWARD);
+        frontr.setDirection(DcMotor.Direction.REVERSE);
+        bottoml.setDirection(DcMotor.Direction.FORWARD);
+        bottomr.setDirection(DcMotor.Direction.REVERSE);
+        //leftLift.setDirection(DcMotor.Direction.FORWARD);
+        //rightLift.setDirection(DcMotor.Direction.FORWARD);
+        //Brake immedietly after joystick hits 0 instead of coasting down
+        frontl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bottoml.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bottomr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         /*
          * Wait for the user to press start on the Driver Station
          */
         int first,second,third;
         Turn.setPosition(1);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftUpper");
-        leftBack = hardwareMap.get(DcMotorEx.class, "leftLower");
-        rightBack = hardwareMap.get(DcMotorEx.class, "rightLower");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightUpper");
 
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();
 
         turnServo g = new turnServo(hardwareMap);
@@ -197,67 +211,96 @@ public class BlueCameraLeft extends LinearOpMode
             int maxOneTwo = Math.max(first, second);
             int max = Math.max(maxOneTwo, third);
             boolean ran = true;
-
+            double clawFullOpen = .775;
 
 
             if (ran) {
                 if (max == first) {
                     Turn = hardwareMap.get(Servo.class, "Turn");
-                    if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
-                        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-                        telemetry.addData("First", first);
-                        Actions.runBlocking(
-                                drive.actionBuilder(drive.pose)
-                                        .setTangent(0)
-                                        .splineToLinearHeading(new Pose2d(-10, 60, 0), Math.PI / 2)
-                                       // .turn(.85)
-                                        .build());
-                        Turn.setPosition(.95);
-                        ran= false;
-                    } else {
-                        throw new AssertionError();
-                    }
+                    frontl.setPower(0.4);
+                    frontr.setPower(0.4);
+                    bottoml.setPower(0.4);
+                    bottomr.setPower(0.4);
+                    sleep(1320);
+                    frontl.setPower(0);
+                    frontr.setPower(0);
+                    bottoml.setPower(0);
+                    bottomr.setPower(0);
+                    //l
+                    frontl.setPower(0.4);
+                    frontr.setPower(-0.4);
+                    bottoml.setPower(0.4);
+                    bottomr.setPower(-0.4);
+                    sleep(600);
+                    frontl.setPower(0);
+                    frontr.setPower(0);
+                    bottoml.setPower(0);
+                    bottomr.setPower(0);
+                    //l
+                    frontl.setPower(-0.4);
+                    frontr.setPower(-0.4);
+                    bottoml.setPower(-0.4);
+                    bottomr.setPower(-0.4);
+                    sleep(140);
+                    frontl.setPower(0);
+                    frontr.setPower(0);
+                    bottoml.setPower(0);
+                    bottomr.setPower(0);
+                    Turn.setPosition(.95);
+                    sleep(1000);
 
                 } else if (max == second) {
                     Turn = hardwareMap.get(Servo.class, "Turn");
                     telemetry.addData("2", second);
-                    if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
-                        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-                        telemetry.addData("2", second);
-                        Actions.runBlocking(
-                                drive.actionBuilder(drive.pose)
-                                        .lineToX(60)
-                                        .build());
-                        Turn.setPosition(.95);
-                        Actions.runBlocking(
-                                drive.actionBuilder(drive.pose)
-                                        .lineToX(65)
-                                        .turn(1)
-                                        .build());
-                        ran = false;
+                    frontl.setPower(0.4);
+                    frontr.setPower(0.4);
+                    bottoml.setPower(0.4);
+                    bottomr.setPower(0.4);
+                    sleep(1820);
+                    frontl.setPower(0);
+                    frontr.setPower(0);
+                    bottoml.setPower(0);
+                    bottomr.setPower(0);
+                    Turn.setPosition(.95);
+                    sleep(1000);
+                    ran = false;
 
-                    } else {
-                        throw new AssertionError();
-                    }
-                    leftFront.setPower(.5);
-                    rightFront.setPower(.5);
-                    leftBack.setPower(.5);
-                    rightBack.setPower(.5);
-                    sleep(1500);
-                    leftFront.setPower(0);
-                    rightFront.setPower(0);
-                    leftBack.setPower(0);
-                    rightBack.setPower(0);
+
                 } else if (max == third) {
+                    Turn = hardwareMap.get(Servo.class, "Turn");
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         telemetry.addData("third", third);
-                        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-                        Actions.runBlocking(
-                                drive.actionBuilder(drive.pose)
-                                        .setTangent(0)
-                                        .splineTo(new Vector2d(44, 41), 1.1)
-                                        .build());
+                        frontl.setPower(0.4);
+                        frontr.setPower(0.4);
+                        bottoml.setPower(0.4);
+                        bottomr.setPower(0.4);
+                        sleep(1320);
+                        frontl.setPower(0);
+                        frontr.setPower(0);
+                        bottoml.setPower(0);
+                        bottomr.setPower(0);
+                        //l
+                        frontl.setPower(-0.4);
+                        frontr.setPower(0.4);
+                        bottoml.setPower(-0.4);
+                        bottomr.setPower(0.4);
+                        sleep(600);
+                        frontl.setPower(0);
+                        frontr.setPower(0);
+                        bottoml.setPower(0);
+                        bottomr.setPower(0);
+                        //l
+                        frontl.setPower(-0.4);
+                        frontr.setPower(-0.4);
+                        bottoml.setPower(-0.4);
+                        bottomr.setPower(-0.4);
+                        sleep(350);
+                        frontl.setPower(0);
+                        frontr.setPower(0);
+                        bottoml.setPower(0);
+                        bottomr.setPower(0);
                         Turn.setPosition(.95);
+                        sleep(1000);
                         ran = false;
                     } else {
                         throw new AssertionError();
@@ -308,10 +351,10 @@ public class BlueCameraLeft extends LinearOpMode
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(230, 500);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(180, 470);
         static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(925, 450);
-        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1550, 500);
-        static final int REGION_WIDTH = 150;
+        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1720, 470);
+        static final int REGION_WIDTH = 250;
         static final int REGION_HEIGHT = 150;
 
 
@@ -348,7 +391,7 @@ public class BlueCameraLeft extends LinearOpMode
                 REGION3_TOPLEFT_ANCHOR_POINT.x,
                 REGION3_TOPLEFT_ANCHOR_POINT.y);
         Point region3_pointB = new Point(
-                REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                1920,
                 REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
         /*

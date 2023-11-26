@@ -51,7 +51,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 
 @Autonomous
-public class RedCameraRight extends LinearOpMode
+public class RedCameraRightTwo extends LinearOpMode
 {
     private static Servo servoOne = null;
     private static Servo Turn = null;

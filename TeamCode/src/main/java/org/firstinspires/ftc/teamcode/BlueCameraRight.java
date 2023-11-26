@@ -228,25 +228,11 @@ public class BlueCameraRight extends LinearOpMode
                                         .lineToX(63)
                                         .build());
                         Turn.setPosition(.95);
-                        Actions.runBlocking(
-                                drive.actionBuilder(drive.pose)
-                                        .lineToX(73)
-                                        .turn(1)
-                                        .build());
                         ran = false;
 
                     } else {
                         throw new AssertionError();
                     }
-                    leftFront.setPower(.5);
-                    rightFront.setPower(.5);
-                    leftBack.setPower(.5);
-                    rightBack.setPower(.5);
-                    sleep(1500);
-                    leftFront.setPower(0);
-                    rightFront.setPower(0);
-                    leftBack.setPower(0);
-                    rightBack.setPower(0);
                 } else if (max == third) {
                     if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
                         telemetry.addData("third", third);
@@ -362,7 +348,6 @@ public class BlueCameraRight extends LinearOpMode
         boolean pos3 = false;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        private volatile WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition position = WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition.LEFT;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -497,7 +482,6 @@ public class BlueCameraRight extends LinearOpMode
              */
             if(max == avg1) // Was it from region 1?
             {
-                position = WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition.LEFT; // Record our analysis
 
                 pos1 = true;
                 /*
@@ -513,7 +497,6 @@ public class BlueCameraRight extends LinearOpMode
             }
             else if(max == avg2) // Was it from region 2?
             {
-                position = WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition.CENTER; // Record our analysis
                 pos2 = true;
                 /*
                  * Draw a solid rectangle on top of the chosen region.
@@ -528,7 +511,6 @@ public class BlueCameraRight extends LinearOpMode
             }
             else if(max == avg3) // Was it from region 3?
             {
-                position = WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition.RIGHT; // Record our analysis
                 pos3 = true;
                 /*
                  * Draw a solid rectangle on top of the chosen region.
@@ -555,10 +537,6 @@ public class BlueCameraRight extends LinearOpMode
         /*
          * Call this from the OpMode thread to obtain the latest analysis
          */
-        public WrongBlueCamera.SkystoneDeterminationPipeline.SkystonePosition getAnalysis()
-        {
-            return position;
-        }
 
         public int isPos1() {
             return avg1;
