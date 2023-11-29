@@ -211,13 +211,13 @@ public class BlueLeft extends LinearOpMode
                             .lineToLinearHeading(new Pose2d(27.5, 5, Math.toRadians(71)))
                             .build();
                     Trajectory trajectoryFirst1 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(9)
+                            .forward(4)
                             .addTemporalMarker(3, () -> {
                                 Turn.setPosition(.75);
                             })
                             .build();
                     Trajectory trajectoryFirst2 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(10)
+                            .strafeRight(25)
                             .build();
                     drive.followTrajectory(trajectoryFirst0);
                     drive.followTrajectory(trajectoryFirst1);

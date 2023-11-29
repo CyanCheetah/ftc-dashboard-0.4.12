@@ -147,9 +147,9 @@ public class CyanCheetahOp extends LinearOpMode {
         double BucketSuperUp = BucketInPosition + .025;
         double mainLiftPower = 0;
         // ------ the values above may change often
-        double clawClose = 1;
-        double clawSemiOpen = .95;
-        double clawFullOpen = .8;
+        double clawClose = .95;
+        double clawSemiOpen = .9;
+        double clawFullOpen = .75;
         double triggerPowerAdjust = 1;
         double bucketPos = 0.37 ;
         while (opModeIsActive()) {  //While Teleop is in session
@@ -196,7 +196,7 @@ public class CyanCheetahOp extends LinearOpMode {
                 moveServos(servoOne, servoTwo, -.32);
             }
             if (gamepad2.a) {
-                moveServos(servoOne, servoTwo, -.43);
+                moveServos(servoOne, servoTwo, -.4);
             }
             //places pixel from front claw to bucket
             if (gamepad2.dpad_left){
