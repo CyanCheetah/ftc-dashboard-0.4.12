@@ -408,7 +408,7 @@ public class RedLeft extends LinearOpMode
          */
         void inputToCb(Mat input)
         {
-            Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
+            Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2Luv);
             Core.extractChannel(YCrCb, Cb, 2);
         }
         @Override
