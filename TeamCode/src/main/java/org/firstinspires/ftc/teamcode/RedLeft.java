@@ -207,35 +207,17 @@ public class RedLeft extends LinearOpMode
             if (ran) {
                 if (max == first) {
                     telemetry.addData("1", first);
-                    Trajectory trajectoryRight0 = drive.trajectoryBuilder(new Pose2d())
-                            .lineToLinearHeading(new Pose2d(26, -5, Math.toRadians(71)))
+                    Trajectory trajectoryFirst0 = drive.trajectoryBuilder(new Pose2d())
+                            .lineToLinearHeading(new Pose2d(27.5, 5, Math.toRadians(71)))
                             .build();
-                    Trajectory trajectoryRight1 = drive.trajectoryBuilder(new Pose2d())
-                            .back(7)
-                            .addTemporalMarker(4, () -> {
+                    Trajectory trajectoryFirst1 = drive.trajectoryBuilder(new Pose2d())
+                            .forward(4)
+                            .addTemporalMarker(3, () -> {
                                 Turn.setPosition(.75);
                             })
                             .build();
-                    Trajectory trajectoryRight2 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(30.6)
-                            .build();
-                    Trajectory trajectoryRight3 = drive.trajectoryBuilder(new Pose2d())
-                            .strafeRight(12)
-                            .build();
-                    drive.followTrajectory(trajectoryRight0);
-                    drive.followTrajectory(trajectoryRight1);
-                    drive.followTrajectory(trajectoryRight2);
-                    drive.followTrajectory(trajectoryRight3);
-                    Bucket.setPosition(.3);
-                    leftLift.setPower(.3);
-                    rightLift.setPower(-.3);
-                    sleep(2500);
-                    leftLift.setPower(0);
-                    rightLift.setPower(0);
-                    Swing.setPosition(.275);
-                    sleep(500);
-                    Bucket.setPosition(.13);
-                    sleep(1000);
+                    drive.followTrajectory(trajectoryFirst0);
+                    drive.followTrajectory(trajectoryFirst1);
 
 
                     ran = false;
@@ -251,58 +233,22 @@ public class RedLeft extends LinearOpMode
                     Trajectory trajectoryMiddle1 = drive.trajectoryBuilder(new Pose2d())
                             .forward(3)
                             .build();
-                    Trajectory trajectoryMiddle2 = drive.trajectoryBuilder(new Pose2d())
-                            .lineToLinearHeading(new Pose2d(0, 25, Math.toRadians(77)))
-                            .build();
-                    Trajectory trajectoryMiddle3 = drive.trajectoryBuilder(new Pose2d())
-                            .strafeLeft(27)
-                            .build();
-                    Trajectory trajectoryMiddle4 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(10.4)
-                            .build();
-                    Trajectory trajectoryMiddle5 = drive.trajectoryBuilder(new Pose2d())
-                            .strafeLeft(16)
-                            .build();
                     drive.followTrajectory(trajectoryMiddle0);
                     drive.followTrajectory(trajectoryMiddle1);
-                    drive.followTrajectory(trajectoryMiddle2);
-                    drive.followTrajectory(trajectoryMiddle3);
-                    drive.followTrajectory(trajectoryMiddle4);
-                    Bucket.setPosition(.3);
-                    leftLift.setPower(.3);
-                    rightLift.setPower(-.3);
-                    sleep(2500);
-                    leftLift.setPower(0);
-                    rightLift.setPower(0);
-                    Swing.setPosition(.275);
-                    sleep(500);
-                    Bucket.setPosition(.13);
-                    sleep(1000);
-                    // drive.followTrajectory(trajectoryMiddle5);
-
-
                     ran = false;
-
-
                 } else if (max == third) {
                     telemetry.addData("3", third);
-                    Trajectory trajectoryFirst0 = drive.trajectoryBuilder(new Pose2d())
-                            .lineToLinearHeading(new Pose2d(27.5, 5, Math.toRadians(71)))
+                    Trajectory trajectoryRight0 = drive.trajectoryBuilder(new Pose2d())
+                            .lineToLinearHeading(new Pose2d(26, -5, Math.toRadians(71)))
                             .build();
-                    Trajectory trajectoryFirst1 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(4)
-                            .addTemporalMarker(3, () -> {
+                    Trajectory trajectoryRight1 = drive.trajectoryBuilder(new Pose2d())
+                            .back(7)
+                            .addTemporalMarker(4, () -> {
                                 Turn.setPosition(.75);
                             })
                             .build();
-                    Trajectory trajectoryFirst2 = drive.trajectoryBuilder(new Pose2d())
-                            .strafeRight(25)
-                            .build();
-                    drive.followTrajectory(trajectoryFirst0);
-                    drive.followTrajectory(trajectoryFirst1);
-                    drive.followTrajectory(trajectoryFirst2);
-
-
+                    drive.followTrajectory(trajectoryRight0);
+                    drive.followTrajectory(trajectoryRight1);
                 }
             }
 
