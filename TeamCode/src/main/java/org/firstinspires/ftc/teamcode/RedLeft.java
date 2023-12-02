@@ -198,8 +198,8 @@ public class RedLeft extends LinearOpMode
             leftLift = hardwareMap.get(DcMotor.class,"leftLift");
             rightLift = hardwareMap.get(DcMotor.class,"rightLift");
             Bucket = hardwareMap.get(Servo.class, "Bucket");
-            int maxOneTwo = Math.max(first, second);
-            int max = Math.max(maxOneTwo, third);
+            int maxOneTwo = Math.min(first, second);
+            int max = Math.min(maxOneTwo, third);
             boolean ran = true;
             double clawFullOpen = .775;
             SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -354,7 +354,7 @@ public class RedLeft extends LinearOpMode
          */
         void inputToCb(Mat input)
         {
-            Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2Luv);
+            Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(YCrCb, Cb, 2);
         }
         @Override
