@@ -222,16 +222,19 @@ public class RedRight extends LinearOpMode
                             })
                             .build();
                     Trajectory trajectoryFirst3 = drive.trajectoryBuilder(new Pose2d())
-                            .lineToConstantHeading(new Vector2d(32,7))
+                            .lineToConstantHeading(new Vector2d(32,13))
+                            .build();
+                    Trajectory park = drive.trajectoryBuilder(new Pose2d())
+                            .strafeRight(35)
+                            .build();
+                    Trajectory park0 = drive.trajectoryBuilder(new Pose2d())
+                            .back(3)
                             .build();
                     drive.followTrajectory(trajectoryFirst0);
                     drive.followTrajectorySequence(ts);
                     drive.followTrajectory(trajectoryFirst2);
                     sleep(1000);
                     drive.followTrajectory(trajectoryFirst3);
-                    Trajectory trajectoryFirstThree = drive.trajectoryBuilder(new Pose2d())
-                            .forward(15)
-                            .build();
                     Bucket.setPosition(.3);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
@@ -247,9 +250,8 @@ public class RedRight extends LinearOpMode
                     sleep(600);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                   // drive.followTrajectory(trajectoryMiddle5);
-                    //drive.followTrajectory(trajectoryMiddle6);
-                    // drive.followTrajectory(trajectoryMiddle5);
+                    drive.followTrajectory(park0);
+                    drive.followTrajectory(park);
 
                 } else if (max == second) {
                     telemetry.addData("2", second);
