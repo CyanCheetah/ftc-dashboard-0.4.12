@@ -256,7 +256,7 @@ public class CyanCheetahOpRed extends LinearOpMode
                     moveServos(servoOne, servoTwo, .2);
                     sleep(350);
                     Turn.setPosition(clawSemiOpen);
-                    sleep(250);
+                    sleep(300);
                     moveServos(servoOne, servoTwo, -.3);
                     sleep(300);
                     Turn.setPosition(clawFullOpen);
