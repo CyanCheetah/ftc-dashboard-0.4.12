@@ -89,7 +89,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TeleOp
-public class CyanCheetahOp extends LinearOpMode
+public class CyanCheetahRed extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
     final double DESIRED_DISTANCE = 2.5; //  this is how close the camera should get to the target (inches)
@@ -321,7 +321,7 @@ public class CyanCheetahOp extends LinearOpMode
              * Left Trigger: NOTHING
              */
             //if (gamepad1.left_trigger > .5){
-             //   Bucket.setPosition(BucketOutPosition);
+            //   Bucket.setPosition(BucketOutPosition);
             //}
             if (gamepad1.right_trigger > 0) {
                 triggerPowerAdjust = .4;
@@ -358,8 +358,8 @@ public class CyanCheetahOp extends LinearOpMode
                 //DroneLinkage.setPosition(0.85);
             }
             //if(gamepad1.dpad_right){
-             //   DroneLauncher.setPosition(0.3);
-                //DroneLinkage.setPosition(0.95);
+            //   DroneLauncher.setPosition(0.3);
+            //DroneLinkage.setPosition(0.95);
             //}
             if(gamepad1.left_bumper) {
                 DroneLinkage.setPosition(0.88);
@@ -368,13 +368,13 @@ public class CyanCheetahOp extends LinearOpMode
                 DroneLauncher.setPosition(0.3);
             }
             if(gamepad1.dpad_left) {
-                DESIRED_TAG_ID = 1;
+                DESIRED_TAG_ID = 4;
             }
             if (gamepad1.dpad_down) {
-                DESIRED_TAG_ID = 2;
+                DESIRED_TAG_ID = 5;
             }
             if (gamepad1.dpad_right) {
-                DESIRED_TAG_ID = 3;
+                DESIRED_TAG_ID = 6;
             }
             // Tell the driver what we see, and what to do.
             if (targetFound) {
