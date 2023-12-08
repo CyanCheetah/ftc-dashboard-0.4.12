@@ -257,7 +257,7 @@ public class CyanCheetahRed extends LinearOpMode
             if (gamepad2.dpad_left){
                 if(Turn.getPosition() > .93){
                     moveServos(servoOne, servoTwo, .2);
-                    sleep(300);
+                    sleep(350);
                     Turn.setPosition(clawSemiOpen);
                     sleep(250);
                     moveServos(servoOne, servoTwo, -.3);

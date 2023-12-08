@@ -92,7 +92,7 @@ import java.util.concurrent.TimeUnit;
 public class CyanCheetahOp extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
-    final double DESIRED_DISTANCE = 2.5; //  this is how close the camera should get to the target (inches)
+    final double DESIRED_DISTANCE = 2; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
@@ -192,8 +192,8 @@ public class CyanCheetahOp extends LinearOpMode
         double SwingOutPosition = 0;
         double SwingScorePosition = 0.275;
         double SwingInPosition = 0.3;
-        double BucketOutPosition = .13;
-        double BucketInPosition = BucketOutPosition + .16;
+        double BucketOutPosition = .11;
+        double BucketInPosition = BucketOutPosition + .14;
         double BucketSuperUp = BucketInPosition + .025;
         double mainLiftPower = 0;
         // ------ the values above may change often
@@ -378,7 +378,7 @@ public class CyanCheetahOp extends LinearOpMode
             }
             // Tell the driver what we see, and what to do.
             if (targetFound) {
-                telemetry.addData("\n>","HOLD Left-Bumper to Drive to Target\n");
+                telemetry.addData("\n>","HOLD Left-Trigger to Drive to Target\n");
                 telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
                 telemetry.addData("X",  "%5.1f inches", desiredTag.ftcPose.x);
                 telemetry.addData("Y","%5.1f inches", desiredTag.ftcPose.y);

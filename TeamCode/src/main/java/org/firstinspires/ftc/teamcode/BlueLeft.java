@@ -247,9 +247,9 @@ public class BlueLeft extends LinearOpMode
                     sleep(2300);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                    Swing.setPosition(.225);
+                    Swing.setPosition(.22);
                     sleep(2000);
-                    Bucket.setPosition(.13);
+                    Bucket.setPosition(.11);
                     sleep(400);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
@@ -299,9 +299,9 @@ public class BlueLeft extends LinearOpMode
                     sleep(2300);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                    Swing.setPosition(.225);
+                    Swing.setPosition(.22);
                     sleep(2000);
-                    Bucket.setPosition(.13);
+                    Bucket.setPosition(.11);
                     sleep(400);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
@@ -328,10 +328,13 @@ public class BlueLeft extends LinearOpMode
                             })
                             .build();
                     Trajectory trajectoryRight2 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(30)
+                            .forward(32)
                             .build();
                     Trajectory trajectoryRight3 = drive.trajectoryBuilder(new Pose2d())
                             .strafeRight(10)
+                            .build();
+                    Trajectory trajectoryRight10 = drive.trajectoryBuilder(new Pose2d())
+                            .forward(2)
                             .build();
                     Trajectory trajectoryRight4 = drive.trajectoryBuilder(new Pose2d())
                             .back(7)
@@ -343,15 +346,16 @@ public class BlueLeft extends LinearOpMode
                     drive.followTrajectory(trajectoryRight1);
                     drive.followTrajectory(trajectoryRight2);
                     drive.followTrajectory(trajectoryRight3);
+                    drive.followTrajectory(trajectoryRight10);
                     Bucket.setPosition(.3);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
                     sleep(2300);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                    Swing.setPosition(.225);
+                    Swing.setPosition(.22);
                     sleep(2000);
-                    Bucket.setPosition(.13);
+                    Bucket.setPosition(.11);
                     sleep(400);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
