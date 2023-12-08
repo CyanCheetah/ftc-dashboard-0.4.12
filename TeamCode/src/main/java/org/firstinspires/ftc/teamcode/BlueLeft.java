@@ -223,7 +223,7 @@ public class BlueLeft extends LinearOpMode
                             .forward(9)
                             .build();
                     Trajectory trajectoryFirst5 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(4)
+                            .forward(6)
                             .build();
                     Trajectory trajectoryFirst4 = drive.trajectoryBuilder(new Pose2d())
                             .strafeLeft(32)

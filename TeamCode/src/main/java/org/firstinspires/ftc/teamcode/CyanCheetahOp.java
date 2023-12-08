@@ -118,8 +118,8 @@ public class CyanCheetahOp extends LinearOpMode
     private Servo Swing = null;
     private Servo Turn = null;
     private DcMotor leftHang = null;//  Used to control the right back drive wheel
-    private static CRServo Drone = null;
-
+    private static Servo DroneLauncher = null;
+    private static Servo DroneLinkage = null;
 
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
     public int DESIRED_TAG_ID = 2;     // Choose the tag you want to approach or set to -1 for ANY tag.
@@ -156,7 +156,8 @@ public class CyanCheetahOp extends LinearOpMode
         Servo servoTwo = hardwareMap.servo.get("servoTwo");
         Bucket = hardwareMap.get(Servo.class, "Bucket");
         Swing = hardwareMap.get(Servo.class, "Swing");
-        Drone = hardwareMap.get(CRServo.class, "Drone");
+        DroneLauncher = hardwareMap.get(Servo.class, "DroneLauncher");
+        DroneLinkage = hardwareMap.get(Servo.class, "DroneLinkage");
 
         //Setting Directions of motors.
         frontl.setDirection(DcMotor.Direction.FORWARD);
@@ -319,9 +320,9 @@ public class CyanCheetahOp extends LinearOpMode
              * Right Bumper: Adjust Bucket
              * Left Trigger: NOTHING
              */
-            if (gamepad1.left_trigger > .5){
-                Bucket.setPosition(BucketOutPosition);
-            }
+            //if (gamepad1.left_trigger > .5){
+             //   Bucket.setPosition(BucketOutPosition);
+            //}
             if (gamepad1.right_trigger > 0) {
                 triggerPowerAdjust = .4;
             } else {
@@ -347,17 +348,25 @@ public class CyanCheetahOp extends LinearOpMode
             // bucketPos=bucketPos+.001;
 
             //}
-            if (gamepad1.right_bumper) {
-                Bucket.setPosition(bucketPos - .01);
-                bucketPos=bucketPos-.001;
-            }
+            //if (gamepad1.right_bumper) {
+            //    Bucket.setPosition(bucketPos - .01);
+            //    bucketPos=bucketPos-.001;
+            //}
             //drone launch code.
-            if(gamepad1.dpad_left){
-                Drone.setPower(-1);
-                sleep(50);
-                Drone.setPower(0);
+            if(gamepad1.y) {
+                DroneLinkage.setPosition(1);
+                //DroneLinkage.setPosition(0.85);
             }
-
+            //if(gamepad1.dpad_right){
+             //   DroneLauncher.setPosition(0.3);
+                //DroneLinkage.setPosition(0.95);
+            //}
+            if(gamepad1.left_bumper) {
+                DroneLinkage.setPosition(0.88);
+            }
+            if(gamepad1.right_bumper) {
+                DroneLauncher.setPosition(0.3);
+            }
             if(gamepad1.x) {
                 DESIRED_TAG_ID = 1;
             }
@@ -382,7 +391,7 @@ public class CyanCheetahOp extends LinearOpMode
             }
 
             // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
-            if (gamepad1.left_bumper && targetFound) {
+            if (gamepad1.left_trigger > 0.3 && targetFound) {
 
                 // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
                 double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);

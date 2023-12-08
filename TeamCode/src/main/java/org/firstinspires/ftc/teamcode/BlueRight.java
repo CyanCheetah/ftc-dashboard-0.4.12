@@ -260,7 +260,7 @@ public class BlueRight extends LinearOpMode
                             .turn(Math.toRadians(80)) // Turns 45 degrees counter-clockwise
                             .build();
                     Trajectory trajectoryRight1 = drive.trajectoryBuilder(new Pose2d())
-                            .back(5.5)
+                            .back(4)
                             .addTemporalMarker(4, () -> {
                                 Turn.setPosition(.75);
                             })

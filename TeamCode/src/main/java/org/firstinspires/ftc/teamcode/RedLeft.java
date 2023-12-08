@@ -242,7 +242,7 @@ public class RedLeft extends LinearOpMode
                             .lineToLinearHeading(new Pose2d(26, -5, Math.toRadians(71)))
                             .build();
                     Trajectory trajectoryRight1 = drive.trajectoryBuilder(new Pose2d())
-                            .back(7)
+                            .back(8.5)
                             .addTemporalMarker(4, () -> {
                                 Turn.setPosition(.75);
                             })
