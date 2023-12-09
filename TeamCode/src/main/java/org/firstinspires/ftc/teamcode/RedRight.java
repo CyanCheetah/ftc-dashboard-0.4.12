@@ -203,10 +203,11 @@ public class RedRight extends LinearOpMode
             int maxOneTwo = Math.min(first, second);
             int max = Math.min(maxOneTwo, third);
             boolean ran = true;
+            MotorConstantValues constants = new MotorConstantValues();
             double clawFullOpen = .775;
-            double swingPos = 0.0;
-            double bucketPos = 0.22;
-            double bucketInPos = bucketPos + .155;
+            double swingPos = constants.getSwingOutPosition();
+            double bucketPos = constants.getBucketOutPosition();
+            double bucketInPos = constants.getBucketInPosition();
             SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
             //multiply this number by the inches needed to travel: 0.68571429
             if (ran) {
@@ -297,10 +298,10 @@ public class RedRight extends LinearOpMode
                     drive.followTrajectory(trajectoryMiddle3);
                     drive.followTrajectory(trajectoryMiddle4);
                     drive.followTrajectory(back2);
-                    Bucket.setPosition(.32);
+                    Bucket.setPosition(bucketInPos);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
-                    sleep(2300);
+                    sleep(1600);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
                     Swing.setPosition(swingPos);

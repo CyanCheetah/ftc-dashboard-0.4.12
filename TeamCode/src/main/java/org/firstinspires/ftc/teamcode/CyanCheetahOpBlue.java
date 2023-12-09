@@ -186,17 +186,18 @@ public class CyanCheetahOpBlue extends LinearOpMode
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
         waitForStart();
-        double SwingOutPosition = 0;
-        double SwingScorePosition = 0.275;
-        double SwingInPosition = 0.31;
-        double BucketOutPosition = .16;
-        double BucketInPosition = BucketOutPosition + .155;
+        MotorConstantValues constants = new MotorConstantValues();
+        double SwingOutPosition = constants.getSwingOutPosition();
+        double SwingScorePosition = constants.getSwingScorePosition();
+        double SwingInPosition = constants.getSwingInPosition();
+        double BucketOutPosition = constants.getBucketOutPosition();
+        double BucketInPosition = constants.getBucketInPosition();
         double BucketSuperUp = BucketInPosition + .025;
         double mainLiftPower = 0;
         // ------ the values above may change often
-        double clawClose = .95;
-        double clawSemiOpen = .9;
-        double clawFullOpen = .75;
+        double clawClose = constants.getClawClose();
+        double clawSemiOpen = constants.getClawSemiOpen();
+        double clawFullOpen = constants.getClawFullOpen();
         double triggerPowerAdjust = 1;
         double bucketPos = 0.37 ;
         boolean swingOut = false;

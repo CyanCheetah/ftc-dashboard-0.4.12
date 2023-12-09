@@ -201,10 +201,11 @@ public class BlueLeft extends LinearOpMode
             int maxOneTwo = Math.max(first, second);
             int max = Math.max(maxOneTwo, third);
             boolean ran = true;
+            MotorConstantValues constants = new MotorConstantValues();
             double clawFullOpen = .775;
-            double swingPos = 0.0;
-            double bucketPos = 0.22;
-            double bucketInPos = bucketPos + .155;
+            double swingPos = constants.getSwingOutPosition();
+            double bucketPos = constants.getBucketOutPosition();
+            double bucketInPos = constants.getBucketInPosition();
             SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
             //multiply this number by the inches needed to travel: 0.68571429
             if (ran) {
