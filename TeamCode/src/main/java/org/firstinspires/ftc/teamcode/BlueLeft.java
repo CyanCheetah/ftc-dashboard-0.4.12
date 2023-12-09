@@ -202,7 +202,7 @@ public class BlueLeft extends LinearOpMode
             int max = Math.max(maxOneTwo, third);
             boolean ran = true;
             MotorConstantValues constants = new MotorConstantValues();
-            double clawFullOpen = .775;
+            double clawFullOpen = constants.getClawFullOpen();
             double swingPos = constants.getSwingOutPosition();
             double bucketPos = constants.getBucketOutPosition();
             double bucketInPos = constants.getBucketInPosition();
@@ -217,7 +217,7 @@ public class BlueLeft extends LinearOpMode
                     Trajectory trajectoryFirst1 = drive.trajectoryBuilder(new Pose2d())
                             .forward(4)
                             .addTemporalMarker(3, () -> {
-                                Turn.setPosition(.75);
+                                Turn.setPosition(clawFullOpen);
                             })
                             .build();
                     Trajectory trajectoryFirst2 = drive.trajectoryBuilder(new Pose2d())
@@ -267,15 +267,12 @@ public class BlueLeft extends LinearOpMode
                     drive.followTrajectory(firt9);
                     drive.followTrajectory(first10);
 
-
-
-
                 } else if (max == second) {
                     telemetry.addData("2", second);
                     Trajectory trajectoryMiddle0 = drive.trajectoryBuilder(new Pose2d())
                             .forward(31.3)
                             .addTemporalMarker(4, () -> {
-                                Turn.setPosition(.75);
+                                Turn.setPosition(clawFullOpen);
                             })
                             .build();
                     Trajectory trajectoryMiddle1 = drive.trajectoryBuilder(new Pose2d())
@@ -323,8 +320,6 @@ public class BlueLeft extends LinearOpMode
                     drive.followTrajectory(trajectoryMiddle5);
                     drive.followTrajectory(trajectoryMiddle6);
                     // drive.followTrajectory(trajectoryMiddle5);
-
-
                     ran = false;
 
 
@@ -336,7 +331,7 @@ public class BlueLeft extends LinearOpMode
                     Trajectory trajectoryRight1 = drive.trajectoryBuilder(new Pose2d())
                             .back(7)
                             .addTemporalMarker(4, () -> {
-                                Turn.setPosition(.75);
+                                Turn.setPosition(clawFullOpen);
                             })
                             .build();
                     Trajectory trajectoryRight2 = drive.trajectoryBuilder(new Pose2d())
@@ -380,12 +375,7 @@ public class BlueLeft extends LinearOpMode
                     rightLift.setPower(0);
                     drive.followTrajectory(trajectoryRight4);
                     drive.followTrajectory(trajectoryRight5);
-
                     ran = false;
-
-
-
-
                 }
             }
 

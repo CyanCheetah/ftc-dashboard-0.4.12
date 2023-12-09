@@ -204,7 +204,7 @@ public class RedRight extends LinearOpMode
             int max = Math.min(maxOneTwo, third);
             boolean ran = true;
             MotorConstantValues constants = new MotorConstantValues();
-            double clawFullOpen = .775;
+            double clawFullOpen = constants.getClawFullOpen();
             double swingPos = constants.getSwingOutPosition();
             double bucketPos = constants.getBucketOutPosition();
             double bucketInPos = constants.getBucketInPosition();
@@ -222,7 +222,7 @@ public class RedRight extends LinearOpMode
                     Trajectory trajectoryFirst2 = drive.trajectoryBuilder(new Pose2d())
                             .back(2)
                             .addTemporalMarker(3, () -> {
-                                Turn.setPosition(.75);
+                                Turn.setPosition(clawFullOpen);
                             })
                             .build();
                     Trajectory trajectoryFirst3 = drive.trajectoryBuilder(new Pose2d())
@@ -268,7 +268,7 @@ public class RedRight extends LinearOpMode
                     Trajectory trajectoryMiddle0 = drive.trajectoryBuilder(new Pose2d())
                             .forward(31.5)
                             .addTemporalMarker(4, () -> {
-                                Turn.setPosition(.75);
+                                Turn.setPosition(clawFullOpen);
                             })
                             .build();
                     Trajectory trajectoryMiddle1 = drive.trajectoryBuilder(new Pose2d())
@@ -328,7 +328,7 @@ public class RedRight extends LinearOpMode
                     Trajectory rightStr = drive.trajectoryBuilder(new Pose2d())
                             .strafeRight(6)
                             .addTemporalMarker(1.5, () -> {
-                                Turn.setPosition(-.75);
+                                Turn.setPosition(clawFullOpen);
                             })
                             .build();
                     Trajectory trajectoryRight1 = drive.trajectoryBuilder(new Pose2d())
