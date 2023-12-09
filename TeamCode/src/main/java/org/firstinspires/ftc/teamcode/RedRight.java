@@ -204,6 +204,9 @@ public class RedRight extends LinearOpMode
             int max = Math.min(maxOneTwo, third);
             boolean ran = true;
             double clawFullOpen = .775;
+            double swingPos = 0.0;
+            double bucketPos = 0.22;
+            double bucketInPos = bucketPos + .155;
             SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
             //multiply this number by the inches needed to travel: 0.68571429
             if (ran) {
@@ -239,15 +242,15 @@ public class RedRight extends LinearOpMode
                     sleep(1000);
                     drive.followTrajectory(trajectoryFirst3);
                     drive.followTrajectory(back1);
-                    Bucket.setPosition(.32);
+                    Bucket.setPosition(bucketInPos);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
                     sleep(2300);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                    Swing.setPosition(0);
+                    Swing.setPosition(swingPos);
                     sleep(2000);
-                    Bucket.setPosition(.11);
+                    Bucket.setPosition(bucketPos);
                     sleep(400);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
@@ -300,9 +303,9 @@ public class RedRight extends LinearOpMode
                     sleep(2300);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                    Swing.setPosition(0);
+                    Swing.setPosition(swingPos);
                     sleep(2000);
-                    Bucket.setPosition(.11);
+                    Bucket.setPosition(bucketPos);
                     sleep(400);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
@@ -349,15 +352,15 @@ public class RedRight extends LinearOpMode
                     drive.followTrajectory(trajectoryRight1);
                     drive.followTrajectory(back3);
                     sleep(1000);
-                    Bucket.setPosition(.32);
+                    Bucket.setPosition(bucketInPos);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
                     sleep(2300);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                    Swing.setPosition(0);
+                    Swing.setPosition(swingPos);
                     sleep(2000);
-                    Bucket.setPosition(.11);
+                    Bucket.setPosition(bucketPos);
                     sleep(400);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);

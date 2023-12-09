@@ -202,6 +202,9 @@ public class BlueLeft extends LinearOpMode
             int max = Math.max(maxOneTwo, third);
             boolean ran = true;
             double clawFullOpen = .775;
+            double swingPos = 0.0;
+            double bucketPos = 0.22;
+            double bucketInPos = bucketPos + .155;
             SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
             //multiply this number by the inches needed to travel: 0.68571429
             if (ran) {
@@ -245,15 +248,15 @@ public class BlueLeft extends LinearOpMode
                     drive.followTrajectory(trajectoryFirst4);
                     drive.followTrajectory(trajectoryFirst5);
                     drive.followTrajectory(back1);
-                    Bucket.setPosition(.32);
+                    Bucket.setPosition(bucketInPos);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
                     sleep(2300);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                    Swing.setPosition(0);
+                    Swing.setPosition(swingPos);
                     sleep(2000);
-                    Bucket.setPosition(.11);
+                    Bucket.setPosition(bucketPos);
                     sleep(400);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
@@ -281,7 +284,7 @@ public class BlueLeft extends LinearOpMode
                             .lineToLinearHeading(new Pose2d(0, 25, Math.toRadians(77)))
                             .build();
                     Trajectory trajectoryMiddle3 = drive.trajectoryBuilder(new Pose2d())
-                            .strafeLeft(31)
+                            .strafeLeft(28)
                             .build();
                     Trajectory trajectoryMiddle4 = drive.trajectoryBuilder(new Pose2d())
                             .forward(12)
@@ -301,15 +304,15 @@ public class BlueLeft extends LinearOpMode
                     drive.followTrajectory(trajectoryMiddle3);
                     drive.followTrajectory(trajectoryMiddle4);
                     drive.followTrajectory(back2);
-                    Bucket.setPosition(.32);
+                    Bucket.setPosition(bucketInPos);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
-                    sleep(2300);
+                    sleep(1600);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                    Swing.setPosition(0);
+                    Swing.setPosition(swingPos);
                     sleep(2000);
-                    Bucket.setPosition(.11);
+                    Bucket.setPosition(bucketPos);
                     sleep(400);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
@@ -359,15 +362,15 @@ public class BlueLeft extends LinearOpMode
                     drive.followTrajectory(trajectoryRight3);
                     drive.followTrajectory(trajectoryRight10);
                     drive.followTrajectory(back3);
-                    Bucket.setPosition(.32);
+                    Bucket.setPosition(bucketInPos);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
                     sleep(2300);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                    Swing.setPosition(0);
+                    Swing.setPosition(swingPos);
                     sleep(2000);
-                    Bucket.setPosition(.11);
+                    Bucket.setPosition(bucketPos);
                     sleep(400);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
