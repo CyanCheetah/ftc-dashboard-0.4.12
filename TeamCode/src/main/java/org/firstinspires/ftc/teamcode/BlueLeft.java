@@ -62,11 +62,13 @@ public class BlueLeft extends LinearOpMode
     private static Servo servoTwo = null;
     private static Servo Turn = null;
 
-
     OpenCvWebcam webcam;
     private static DcMotor frontl = null;
+
     private static DcMotor frontr = null;
+
     private static DcMotor bottoml = null;
+
     private static DcMotor bottomr = null;
     SkystoneDeterminationPipeline pipeline = new SkystoneDeterminationPipeline();
     private static DcMotor rightLift = null;
@@ -401,6 +403,7 @@ public class BlueLeft extends LinearOpMode
      * then you will need to account for that accordingly.
      */
     //wow its cyancheetah
+
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
         /*
