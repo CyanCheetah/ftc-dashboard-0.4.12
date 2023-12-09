@@ -18,7 +18,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+/**
+ * @author CyanCheeah
+ * This is the RedLeft autonomous that scores only puruple.
+ */
 package org.firstinspires.ftc.teamcode;
 
 

@@ -18,7 +18,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+/**
+ * @author CyanCheeah
+ * This is the BlueRight autonomous that scores only on purple.
+ */
 package org.firstinspires.ftc.teamcode;
 
 

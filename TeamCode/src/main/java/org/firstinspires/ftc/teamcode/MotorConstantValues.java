@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
-
+/**
+ * @author CyanCheeah
+ * This is motor constants for the elevator and bucket and servo.
+ */
 public class MotorConstantValues {
     private double SwingOutPosition = 0;
     private double SwingScorePosition = 0.275;

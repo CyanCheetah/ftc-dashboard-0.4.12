@@ -18,7 +18,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+/**
+ * @author CyanCheeah
+ * This is the BlueLeft autonomous that scores on yellow as well.
+ */
 package org.firstinspires.ftc.teamcode;
 
 
