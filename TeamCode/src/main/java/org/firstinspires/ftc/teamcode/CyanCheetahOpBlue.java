@@ -190,7 +190,7 @@ public class CyanCheetahOpBlue extends LinearOpMode
         double SwingScorePosition = 0.275;
         double SwingInPosition = 0.315;
         double BucketOutPosition = .11;
-        double BucketInPosition = BucketOutPosition + .15;
+        double BucketInPosition = BucketOutPosition + .22;
         double BucketSuperUp = BucketInPosition + .025;
         double mainLiftPower = 0;
         // ------ the values above may change often

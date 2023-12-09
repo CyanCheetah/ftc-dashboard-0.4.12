@@ -239,7 +239,7 @@ public class RedRight extends LinearOpMode
                     sleep(1000);
                     drive.followTrajectory(trajectoryFirst3);
                     drive.followTrajectory(back1);
-                    Bucket.setPosition(.26);
+                    Bucket.setPosition(.32);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
                     sleep(2300);
@@ -294,7 +294,7 @@ public class RedRight extends LinearOpMode
                     drive.followTrajectory(trajectoryMiddle3);
                     drive.followTrajectory(trajectoryMiddle4);
                     drive.followTrajectory(back2);
-                    Bucket.setPosition(.3);
+                    Bucket.setPosition(.32);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
                     sleep(2300);
@@ -349,7 +349,7 @@ public class RedRight extends LinearOpMode
                     drive.followTrajectory(trajectoryRight1);
                     drive.followTrajectory(back3);
                     sleep(1000);
-                    Bucket.setPosition(.3);
+                    Bucket.setPosition(.32);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
                     sleep(2300);
