@@ -228,6 +228,9 @@ public class BlueLeft extends LinearOpMode
                     Trajectory trajectoryFirst4 = drive.trajectoryBuilder(new Pose2d())
                             .strafeLeft(32)
                             .build();
+                    Trajectory back1 = drive.trajectoryBuilder(new Pose2d())
+                            .back(3)
+                            .build();
                     Trajectory firt9 = drive.trajectoryBuilder(new Pose2d())
                             .back(7)
                             .build();
@@ -241,13 +244,14 @@ public class BlueLeft extends LinearOpMode
                     drive.followTrajectory(trajectoryFirst3);
                     drive.followTrajectory(trajectoryFirst4);
                     drive.followTrajectory(trajectoryFirst5);
+                    drive.followTrajectory(back1);
                     Bucket.setPosition(.3);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
                     sleep(2300);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                    Swing.setPosition(.22);
+                    Swing.setPosition(0);
                     sleep(2000);
                     Bucket.setPosition(.11);
                     sleep(400);

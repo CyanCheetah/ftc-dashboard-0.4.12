@@ -188,9 +188,9 @@ public class CyanCheetahOpBlue extends LinearOpMode
         waitForStart();
         double SwingOutPosition = 0;
         double SwingScorePosition = 0.275;
-        double SwingInPosition = 0.3;
+        double SwingInPosition = 0.315;
         double BucketOutPosition = .11;
-        double BucketInPosition = BucketOutPosition + .14;
+        double BucketInPosition = BucketOutPosition + .15;
         double BucketSuperUp = BucketInPosition + .025;
         double mainLiftPower = 0;
         // ------ the values above may change often
@@ -254,9 +254,9 @@ public class CyanCheetahOpBlue extends LinearOpMode
             if (gamepad2.dpad_left){
                 if(Turn.getPosition() > .93){
                     moveServos(servoOne, servoTwo, .2);
-                    sleep(300);
+                    sleep(333);
                     Turn.setPosition(clawSemiOpen);
-                    sleep(300);
+                    sleep(333);
                     moveServos(servoOne, servoTwo, -.3);
                     sleep(300);
                     Turn.setPosition(clawFullOpen);
@@ -318,7 +318,7 @@ public class CyanCheetahOpBlue extends LinearOpMode
              * Left Trigger: NOTHING
              */
             //if (gamepad1.left_trigger > .5){
-             //   Bucket.setPosition(BucketOutPosition);
+            //   Bucket.setPosition(BucketOutPosition);
             //}
             if (gamepad1.right_trigger > 0) {
                 triggerPowerAdjust = .4;
@@ -355,8 +355,8 @@ public class CyanCheetahOpBlue extends LinearOpMode
                 //DroneLinkage.setPosition(0.85);
             }
             //if(gamepad1.dpad_right){
-             //   DroneLauncher.setPosition(0.3);
-                //DroneLinkage.setPosition(0.95);
+            //   DroneLauncher.setPosition(0.3);
+            //DroneLinkage.setPosition(0.95);
             //}
             if(gamepad1.left_bumper) {
                 DroneLinkage.setPosition(0.88);
