@@ -188,9 +188,9 @@ public class CyanCheetahOpBlue extends LinearOpMode
         waitForStart();
         double SwingOutPosition = 0;
         double SwingScorePosition = 0.275;
-        double SwingInPosition = 0.3;
+        double SwingInPosition = 0.315;
         double BucketOutPosition = .11;
-        double BucketInPosition = BucketOutPosition + .14;
+        double BucketInPosition = BucketOutPosition + .15;
         double BucketSuperUp = BucketInPosition + .025;
         double mainLiftPower = 0;
         // ------ the values above may change often
@@ -254,9 +254,9 @@ public class CyanCheetahOpBlue extends LinearOpMode
             if (gamepad2.dpad_left){
                 if(Turn.getPosition() > .93){
                     moveServos(servoOne, servoTwo, .2);
-                    sleep(300);
+                    sleep(333);
                     Turn.setPosition(clawSemiOpen);
-                    sleep(300);
+                    sleep(333);
                     moveServos(servoOne, servoTwo, -.3);
                     sleep(300);
                     Turn.setPosition(clawFullOpen);
