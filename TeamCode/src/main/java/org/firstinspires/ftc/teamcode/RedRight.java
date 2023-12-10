@@ -216,6 +216,7 @@ public class RedRight extends LinearOpMode
             if (ran) {
                 if (max == first) {
                     telemetry.addData("1", first);
+                    Bucket.setPosition(bucketInPos + .05);
                     Trajectory trajectoryFirst0 = drive.trajectoryBuilder(new Pose2d())
                             .forward(20)
                             .build();
@@ -232,24 +233,25 @@ public class RedRight extends LinearOpMode
                             .lineToConstantHeading(new Vector2d(31,16))
                             .build();
                     Trajectory park = drive.trajectoryBuilder(new Pose2d())
-                            .strafeRight(35)
+                            .strafeRight(37)
                             .build();
                     Trajectory park0 = drive.trajectoryBuilder(new Pose2d())
                             .back(3)
                             .build();
                     Trajectory back1 = drive.trajectoryBuilder(new Pose2d())
-                            .back(3)
+                            .back(2)
                             .build();
+
                     drive.followTrajectory(trajectoryFirst0);
                     drive.followTrajectorySequence(ts);
                     drive.followTrajectory(trajectoryFirst2);
                     sleep(1000);
                     drive.followTrajectory(trajectoryFirst3);
+
                     drive.followTrajectory(back1);
-                    Bucket.setPosition(bucketInPos);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
-                    sleep(2300);
+                    sleep(2100);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
                     Swing.setPosition(swingPos);
@@ -266,8 +268,7 @@ public class RedRight extends LinearOpMode
 
                 } else if (max == second) {
                     telemetry.addData("2", second);
-                    telemetry.addData("hi", "SecondOne");
-                    telemetry.addData("2", second);
+                    Bucket.setPosition(bucketInPos + .05);
                     Trajectory trajectoryMiddle0 = drive.trajectoryBuilder(new Pose2d())
                             .forward(31.5)
                             .addTemporalMarker(4, () -> {
@@ -281,13 +282,13 @@ public class RedRight extends LinearOpMode
                             .lineToLinearHeading(new Pose2d(0, -25, Math.toRadians(-77)))
                             .build();
                     Trajectory trajectoryMiddle3 = drive.trajectoryBuilder(new Pose2d())
-                            .strafeRight(30)
+                            .strafeRight(28)
                             .build();
                     Trajectory trajectoryMiddle4 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(11.5)
+                            .forward(15)
                             .build();
                     Trajectory trajectoryMiddle5 = drive.trajectoryBuilder(new Pose2d())
-                            .back(7)
+                            .back(5)
                             .build();
                     Trajectory trajectoryMiddle6 = drive.trajectoryBuilder(new Pose2d())
                             .strafeRight(30)
@@ -301,10 +302,9 @@ public class RedRight extends LinearOpMode
                     drive.followTrajectory(trajectoryMiddle3);
                     drive.followTrajectory(trajectoryMiddle4);
                     drive.followTrajectory(back2);
-                    Bucket.setPosition(bucketInPos);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
-                    sleep(1600);
+                    sleep(2100);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
                     Swing.setPosition(swingPos);
@@ -325,6 +325,7 @@ public class RedRight extends LinearOpMode
 
                 } else if (max == third) {
                     telemetry.addData("3", third);
+                    Bucket.setPosition(bucketInPos + .05);
                     Trajectory trajectoryRight0 = drive.trajectoryBuilder(new Pose2d())
                             .lineToConstantHeading(new Vector2d(23, -22))
                             .build();
@@ -339,27 +340,30 @@ public class RedRight extends LinearOpMode
                             .build();
 
                     Trajectory trajectoryRight2 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(10)
+                            .forward(13)
                             .build();
                     Trajectory rightpark = drive.trajectoryBuilder(new Pose2d())
-                            .back(7)
+                            .back(3)
                             .build();
                     Trajectory rightpark2 = drive.trajectoryBuilder(new Pose2d())
-                            .strafeRight(29)
+                            .strafeRight(37)
                             .build();
                     Trajectory back3 = drive.trajectoryBuilder(new Pose2d())
                             .back(3)
+                            .build();
+                    Trajectory back4 = drive.trajectoryBuilder(new Pose2d())
+                            .forward(5)
                             .build();
                     drive.followTrajectory(trajectoryRight0);
                     drive.followTrajectory(rightStr);
                     drive.followTrajectory(trajectoryRight2);
                     drive.followTrajectory(trajectoryRight1);
+                    drive.followTrajectory(back4);
                     drive.followTrajectory(back3);
                     sleep(1000);
-                    Bucket.setPosition(bucketInPos);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
-                    sleep(2300);
+                    sleep(2100);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
                     Swing.setPosition(swingPos);

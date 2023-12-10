@@ -9,9 +9,9 @@ public class MotorConstantValues {
     private double SwingScorePosition = 0.275;
 
     private double SwingInPosition = 0.31;
-    private double BucketOutPosition = .16;
+    private double BucketOutPosition = 0.26;
 
-    private double BucketInPosition = BucketOutPosition + .155;
+    private double BucketInPosition = BucketOutPosition + .18;
     private double clawClose = .95;
     private double clawSemiOpen = .9;
     private double clawFullOpen = .75;

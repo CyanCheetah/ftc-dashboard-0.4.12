@@ -252,15 +252,15 @@ public class CyanCheetahOpBlue extends LinearOpMode
                 moveServos(servoOne, servoTwo, -.32);
             }
             if (gamepad2.a) {
-                moveServos(servoOne, servoTwo, -.4);
+                moveServos(servoOne, servoTwo, -.395);
             }
             //places pixel from front claw to bucket
             if (gamepad2.dpad_left){
                 if(Turn.getPosition() > .93){
                     moveServos(servoOne, servoTwo, .2);
-                    sleep(333);
+                    sleep(300);
                     Turn.setPosition(clawSemiOpen);
-                    sleep(333);
+                    sleep(400);
                     moveServos(servoOne, servoTwo, -.3);
                     sleep(300);
                     Turn.setPosition(clawFullOpen);
@@ -320,7 +320,7 @@ public class CyanCheetahOpBlue extends LinearOpMode
              * Left Bumper: Drone Linkage
              * Right Trigger: Trigger Power Adjust: Slows the robot down by given amount
              * Right Bumper: Drone Linkage
-             * Left Trigger: NOTHING
+             * Left Trigger: AprilTags
              */
             //if (gamepad1.left_trigger > .5){
             //   Bucket.setPosition(BucketOutPosition);
@@ -345,15 +345,21 @@ public class CyanCheetahOpBlue extends LinearOpMode
             }
             //minute adjustions for the bucket angle. The bucketPos double variable
             //despite the game controller 2's bucket movement. The values are updated.
-            //if (gamepad1.left_bumper){
-            // Bucket.setPosition(bucketPos + .01);
-            // bucketPos=bucketPos+.001;
+            if (gamepad1.dpad_up){
+              Bucket.setPosition(bucketPos + .001);
+              bucketPos=bucketPos+.001;
+              BucketInPosition = BucketInPosition + .001;
+              BucketOutPosition = BucketOutPosition + .001;
 
-            //}
-            //if (gamepad1.right_bumper) {
-            //    Bucket.setPosition(bucketPos - .01);
-            //    bucketPos=bucketPos-.001;
-            //}
+
+            }
+            if (gamepad1.x) {
+                Bucket.setPosition(bucketPos - .001);
+                bucketPos=bucketPos-.001;
+                BucketInPosition = BucketInPosition - .001;
+                BucketOutPosition = BucketOutPosition - .001;
+
+            }
             //drone launch code.
             if(gamepad1.b) {
                 DroneLinkage.setPosition(1);
@@ -364,8 +370,16 @@ public class CyanCheetahOpBlue extends LinearOpMode
             //DroneLinkage.setPosition(0.95);
             //}
             if(gamepad1.left_bumper) {
-                DroneLinkage.setPosition(0.88);
+                double pos = 1.0;
+                //DroneLinkage.setPosition(.87);
+                for (int i = 0; i < 6; i++) {
+                    DroneLinkage.setPosition(pos);
+                    pos = pos - .01;
+                    sleep(200);
+                }
+
             }
+            telemetry.addData("Drone", DroneLinkage.getPosition());
             if(gamepad1.right_bumper) {
                 DroneLauncher.setPosition(0.3);
             }
