@@ -287,6 +287,7 @@ public class CyanCheetahOpBlue extends LinearOpMode
                 bucketPos = BucketInPosition;
                 swingOut = false;
             }
+            telemetry.addData("BucketPos", Bucket.getPosition());
             //bucket position to superUp
             if (gamepad2.left_bumper){
                 Turn.setPosition(clawFullOpen);
@@ -300,10 +301,10 @@ public class CyanCheetahOpBlue extends LinearOpMode
             //          ************************************************ GAMEPAD 1 CONTROLS ************************************************
             /**
              * Gamepad 1 Controls:
-             * Dpad Up: Drone Launcher
-             * Dpad Down: NOTHING
-             * Dpad Left: NOTHING
-             * Dpad Right: NOTHING
+             * Dpad Up: Nothing
+             * Dpad Down: April Tags
+             * Dpad Left: April Tags
+             * Dpad Right: April Tags
              * Left Joystick: NOTHING
              * - Up: Forward
              * - Down: Backwards
@@ -312,13 +313,13 @@ public class CyanCheetahOpBlue extends LinearOpMode
              * Right Joystick:
              * - Left: Turn in position left
              * - Right: Turn in position right
-             * X: Hang goes UP?? (Change if necessary)
-             * Y: Hang goes Down?? (Change if necessary)
-             * A: NOTHING
-             * B: NOTHING
-             * Left Bumper: Adjust Bucket
+             * X: NOTHING
+             * Y: Hang goes Down
+             * A: Hang goes Up
+             * B: Drone Launcher
+             * Left Bumper: Drone Linkage
              * Right Trigger: Trigger Power Adjust: Slows the robot down by given amount
-             * Right Bumper: Adjust Bucket
+             * Right Bumper: Drone Linkage
              * Left Trigger: NOTHING
              */
             //if (gamepad1.left_trigger > .5){

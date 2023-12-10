@@ -151,6 +151,7 @@ public class BlueLeft extends LinearOpMode
         Servo servoOne = hardwareMap.servo.get("servoOne");
         Servo servoTwo = hardwareMap.servo.get("servoTwo");
         Servo Swing = hardwareMap.servo.get("Swing");
+        Turn = hardwareMap.get(Servo.class, "Turn");
 
         //Bucket = hardwareMap.get(Servo.class, "Bucket");
         //Swing = hardwareMap.get(Servo.class, "Swing");
@@ -162,7 +163,6 @@ public class BlueLeft extends LinearOpMode
          * Wait for the user to press start on the Driver Station
          */
         int first,second,third;
-        Turn = hardwareMap.get(Servo.class, "Turn");
         Turn.setPosition(.95);
         waitForStart();
 
@@ -445,7 +445,7 @@ public class BlueLeft extends LinearOpMode
          *   |                                  |
          *   |                                  |
          *   |                                  |
-         *   |                  Point B (70,50) |
+         *   |              Point B (1920,1080) |
          *   ------------------------------------
          *
          */
