@@ -18,7 +18,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+/**
+ * @author CyanCheeah
+ * This is the BlueLeft autonomous that scores on yellow as well.
+ */
 package org.firstinspires.ftc.teamcode;
 
 
@@ -59,11 +62,13 @@ public class BlueLeft extends LinearOpMode
     private static Servo servoTwo = null;
     private static Servo Turn = null;
 
-
     OpenCvWebcam webcam;
     private static DcMotor frontl = null;
+
     private static DcMotor frontr = null;
+
     private static DcMotor bottoml = null;
+
     private static DcMotor bottomr = null;
     SkystoneDeterminationPipeline pipeline = new SkystoneDeterminationPipeline();
     private static DcMotor rightLift = null;
@@ -146,6 +151,7 @@ public class BlueLeft extends LinearOpMode
         Servo servoOne = hardwareMap.servo.get("servoOne");
         Servo servoTwo = hardwareMap.servo.get("servoTwo");
         Servo Swing = hardwareMap.servo.get("Swing");
+        Turn = hardwareMap.get(Servo.class, "Turn");
 
         //Bucket = hardwareMap.get(Servo.class, "Bucket");
         //Swing = hardwareMap.get(Servo.class, "Swing");
@@ -157,7 +163,6 @@ public class BlueLeft extends LinearOpMode
          * Wait for the user to press start on the Driver Station
          */
         int first,second,third;
-        Turn = hardwareMap.get(Servo.class, "Turn");
         Turn.setPosition(.95);
         waitForStart();
 
@@ -201,35 +206,43 @@ public class BlueLeft extends LinearOpMode
             int maxOneTwo = Math.max(first, second);
             int max = Math.max(maxOneTwo, third);
             boolean ran = true;
-            double clawFullOpen = .775;
+            MotorConstantValues constants = new MotorConstantValues();
+            double clawFullOpen = constants.getClawFullOpen();
+            double swingPos = constants.getSwingOutPosition();
+            double bucketPos = constants.getBucketOutPosition();
+            double bucketInPos = constants.getBucketInPosition();
             SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
             //multiply this number by the inches needed to travel: 0.68571429
             if (ran) {
                 if (max == first) {
                     telemetry.addData("1", first);
+                    Bucket.setPosition(bucketInPos + .05);
                     Trajectory trajectoryFirst0 = drive.trajectoryBuilder(new Pose2d())
                             .lineToLinearHeading(new Pose2d(27.5, 5, Math.toRadians(71)))
                             .build();
                     Trajectory trajectoryFirst1 = drive.trajectoryBuilder(new Pose2d())
                             .forward(4)
                             .addTemporalMarker(3, () -> {
-                                Turn.setPosition(.75);
+                                Turn.setPosition(clawFullOpen);
                             })
                             .build();
                     Trajectory trajectoryFirst2 = drive.trajectoryBuilder(new Pose2d())
                             .strafeRight(25)
                             .build();
                     Trajectory trajectoryFirst3 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(9)
+                            .forward(8)
                             .build();
                     Trajectory trajectoryFirst5 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(6)
+                            .forward(9)
                             .build();
                     Trajectory trajectoryFirst4 = drive.trajectoryBuilder(new Pose2d())
-                            .strafeLeft(32)
+                            .strafeLeft(31)
+                            .build();
+                    Trajectory back1 = drive.trajectoryBuilder(new Pose2d())
+                            .back(3)
                             .build();
                     Trajectory firt9 = drive.trajectoryBuilder(new Pose2d())
-                            .back(7)
+                            .back(4)
                             .build();
                     Trajectory first10 = drive.trajectoryBuilder(new Pose2d())
                             .strafeLeft(21)
@@ -241,15 +254,15 @@ public class BlueLeft extends LinearOpMode
                     drive.followTrajectory(trajectoryFirst3);
                     drive.followTrajectory(trajectoryFirst4);
                     drive.followTrajectory(trajectoryFirst5);
-                    Bucket.setPosition(.3);
+                    drive.followTrajectory(back1);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
-                    sleep(2300);
+                    sleep(2100);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                    Swing.setPosition(.22);
+                    Swing.setPosition(swingPos);
                     sleep(2000);
-                    Bucket.setPosition(.11);
+                    Bucket.setPosition(bucketPos);
                     sleep(400);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
@@ -259,15 +272,13 @@ public class BlueLeft extends LinearOpMode
                     drive.followTrajectory(firt9);
                     drive.followTrajectory(first10);
 
-
-
-
                 } else if (max == second) {
                     telemetry.addData("2", second);
+                    Bucket.setPosition(bucketInPos + .05);
                     Trajectory trajectoryMiddle0 = drive.trajectoryBuilder(new Pose2d())
                             .forward(31.3)
                             .addTemporalMarker(4, () -> {
-                                Turn.setPosition(.75);
+                                Turn.setPosition(clawFullOpen);
                             })
                             .build();
                     Trajectory trajectoryMiddle1 = drive.trajectoryBuilder(new Pose2d())
@@ -277,31 +288,34 @@ public class BlueLeft extends LinearOpMode
                             .lineToLinearHeading(new Pose2d(0, 25, Math.toRadians(77)))
                             .build();
                     Trajectory trajectoryMiddle3 = drive.trajectoryBuilder(new Pose2d())
-                            .strafeLeft(27)
+                            .strafeLeft(24)
                             .build();
                     Trajectory trajectoryMiddle4 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(12)
+                            .forward(17)
                             .build();
                     Trajectory trajectoryMiddle5 = drive.trajectoryBuilder(new Pose2d())
-                            .back(7)
+                            .back(4)
                             .build();
                     Trajectory trajectoryMiddle6 = drive.trajectoryBuilder(new Pose2d())
                             .strafeLeft(30)
+                            .build();
+                    Trajectory back2 = drive.trajectoryBuilder(new Pose2d())
+                            .back(3)
                             .build();
                     drive.followTrajectory(trajectoryMiddle0);
                     drive.followTrajectory(trajectoryMiddle1);
                     drive.followTrajectory(trajectoryMiddle2);
                     drive.followTrajectory(trajectoryMiddle3);
                     drive.followTrajectory(trajectoryMiddle4);
-                    Bucket.setPosition(.3);
+                    drive.followTrajectory(back2);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
-                    sleep(2300);
+                    sleep(1900);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                    Swing.setPosition(.22);
+                    Swing.setPosition(swingPos);
                     sleep(2000);
-                    Bucket.setPosition(.11);
+                    Bucket.setPosition(bucketPos);
                     sleep(400);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
@@ -311,51 +325,53 @@ public class BlueLeft extends LinearOpMode
                     drive.followTrajectory(trajectoryMiddle5);
                     drive.followTrajectory(trajectoryMiddle6);
                     // drive.followTrajectory(trajectoryMiddle5);
-
-
                     ran = false;
 
 
                 } else if (max == third) {
                     telemetry.addData("3", third);
+                    Bucket.setPosition(bucketInPos + .05);
                     Trajectory trajectoryRight0 = drive.trajectoryBuilder(new Pose2d())
                             .lineToLinearHeading(new Pose2d(26, -5, Math.toRadians(71)))
                             .build();
                     Trajectory trajectoryRight1 = drive.trajectoryBuilder(new Pose2d())
                             .back(7)
                             .addTemporalMarker(4, () -> {
-                                Turn.setPosition(.75);
+                                Turn.setPosition(clawFullOpen);
                             })
                             .build();
                     Trajectory trajectoryRight2 = drive.trajectoryBuilder(new Pose2d())
                             .forward(32)
                             .build();
                     Trajectory trajectoryRight3 = drive.trajectoryBuilder(new Pose2d())
-                            .strafeRight(10)
+                            .strafeRight(12)
                             .build();
                     Trajectory trajectoryRight10 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(2)
+                            .forward(5)
                             .build();
                     Trajectory trajectoryRight4 = drive.trajectoryBuilder(new Pose2d())
-                            .back(7)
+                            .back(5)
                             .build();
                     Trajectory trajectoryRight5 = drive.trajectoryBuilder(new Pose2d())
                             .strafeLeft(41)
+                            .build();
+                    Trajectory back3 = drive.trajectoryBuilder(new Pose2d())
+                            .back(4)
                             .build();
                     drive.followTrajectory(trajectoryRight0);
                     drive.followTrajectory(trajectoryRight1);
                     drive.followTrajectory(trajectoryRight2);
                     drive.followTrajectory(trajectoryRight3);
                     drive.followTrajectory(trajectoryRight10);
-                    Bucket.setPosition(.3);
+                    drive.followTrajectory(back3);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
-                    sleep(2300);
+                    sleep(2000);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                    Swing.setPosition(.22);
+                    Swing.setPosition(swingPos);
                     sleep(2000);
-                    Bucket.setPosition(.11);
+                    Bucket.setPosition(bucketPos);
                     sleep(400);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
@@ -364,12 +380,7 @@ public class BlueLeft extends LinearOpMode
                     rightLift.setPower(0);
                     drive.followTrajectory(trajectoryRight4);
                     drive.followTrajectory(trajectoryRight5);
-
                     ran = false;
-
-
-
-
                 }
             }
 
@@ -392,6 +403,7 @@ public class BlueLeft extends LinearOpMode
      * then you will need to account for that accordingly.
      */
     //wow its cyancheetah
+
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
         /*
@@ -433,7 +445,7 @@ public class BlueLeft extends LinearOpMode
          *   |                                  |
          *   |                                  |
          *   |                                  |
-         *   |                  Point B (70,50) |
+         *   |              Point B (1920,1080) |
          *   ------------------------------------
          *
          */
