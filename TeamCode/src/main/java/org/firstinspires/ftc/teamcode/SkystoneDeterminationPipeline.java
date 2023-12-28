@@ -1,5 +1,7 @@
+/**
+ * To get uptodate code go to easyOpenCV github
+ */
 package org.firstinspires.ftc.teamcode;
-
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -7,19 +9,8 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
-
 public class SkystoneDeterminationPipeline extends OpenCvPipeline
 {
-    /*
-     * An enum to define the skystone position
-     */
-    public enum SkystonePosition
-    {
-        LEFT,
-        CENTER,
-        RIGHT
-    }
-
     /*
      * Some color constants
      */
@@ -34,8 +25,6 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline
     static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1720, 470);
     static final int REGION_WIDTH = 250;
     static final int REGION_HEIGHT = 150;
-
-
     /*
      * Points which actually define the sample region rectangles, derived from above values
      *
@@ -259,8 +248,6 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline
                     GREEN, // The color the rectangle is drawn in
                     -1); // Negative thickness means solid fill
         }
-
-
         /*
          * Render the 'input' buffer to the viewport. But note this is not
          * simply rendering the raw camera feed, because we called functions
@@ -268,13 +255,9 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline
          */
         return input;
     }
-
-
     /*
      * Call this from the OpMode thread to obtain the latest analysis
      */
-
-
     public int isPos1() {
         return avg1;
     }
