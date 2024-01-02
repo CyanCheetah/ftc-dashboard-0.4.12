@@ -180,10 +180,6 @@ public class CyanCheetahOpRed extends LinearOpMode
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
 
-
-        if (USE_WEBCAM) {
-            setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
-        }
         // Wait for driver to press start
         telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
@@ -367,7 +363,7 @@ public class CyanCheetahOpRed extends LinearOpMode
             if(gamepad1.left_bumper) {
                 double pos = 1.0;
                 //DroneLinkage.setPosition(.87);
-                for (int i = 0; i < 6; i++) {
+                for (int i = 0; i < 7; i++) {
                     DroneLinkage.setPosition(pos);
                     pos = pos - .01;
                     sleep(200);
