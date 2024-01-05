@@ -43,6 +43,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -92,7 +93,6 @@ public class CameraTEst extends LinearOpMode
     private AprilTagDetection desiredTag = null;
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
     public int DESIRED_TAG_ID = 3;
-    final double DESIRED_DISTANCE = 2; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
@@ -169,7 +169,7 @@ public class CameraTEst extends LinearOpMode
          */
         webcam.setMillisecondsPermissionTimeout(5000); // Timeout for obtaining permission is configurable. Set before opening.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
+
             public void onOpened() {
                 /*
                  * Tell the webcam to start streaming images to us! Note that you must make sure
@@ -190,13 +190,41 @@ public class CameraTEst extends LinearOpMode
                 webcam.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
             }
 
+            public void moveRobot(double x, double y, double yaw) {
+                // Calculate wheel powers.
+                double leftFrontPower    =  x -y -yaw;
+                double rightFrontPower   =  x +y +yaw;
+                double leftBackPower     =  x +y -yaw;
+                double rightBackPower    =  x -y +yaw;
+
+                // Normalize wheel powers to be less than 1.0
+                double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+                max = Math.max(max, Math.abs(leftBackPower));
+                max = Math.max(max, Math.abs(rightBackPower));
+
+                if (max > 1.0) {
+                    leftFrontPower /= max;
+                    rightFrontPower /= max;
+                    leftBackPower /= max;
+                    rightBackPower /= max;
+                }
+
+                // Send powers to the wheels.
+                frontl.setPower(leftFrontPower);
+                frontr.setPower(rightFrontPower);
+                bottoml.setPower(leftBackPower);
+                bottomr.setPower(rightBackPower);
+            }
+
             @Override
             public void onError(int errorCode) {
                 /*
                  * This will be called if the camera could not be opened
                  */
+
             }
         });
+
 
         telemetry.addLine("Waiting for start");
         telemetry.update();
@@ -214,6 +242,12 @@ public class CameraTEst extends LinearOpMode
 
         while (opModeIsActive()) {
 
+            boolean targetFound = false;    // Set to true when an AprilTag target is detected
+            double front = 1;        // Desired forward power/speed (-1 to +1)
+            double side = 1;        // Desired strafe power/speed (-1 to +1)
+            double heading = 1;        // Desired turning power/speed (-1 to +1)
+            while (pipeline.isPos1() == 0 && pipeline.isPos2() == 0 && pipeline.isPos3() == 0) {
+
                 sleep(1000);
 
                 first = pipeline.isPos1();
@@ -227,7 +261,7 @@ public class CameraTEst extends LinearOpMode
 
                 //multiply this number by the inches needed to travel: 0.68571429
                 //APRILTAG STUFF
-               // targetFound = false;
+                // targetFound = false;
                 desiredTag = null;
 
                 // Step through the list of detected tags and look for a matching tag
@@ -240,8 +274,36 @@ public class CameraTEst extends LinearOpMode
                             // Yes, we want to use this tag.
                             desiredTag = detection;
                             telemetry.addData("Unknown", "Tag Id %d is desired", detection.id);
-                           // break;  // don't look any further.
-                        } else {
+                            final double DESIRED_DISTANCE = 2; //  this is how close the camera should get to the target (inches)
+
+                            // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+                            /*I think that with this part we would have to change this based off how we want our
+                             * heading and everything. I lowkey forgot what Owen said to put each thing as, but we
+                             * pretty much have to use roadrunner instead of powers like we use in TeleOp.
+                             * You pretty much will have one thing for your x-coordinate, y-coordinate,
+                             * and your heading.*/
+                            double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                            double  headingError    = desiredTag.ftcPose.bearing;
+                            double  yawError        = desiredTag.ftcPose.yaw;
+
+                            // Use the speed and turn "gains" to calculate how we want the robot to move.
+                            front  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                            side   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+                            heading = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+
+                            telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", front, side, heading);
+
+
+                            break;  // don't look any further.
+
+                                // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+                                /*I think that with this part we would have to change this based off how we want our
+                                 * heading and everything. I lowkey forgot what Owen said to put each thing as, but we
+                                 * pretty much have to use roadrunner instead of powers like we use in TeleOp.
+                                 * You pretty much will have one thing for your x-coordinate, y-coordinate,
+                                 * and your heading.*/
+                                } else {
                             // This tag is in the library, but we do not want to track it right now.
                             telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
                         }
@@ -250,6 +312,8 @@ public class CameraTEst extends LinearOpMode
                         telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
                     }
                 }
+
+            }
         }
     }
 
