@@ -70,7 +70,7 @@ import java.util.List;
 
 
 @Autonomous
-public class BlueRightCamera extends LinearOpMode
+public class CameraTEst extends LinearOpMode
 {
     private static Servo servoOne = null;
 
@@ -91,7 +91,7 @@ public class BlueRightCamera extends LinearOpMode
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
-    public int DESIRED_TAG_ID = 9;
+    public int DESIRED_TAG_ID = 3;
     final double DESIRED_DISTANCE = 2; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
@@ -133,9 +133,7 @@ public class BlueRightCamera extends LinearOpMode
         }
     }
     @Override
-    public void runOpMode()
-
-    {
+    public void runOpMode() {
         initAprilTag();
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using.
@@ -170,11 +168,9 @@ public class BlueRightCamera extends LinearOpMode
          * If you really want to open synchronously, the old method is still available.
          */
         webcam.setMillisecondsPermissionTimeout(5000); // Timeout for obtaining permission is configurable. Set before opening.
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
+            public void onOpened() {
                 /*
                  * Tell the webcam to start streaming images to us! Note that you must make sure
                  * the resolution you specify is supported by the camera. If it is not, an exception
@@ -195,8 +191,7 @@ public class BlueRightCamera extends LinearOpMode
             }
 
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
                 /*
                  * This will be called if the camera could not be opened
                  */
@@ -211,30 +206,13 @@ public class BlueRightCamera extends LinearOpMode
         Servo servoTwo = hardwareMap.servo.get("servoTwo");
         Servo Swing = hardwareMap.servo.get("Swing");
 
-        //Bucket = hardwareMap.get(Servo.class, "Bucket");
-        //Swing = hardwareMap.get(Servo.class, "Swing");
-        //Setting Directions of motors.
-
-        //leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        // rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        /*
-         * Wait for the user to press start on the Driver Station
-         */
-        int first,second,third;
+        int first, second, third;
         Turn = hardwareMap.get(Servo.class, "Turn");
         Turn.setPosition(.95);
         waitForStart();
 
 
-
-        if (opModeIsActive())
-
-        {
-            boolean targetFound     = false;    // Set to true when an AprilTag target is detected
-            double  move           = 0;        // Desired forward power/speed (-1 to +1)
-            double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
-            double  turn            = 0;        // Desired turning power/speed (-1 to +1)
-            while (pipeline.isPos1() == 0 && pipeline.isPos2() == 0 && pipeline.isPos3() == 0)  {
+        while (opModeIsActive()) {
 
                 sleep(1000);
 
@@ -246,155 +224,32 @@ public class BlueRightCamera extends LinearOpMode
                 telemetry.addData("3", third);
                 telemetry.update();
 
-            }
-            int sum1 = 0, sum2 = 0, sum3 = 0;
-            for (int i = 0; i < 4; i++) {
-                first = pipeline.isPos1();
-                second = pipeline.isPos2();
-                third = pipeline.isPos3();
-                sum1 += first;
-                sum2 += second;
-                sum3 += third;
-                sleep(500);
-            }
-            first = sum1 / 4;
-            second = sum2 / 4;
-            third = sum3 / 4;
-            telemetry.addData("1", first);
-            telemetry.addData("2", second);
-            telemetry.addData("3", third);
-            leftLift = hardwareMap.get(DcMotor.class,"leftLift");
-            rightLift = hardwareMap.get(DcMotor.class,"rightLift");
-            Bucket = hardwareMap.get(Servo.class, "Bucket");
-            int maxOneTwo = Math.max(first, second);
-            int max = Math.max(maxOneTwo, third);
-            boolean ran = true;
-            double clawFullOpen = .775;
-            SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-            //multiply this number by the inches needed to travel: 0.68571429
-            if (ran) {
-                if (max == first) {
-                    telemetry.addData("1", first);
-                    Trajectory trajectoryFirst0 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(20)
-                            .build();
-                    TrajectorySequence ts = drive.trajectorySequenceBuilder(new Pose2d())
-                            .turn(Math.toRadians(-90)) // Turns 45 degrees counter-clockwise
-                            .build();
-                    Trajectory trajectoryFirst2 = drive.trajectoryBuilder(new Pose2d())
-                            .back(4)
-                            .addTemporalMarker(3, () -> {
-                                Turn.setPosition(.75);
-                            })
-                            .build();
-                    Trajectory trajectoryFirst3 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(3)
-                            .build();
-                    drive.followTrajectory(trajectoryFirst0);
-                    drive.followTrajectorySequence(ts);
-                    drive.followTrajectory(trajectoryFirst2);
-                    sleep(1000);
-                    drive.followTrajectory(trajectoryFirst3);
-                    //APRILTAG STUFF
-                    targetFound = false;
-                    desiredTag  = null;
 
-                    // Step through the list of detected tags and look for a matching tag
-                    List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-                    for (AprilTagDetection detection : currentDetections) {
-                        // Look to see if we have size info on this tag.
-                        if (detection.metadata != null) {
-                            //  Check to see if we want to track towards this tag.
-                            if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
-                                // Yes, we want to use this tag.
-                                targetFound = true;
-                                desiredTag = detection;
-                                break;  // don't look any further.
-                            } else {
-                                // This tag is in the library, but we do not want to track it right now.
-                                telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
-                            }
+                //multiply this number by the inches needed to travel: 0.68571429
+                //APRILTAG STUFF
+               // targetFound = false;
+                desiredTag = null;
+
+                // Step through the list of detected tags and look for a matching tag
+                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+                for (AprilTagDetection detection : currentDetections) {
+                    // Look to see if we have size info on this tag.
+                    if (detection.metadata != null) {
+                        //  Check to see if we want to track towards this tag.
+                        if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
+                            // Yes, we want to use this tag.
+                            desiredTag = detection;
+                            telemetry.addData("Unknown", "Tag Id %d is desired", detection.id);
+                           // break;  // don't look any further.
                         } else {
-                            // This tag is NOT in the library, so we don't have enough information to track to it.
-                            telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                            // This tag is in the library, but we do not want to track it right now.
+                            telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
                         }
+                    } else {
+                        // This tag is NOT in the library, so we don't have enough information to track to it.
+                        telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
                     }
-
-                    if (DESIRED_TAG_ID == 9 && targetFound == false) {
-
-                        // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-                        /*I think that with this part we would have to change this based off how we want our
-                         * heading and everything. I lowkey forgot what Owen said to put each thing as, but we
-                         * pretty much have to use roadrunner instead of powers like we use in TeleOp.
-                         * You pretty much will have one thing for your x-coordinate, y-coordinate,
-                         * and your heading.*/
-                        double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-                        double  headingError    = desiredTag.ftcPose.bearing;
-                        double  yawError        = desiredTag.ftcPose.yaw;
-
-                        // Use the speed and turn "gains" to calculate how we want the robot to move.
-                        move  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                        turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-                        strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-
-                        telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
-                    }
-
-                } else if (max == second) {
-                    telemetry.addData("2", second);
-                    Trajectory trajectoryMiddle0 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(31.3)
-                            .addTemporalMarker(4, () -> {
-                                Turn.setPosition(.75);
-                            })
-                            .build();
-                    Trajectory trajectoryMiddle1 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(3)
-                            .build();
-
-
-                    drive.followTrajectory(trajectoryMiddle0);
-                    sleep(1000);
-                    drive.followTrajectory(trajectoryMiddle1);
-
-
-
-                    ran = false;
-
-
-                } else if (max == third) {
-                    telemetry.addData("3", third);
-                    DESIRED_TAG_ID = 3;
-                    Trajectory trajectoryRight0 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(25)
-                            .build();
-                    TrajectorySequence ts2 = drive.trajectorySequenceBuilder(new Pose2d())
-                            .turn(Math.toRadians(80)) // Turns 45 degrees counter-clockwise
-                            .build();
-                    Trajectory trajectoryRight1 = drive.trajectoryBuilder(new Pose2d())
-                            .back(4)
-                            .addTemporalMarker(4, () -> {
-                                Turn.setPosition(.75);
-                            })
-                            .build();
-                    Trajectory trajectoryRight2 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(3)
-                            .build();
-                    drive.followTrajectory(trajectoryRight0);
-                    drive.followTrajectorySequence(ts2);
-                    drive.followTrajectory(trajectoryRight1);
-                    sleep(1000);
-                    drive.followTrajectory(trajectoryRight2);
-
-
-                    ran = false;
-
-
-
-
                 }
-            }
-
         }
     }
 
