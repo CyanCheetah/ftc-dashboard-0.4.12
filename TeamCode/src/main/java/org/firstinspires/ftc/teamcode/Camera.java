@@ -71,7 +71,7 @@ import java.util.List;
 
 
 @Autonomous
-public class CameraTEst extends LinearOpMode
+public class Camera extends LinearOpMode
 {
     private static Servo servoOne = null;
 
@@ -248,7 +248,7 @@ public class CameraTEst extends LinearOpMode
                 // targetFound = false;
                 desiredTag = null;
             }
-           int sum1 = 0, sum2 = 0, sum3 = 0;
+            int sum1 = 0, sum2 = 0, sum3 = 0;
             for (int i = 0; i < 4; i++) {
                 first = pipeline.isPos1();
                 second = pipeline.isPos2();
@@ -266,7 +266,7 @@ public class CameraTEst extends LinearOpMode
             telemetry.addData("3", third);
             int maxOneTwo = Math.max(first, second);
             int max = Math.max(maxOneTwo, third);
-                // Step through the list of detected tags and look for a matching tag
+            // Step through the list of detected tags and look for a matching tag
             SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
             if (max == first) {
                 telemetry.addData("1", first);
@@ -284,7 +284,7 @@ public class CameraTEst extends LinearOpMode
                 sleep(1000);
                 drive.followTrajectory(trajectoryFirst3);
             }
-            else if (max == second){
+            if (max == second){
                 telemetry.addData("2", second);
                 Trajectory trajectoryMiddle1 = drive.trajectoryBuilder(new Pose2d())
                         .forward(3)
@@ -294,8 +294,9 @@ public class CameraTEst extends LinearOpMode
                 //telemetry.addData("movement", "hi");
                 drive.followTrajectory(trajectoryMiddle1);
                 telemetry.addData("movement", "finsihed movment");
+                break;
             }
-            else if (max == third) {
+            if (max == third) {
                 telemetry.addData("3", third);
                 Trajectory trajectoryRight0 = drive.trajectoryBuilder(new Pose2d())
                         .forward(25)
@@ -310,64 +311,63 @@ public class CameraTEst extends LinearOpMode
                 drive.followTrajectorySequence(ts2);
                 sleep(1000);
                 drive.followTrajectory(trajectoryRight2);
+            }
+            initAprilTag();
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            int Count = 0;
+            for (AprilTagDetection detection : currentDetections) {
+                // Look to see if we have size info on this tag.
+                if (detection.metadata != null) {
+                    //  Check to see if we want to track towards this tag.
+                    if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
+                        // Yes, we want to use this tag.
+                        desiredTag = detection;
+                        telemetry.addData("Unknown", "Tag Id %d is desired", detection.id);
+                        final double DESIRED_DISTANCE = 2; //  this is how close the camera should get to the target (inches)
+
+                        // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+                        /*I think that with this part we would have to change this based off how we want our
+                         * heading and everything. I lowkey forgot what Owen said to put each thing as, but we
+                         * pretty much have to use roadrunner instead of powers like we use in TeleOp.
+                         * You pretty much will have one thing for your x-coordinate, y-coordinate,
+                         * and your heading.*/
+                        double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                        double  headingError    = desiredTag.ftcPose.bearing;
+                        double  yawError        = desiredTag.ftcPose.yaw;
+
+                        // Use the speed and turn "gains" to calculate how we want the robot to move.
+                        front  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                        side   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+                        heading = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+                        Trajectory trajectoryFirst0 = drive.trajectoryBuilder(new Pose2d())
+                                .forward(2)
+                                .build();
+                        drive.followTrajectory(trajectoryFirst0);
+                        Count = Count + 1;
+                        telemetry.addData("Loop counts", Count);
+                        //moveRobot(front,side,heading);
+                        telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", front, side, heading);
+
+
+                        break;  // don't look any further.
+
+                        // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+                        /*I think that with this part we would have to change this based off how we want our
+                         * heading and everything. I lowkey forgot what Owen said to put each thing as, but we
+                         * pretty much have to use roadrunner instead of powers like we use in TeleOp.
+                         * You pretty much will have one thing for your x-coordinate, y-coordinate,
+                         * and your heading.*/
+                    } else {
+                        // This tag is in the library, but we do not want to track it right now.
+                        telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                    }
+                } else {
+                    // This tag is NOT in the library, so we don't have enough information to track to it.
+                    telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                }
 
             }
-                initAprilTag();
-                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-                int Count = 0;
-                for (AprilTagDetection detection : currentDetections) {
-                    // Look to see if we have size info on this tag.
-                    if (detection.metadata != null) {
-                        //  Check to see if we want to track towards this tag.
-                        if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
-                            // Yes, we want to use this tag.
-                            desiredTag = detection;
-                            telemetry.addData("Unknown", "Tag Id %d is desired", detection.id);
-                            final double DESIRED_DISTANCE = 2; //  this is how close the camera should get to the target (inches)
-
-                            // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-                            /*I think that with this part we would have to change this based off how we want our
-                             * heading and everything. I lowkey forgot what Owen said to put each thing as, but we
-                             * pretty much have to use roadrunner instead of powers like we use in TeleOp.
-                             * You pretty much will have one thing for your x-coordinate, y-coordinate,
-                             * and your heading.*/
-                            double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-                            double  headingError    = desiredTag.ftcPose.bearing;
-                            double  yawError        = desiredTag.ftcPose.yaw;
-
-                            // Use the speed and turn "gains" to calculate how we want the robot to move.
-                            front  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                            side   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-                            heading = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-
-                            Trajectory trajectoryFirst0 = drive.trajectoryBuilder(new Pose2d())
-                                    .forward(2)
-                                    .build();
-                            drive.followTrajectory(trajectoryFirst0);
-                            Count = Count + 1;
-                            telemetry.addData("Loop counts", Count);
-                            //moveRobot(front,side,heading);
-                            telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", front, side, heading);
-
-
-                            break;  // don't look any further.
-
-                                // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-                                /*I think that with this part we would have to change this based off how we want our
-                                 * heading and everything. I lowkey forgot what Owen said to put each thing as, but we
-                                 * pretty much have to use roadrunner instead of powers like we use in TeleOp.
-                                 * You pretty much will have one thing for your x-coordinate, y-coordinate,
-                                 * and your heading.*/
-                                } else {
-                            // This tag is in the library, but we do not want to track it right now.
-                            telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
-                        }
-                    } else {
-                        // This tag is NOT in the library, so we don't have enough information to track to it.
-                        telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
-                    }
-
-                }
 
         }
 
