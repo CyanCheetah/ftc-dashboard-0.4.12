@@ -26,8 +26,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 import org.openftc.easyopencv.OpenCvPipeline;
 @Autonomous
-public class BlueLeft extends LinearOpMode
-{
+public class BlueLeft extends LinearOpMode {
     /**
      * swing ser os
      */
@@ -67,9 +66,7 @@ public class BlueLeft extends LinearOpMode
      */
     private static Servo Swing = null;
     @Override
-    public void runOpMode()
-
-    {
+    public void runOpMode() {
         /**
          * CameraMonitorViewID
          */
@@ -125,11 +122,9 @@ public class BlueLeft extends LinearOpMode
          * If you really want to open synchronously, the old method is still available.
          */
         webcam.setMillisecondsPermissionTimeout(5000); // Timeout for obtaining permission is configurable. Set before opening.
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
+            public void onOpened() {
                 /*
                  * Tell the webcam to start streaming images to us! Note that you must make sure
                  * the resolution you specify is supported by the camera. If it is not, an exception
@@ -148,10 +143,8 @@ public class BlueLeft extends LinearOpMode
                  */
                 webcam.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
             }
-
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
                 /*
                  * This will be called if the camera could not be opened
                  */
@@ -167,7 +160,7 @@ public class BlueLeft extends LinearOpMode
 
         Turn.setPosition(.95);
         sleep(3000);
-        while (!opModeIsActive())  {
+        while (!opModeIsActive()) {
             sleep(1000);
             first = pipeline.isPos1();
             second = pipeline.isPos2();
@@ -183,8 +176,7 @@ public class BlueLeft extends LinearOpMode
 
         }
         waitForStart();
-        if (opModeIsActive())
-        {
+        if (opModeIsActive()) {
             //redundancy
             if (sum1 == 0 || sum2 == 0 || sum3 == 0)  {
                 sleep(1000);
@@ -271,7 +263,6 @@ public class BlueLeft extends LinearOpMode
                     rightLift.setPower(0);
                     drive.followTrajectory(firt9);
                     drive.followTrajectory(first10);
-
                 } else if (max == second) {
                     telemetry.addData("2", second);
                     Bucket.setPosition(bucketInPos + .05);
@@ -326,8 +317,6 @@ public class BlueLeft extends LinearOpMode
                     drive.followTrajectory(trajectoryMiddle6);
                     // drive.followTrajectory(trajectoryMiddle5);
                     ran = false;
-
-
                 } else if (max == third) {
                     telemetry.addData("3", third);
                     Bucket.setPosition(bucketInPos + .05);

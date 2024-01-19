@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -57,20 +58,17 @@ import org.openftc.easyopencv.OpenCvPipeline;
 @Autonomous
 public class RedLeftCycle extends LinearOpMode
 {
-    private static Servo servoOne = null;
 
-    private static Servo servoTwo = null;
-
-
+    private static CRServo IntakeUno = null;
+    private static CRServo IntakeDos = null;
+    private static CRServo IntakeRoller = null;
+    private static Servo IntakePos = null;
     OpenCvWebcam webcam;
     private static DcMotor frontl = null;
     private static DcMotor frontr = null;
     private static DcMotor bottoml = null;
     private static DcMotor bottomr = null;
     SkystoneDeterminationPipeline pipeline = new SkystoneDeterminationPipeline();
-    private static DcMotor rightLift = null;
-    private static DcMotor leftLift = null;
-    private static Servo Bucket = null;
     @Override
     public void runOpMode()
 
@@ -145,9 +143,6 @@ public class RedLeftCycle extends LinearOpMode
         telemetry.update();
         // leftLift = hardwareMap.get(DcMotor.class,"leftLift");
         // rightLift = hardwareMap.get(DcMotor.class,"rightLift");
-        Servo servoOne = hardwareMap.servo.get("servoOne");
-        Servo servoTwo = hardwareMap.servo.get("servoTwo");
-        Servo Swing = hardwareMap.servo.get("Swing");
 
         //Bucket = hardwareMap.get(Servo.class, "Bucket");
         //Swing = hardwareMap.get(Servo.class, "Swing");
@@ -158,7 +153,34 @@ public class RedLeftCycle extends LinearOpMode
         /*
          * Wait for the user to press start on the Driver Station
          */
+        IntakeUno = hardwareMap.get(CRServo.class, "IntakeUno");
+        IntakeDos = hardwareMap.get(CRServo.class, "IntakeDos");
+        IntakeRoller = hardwareMap.get(CRServo.class, "IntakeRoller");
+        IntakePos = hardwareMap.get(Servo.class, "IntakePos");
         int first,second,third;
+        while (pipeline.isPos1() == 0 && pipeline.isPos2() == 0 && pipeline.isPos3() == 0)  {
+
+            sleep(1000);
+
+            first = pipeline.isPos1();
+            second = pipeline.isPos2();
+            third = pipeline.isPos3();
+            telemetry.addData("1", first);
+            telemetry.addData("2", second);
+            telemetry.addData("3", third);
+            telemetry.update();
+
+        }
+        int sum1 = 0, sum2 = 0, sum3 = 0;
+        for (int i = 0; i < 4; i++) {
+            first = pipeline.isPos1();
+            second = pipeline.isPos2();
+            third = pipeline.isPos3();
+            sum1 += first;
+            sum2 += second;
+            sum3 += third;
+            sleep(500);
+        }
         waitForStart();
 
 
@@ -166,37 +188,13 @@ public class RedLeftCycle extends LinearOpMode
         if (opModeIsActive())
 
         {
-            while (pipeline.isPos1() == 0 && pipeline.isPos2() == 0 && pipeline.isPos3() == 0)  {
 
-                sleep(1000);
-
-                first = pipeline.isPos1();
-                second = pipeline.isPos2();
-                third = pipeline.isPos3();
-                telemetry.addData("1", first);
-                telemetry.addData("2", second);
-                telemetry.addData("3", third);
-                telemetry.update();
-
-            }
-            int sum1 = 0, sum2 = 0, sum3 = 0;
-            for (int i = 0; i < 4; i++) {
-                first = pipeline.isPos1();
-                second = pipeline.isPos2();
-                third = pipeline.isPos3();
-                sum1 += first;
-                sum2 += second;
-                sum3 += third;
-                sleep(500);
-            }
             first = sum1 / 4;
             second = sum2 / 4;
             third = sum3 / 4;
             telemetry.addData("1", first);
             telemetry.addData("2", second);
             telemetry.addData("3", third);
-            leftLift = hardwareMap.get(DcMotor.class,"leftLift");
-            rightLift = hardwareMap.get(DcMotor.class,"rightLift");
             int maxOneTwo = Math.min(first, second);
             int max = Math.min(maxOneTwo, third);
             boolean ran = true;
@@ -211,9 +209,6 @@ public class RedLeftCycle extends LinearOpMode
                             .build();
                     Trajectory trajectoryFirst1 = drive.trajectoryBuilder(new Pose2d())
                             .forward(4)
-                            .addTemporalMarker(3, () -> {
-                                Turn.setPosition(.75);
-                            })
                             .build();
                     Trajectory trajectoryFirst2 = drive.trajectoryBuilder(new Pose2d())
                             .forward(4)
@@ -221,21 +216,63 @@ public class RedLeftCycle extends LinearOpMode
                     drive.followTrajectory(trajectoryFirst0);
                     drive.followTrajectory(trajectoryFirst1);
                     drive.followTrajectory(trajectoryFirst2);
-
-
                     ran = false;
 
                 } else if (max == second) {
                     telemetry.addData("2", second);
                     Trajectory trajectoryMiddle0 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(25)
+                            .forward(23)
+                            .addTemporalMarker(3, () -> {
+                                IntakePos.setPosition(.92);
+                            })
                             .build();
                     Trajectory trajectoryMiddle1 = drive.trajectoryBuilder(new Pose2d())
-                            .splineTo(new Vector2d(-5, 20), Math.toRadians(71))
+                            .lineToLinearHeading(new Pose2d(-5, 24, Math.toRadians(-75)))
+                            .addTemporalMarker(0, () -> {
+                                IntakeUno.setPower((-.8));
+                                IntakeDos.setPower((.8));
+                                IntakeRoller.setPower((1));
+                            })
+                            .addTemporalMarker(3, () -> {
+                                IntakeUno.setPower((0));
+                                IntakeDos.setPower((0));
+                                IntakeRoller.setPower((0));
+                            })
                             .build();
+                    Trajectory trajectoryMiddle10 = drive.trajectoryBuilder(new Pose2d())
+                            .forward(3)
+                            .build();
+                    Trajectory trajectoryMiddle2 = drive.trajectoryBuilder(new Pose2d())
+                            //.lineToLinearHeading(new Pose2d(2, 30, Math.toRadians(0)))
+                            .splineTo(new Vector2d(6, 22), Math.toRadians(0))
+                            .addTemporalMarker(0, () -> {
+                                IntakeUno.setPower((-.8));
+                                IntakeDos.setPower((.8));
+                                IntakeRoller.setPower((1));
+                            })
+                            .splineTo(new Vector2d(65, -5), Math.toRadians(0))
+                            //.lineToLinearHeading(new Pose2d(65, 0, Math.toRadians(0)))
+                            //.lineToLinearHeading(new Pose2d(15, -20, Math.toRadians(0)))
+                            .build();
+                    /*
+                    Trajectory trajectoryMiddle5 = drive.trajectoryBuilder(new Pose2d())
+                            .lineToLinearHeading(new Pose2d(-15, 20, Math.toRadians(0)))
+                            .build();
+                    Trajectory trajectoryMiddle6 = drive.trajectoryBuilder(new Pose2d())
+                            .back(65)
+                            .build();
+                            */
                     drive.followTrajectory(trajectoryMiddle0);
-                    sleep(1000);
+                    sleep(500);
                     drive.followTrajectory(trajectoryMiddle1);
+                    //drive.followTrajectory(trajectoryMiddle9);
+                    drive.followTrajectory(trajectoryMiddle10);
+                    drive.followTrajectory(trajectoryMiddle2);
+                    //drive.followTrajectory(trajectoryMiddle3);
+                    //drive.followTrajectory(trajectoryMiddle4);
+                    sleep(1000);
+                    //drive.followTrajectory(trajectoryMiddle5);
+                    //drive.followTrajectory(trajectoryMiddle6);
                     ran = false;
                 } else if (max == third) {
                     telemetry.addData("3", third);
@@ -244,9 +281,6 @@ public class RedLeftCycle extends LinearOpMode
                             .build();
                     Trajectory trajectoryRight1 = drive.trajectoryBuilder(new Pose2d())
                             .back(8)
-                            .addTemporalMarker(4, () -> {
-                                Turn.setPosition(.75);
-                            })
                             .build();
                     Trajectory trajectoryRight2 = drive.trajectoryBuilder(new Pose2d())
                             .forward(4)
