@@ -42,6 +42,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -220,38 +221,38 @@ public class RedLeftCycle extends LinearOpMode
 
                 } else if (max == second) {
                     telemetry.addData("2", second);
-                    Trajectory trajectoryMiddle0 = drive.trajectoryBuilder(new Pose2d())
+                    TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
                             .forward(23)
-                            .addTemporalMarker(3, () -> {
+                            .addTemporalMarker(0, () -> {
                                 IntakePos.setPosition(.92);
                             })
-                            .build();
-                    Trajectory trajectoryMiddle1 = drive.trajectoryBuilder(new Pose2d())
-                            .lineToLinearHeading(new Pose2d(-5, 24, Math.toRadians(-75)))
-                            .addTemporalMarker(0, () -> {
+                            .lineToLinearHeading(new Pose2d(17, 24, Math.toRadians(-75)))
+                            .addTemporalMarker(2, () -> {
                                 IntakeUno.setPower((-.8));
                                 IntakeDos.setPower((.8));
                                 IntakeRoller.setPower((1));
                             })
-                            .addTemporalMarker(3, () -> {
+                            .addTemporalMarker(3.5, () -> {
                                 IntakeUno.setPower((0));
                                 IntakeDos.setPower((0));
                                 IntakeRoller.setPower((0));
                             })
                             .build();
-                    Trajectory trajectoryMiddle10 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(3)
-                            .build();
-                    Trajectory trajectoryMiddle2 = drive.trajectoryBuilder(new Pose2d())
-                            //.lineToLinearHeading(new Pose2d(2, 30, Math.toRadians(0)))
-                            .splineTo(new Vector2d(6, 22), Math.toRadians(0))
+                    TrajectorySequence trajectoryMiddle2 = drive.trajectorySequenceBuilder(new Pose2d())
+                           // .splineTo(new Vector2d(-5, 24), Math.toRadians(0))
+                            .splineTo(new Vector2d(10, 20), Math.toRadians(3))
                             .addTemporalMarker(0, () -> {
                                 IntakeUno.setPower((-.8));
                                 IntakeDos.setPower((.8));
                                 IntakeRoller.setPower((1));
                             })
-                            .splineTo(new Vector2d(65, -5), Math.toRadians(0))
-                            //.lineToLinearHeading(new Pose2d(65, 0, Math.toRadians(0)))
+                            .splineTo(new Vector2d(70, 20), Math.toRadians(0))
+                            .addTemporalMarker(1, () -> {
+                                IntakeUno.setPower((0));
+                                IntakeDos.setPower((0));
+                                IntakeRoller.setPower((0));
+                            })
+                            .splineTo(new Vector2d(95, 8), Math.toRadians(0))
                             //.lineToLinearHeading(new Pose2d(15, -20, Math.toRadians(0)))
                             .build();
                     /*
@@ -262,12 +263,11 @@ public class RedLeftCycle extends LinearOpMode
                             .back(65)
                             .build();
                             */
-                    drive.followTrajectory(trajectoryMiddle0);
-                    sleep(500);
-                    drive.followTrajectory(trajectoryMiddle1);
+                    //drive.followTrajectory(trajectoryMiddle0);
+                    drive.followTrajectorySequence(trajSeq);
+                    //drive.followTrajectory(trajectoryMiddle1);
                     //drive.followTrajectory(trajectoryMiddle9);
-                    drive.followTrajectory(trajectoryMiddle10);
-                    drive.followTrajectory(trajectoryMiddle2);
+                    drive.followTrajectorySequence(trajectoryMiddle2);
                     //drive.followTrajectory(trajectoryMiddle3);
                     //drive.followTrajectory(trajectoryMiddle4);
                     sleep(1000);
