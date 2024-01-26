@@ -49,45 +49,6 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-/*
- * This OpMode illustrates using a camera to locate and drive towards a specific AprilTag.
- * The code assumes a Holonomic (Mecanum or X Drive) Robot.
- *
- * For an introduction to AprilTags, see the ftc-docs link below:
- * https://ftc-docs.firstinspires.org/en/latest/apriltag/vision_portal/apriltag_intro/apriltag-intro.html
- *
- * When an AprilTag in the TagLibrary is detected, the SDK provides location and orientation of the tag, relative to the camera.
- * This information is provided in the "ftcPose" member of the returned "detection", and is explained in the ftc-docs page linked below.
- * https://ftc-docs.firstinspires.org/apriltag-detection-values
- *
- * The drive goal is to rotate to keep the Tag centered in the camera, while strafing to be directly in front of the tag, and
- * driving towards the tag to achieve the desired distance.
- * To reduce any motion blur (which will interrupt the detection process) the Camera exposure is reduced to a very low value (5mS)
- * You can determine the best Exposure and Gain values by using the ConceptAprilTagOptimizeExposure OpMode in this Samples folder.
- *
- * The code assumes a Robot Configuration with motors named: leftfront_drive and rightfront_drive, leftback_drive and rightback_drive.
- * The motor directions must be set so a positive power goes forward on all wheels.
- * This sample assumes that the current game AprilTag Library (usually for the current season) is being loaded by default,
- * so you should choose to approach a valid tag ID (usually starting at 0)
- *
- * Under manual control, the left stick will move forward/back & left/right.  The right stick will rotate the robot.
- * Manually drive the robot until it displays Target data on the Driver Station.
- *
- * Press and hold the *Left Bumper* to enable the automatic "Drive to target" mode.
- * Release the Left Bumper to return to manual driving mode.
- *
- * Under "Drive To Target" mode, the robot has three goals:
- * 1) Turn the robot to always keep the Tag centered on the camera frame. (Use the Target Bearing to turn the robot.)
- * 2) Strafe the robot towards the centerline of the Tag, so it approaches directly in front  of the tag.  (Use the Target Yaw to strafe the robot)
- * 3) Drive towards the Tag to get to the desired distance.  (Use Tag Range to drive the robot forward/backward)
- *
- * Use DESIRED_DISTANCE to set how close you want the robot to get to the target.
- * Speed and Turn sensitivity can be adjusted using the SPEED_GAIN, STRAFE_GAIN and TURN_GAIN constants.
- *
- * Use Android Studio to Copy this Class, and Paste it into the TeamCode/src/main/java/org/firstinspires/ftc/teamcode folder.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
- *
- */
 
 @TeleOp
 public class CyanCheetahOpBlue extends LinearOpMode
@@ -115,9 +76,9 @@ public class CyanCheetahOpBlue extends LinearOpMode
     private DcMotor rightHang = null;
     private Servo servoOne = null;
     private Servo servoTwo = null;
-    private Servo Bucket = null;
-    private Servo Swing = null;
-    private Servo Turn = null;
+    //private Servo Bucket = null;
+    // private Servo Swing = null;
+    // private Servo Turn = null;
     private DcMotor leftHang = null;//  Used to control the right back drive wheel
     private static Servo DroneLauncher = null;
     private static Servo DroneLinkage = null;
@@ -127,6 +88,9 @@ public class CyanCheetahOpBlue extends LinearOpMode
     private static CRServo IntakeRoller = null;
     private static Servo IntakePos = null;
     private static Servo OuttakeClaw = null;
+    private static Servo OuttakeFlip = null;
+
+    private static Servo OuttakeSpin = null;
 
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
     public int DESIRED_TAG_ID = 2;     // Choose the tag you want to approach or set to -1 for ANY tag.
@@ -158,11 +122,11 @@ public class CyanCheetahOpBlue extends LinearOpMode
         rightLift = hardwareMap.get(DcMotor.class,"rightLift");
         rightHang = hardwareMap.get(DcMotor.class,"rightHang");
         leftHang = hardwareMap.get(DcMotor.class,"leftHang");
-        Turn = hardwareMap.get(Servo.class, "Turn");
+        //Turn = hardwareMap.get(Servo.class, "Turn");
         //Servo servoOne = hardwareMap.servo.get("servoOne");
         //Servo servoTwo = hardwareMap.servo.get("servoTwo");
-        Bucket = hardwareMap.get(Servo.class, "Bucket");
-        Swing = hardwareMap.get(Servo.class, "Swing");
+        //Bucket = hardwareMap.get(Servo.class, "Bucket");
+        //Swing = hardwareMap.get(Servo.class, "Swing");
         DroneLauncher = hardwareMap.get(Servo.class, "DroneLauncher");
         DroneLinkage = hardwareMap.get(Servo.class, "DroneLinkage");
         IntakeUno = hardwareMap.get(CRServo.class, "IntakeUno");
@@ -170,6 +134,8 @@ public class CyanCheetahOpBlue extends LinearOpMode
         IntakeRoller = hardwareMap.get(CRServo.class, "IntakeRoller");
         IntakePos = hardwareMap.get(Servo.class, "IntakePos");
         OuttakeClaw = hardwareMap.get(Servo.class, "OuttakeClaw");
+        OuttakeFlip = hardwareMap.get(Servo.class, "OuttakeFlip");
+        OuttakeSpin = hardwareMap.get(Servo.class, "OuttakeSpin");
 
 
 
@@ -203,23 +169,16 @@ public class CyanCheetahOpBlue extends LinearOpMode
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
         waitForStart();
-        //MotorConstantValues constants = new MotorConstantValues();
-        //double SwingOutPosition = constants.getSwingOutPosition();
-        //double SwingScorePosition = constants.getSwingScorePosition();
-        //double SwingInPosition = constants.getSwingInPosition();
-        //double BucketOutPosition = constants.getBucketOutPosition();
-        //double BucketInPosition = constants.getBucketInPosition();
-        //double BucketSuperUp = BucketInPosition + .025;
-        //double mainLiftPower = 0;
-        // ------ the values above may change often
-        //double clawClose = constants.getClawClose();
-        //double clawSemiOpen = constants.getClawSemiOpen();
-        //double clawFullOpen = constants.getClawFullOpen();
+        MotorConstantValues constants = new MotorConstantValues();
         double triggerPowerAdjust = 1;
-        double intakeUp = 0.85;
-        double intakeDown = 0.99;
-        double outClose = 0.065;
-        double outOpen = 0.275;
+        double intakeUp = constants.getIntakeUp();
+        double intakeDown = constants.getIntakeDown();
+        double outClose = constants.getOutClose();
+        double outOpen = constants.getOutOpen();
+        double flipOut = constants.getFlipOut();
+        double flipIn = constants.getFlipIn();
+        double spinOne = constants.getSpinOne();
+        double spinTwo = constants.getSpinTwo();
         //double intakeUp = 0.92; GOOD STACK 5
         //double intakeDown = .93; GOOD STACK 4
         //double bucketPos = 0.37 ;
@@ -261,20 +220,6 @@ public class CyanCheetahOpBlue extends LinearOpMode
                 rightLift.setPower((0));
                 leftLift.setPower((0));
             }
-            //movement to the bucket stuff
-            /* if (gamepad2.x) {
-                moveServos(servoOne, servoTwo, -.375);
-            }
-            if (gamepad2.b) {
-                moveServos(servoOne, servoTwo, -.3);
-            }
-            if (gamepad2.y) {
-                moveServos(servoOne, servoTwo, -.32);
-            }
-            if (gamepad2.a) {
-                moveServos(servoOne, servoTwo, -.395);
-            }
-             */
             if (gamepad2.x) {
                 IntakeUno.setPower((.8));
                 IntakeDos.setPower((-.8));
@@ -290,64 +235,36 @@ public class CyanCheetahOpBlue extends LinearOpMode
                 IntakeDos.setPower((0));
                 IntakeRoller.setPower((0));
             }
-            //places pixel from front claw to bucket
-            /*if (gamepad2.dpad_left){
-                if(Turn.getPosition() > .93){
-                    moveServos(servoOne, servoTwo, .2);
-                    sleep(300);
-                    Turn.setPosition(clawSemiOpen);
-                    sleep(400);
-                    moveServos(servoOne, servoTwo, -.3);
-                    sleep(300);
-                    Turn.setPosition(clawFullOpen);
-                }
+            if (gamepad2.dpad_left) {
+                OuttakeSpin.setPosition(spinOne);
             }
-        */
+            if (gamepad2.dpad_right) {
+                OuttakeSpin.setPosition(spinTwo);
+            }
+            if (gamepad2.left_bumper) {
+                OuttakeFlip.setPosition(flipIn);
+            }
+            if (gamepad2.right_bumper) {
+                OuttakeFlip.setPosition(flipOut);
+            }
             //closes the claw
             if (gamepad2.a){
                 IntakePos.setPosition(intakeUp);
+                // sleep(200);
+                //if (gamepad2.a){
+                //  IntakePos.setPosition(intakeUp);
+                //}
             }
 
             if (gamepad2.b){
                 IntakePos.setPosition(intakeDown);
             }
-            if (gamepad2.dpad_left) {
-                OuttakeClaw.setPosition(outOpen);
-            }
-            if (gamepad2.dpad_right) {
+            if (gamepad2.left_trigger > 0.5) {
                 OuttakeClaw.setPosition(outClose);
             }
-            //Bucket algorithm
-            /*
-            if (gamepad2.right_trigger > .5){
-                if(!swingOut) {
-                    sleep(10);
-                    Swing.setPosition((SwingScorePosition));
-                }
-                Bucket.setPosition(BucketOutPosition);
-                bucketPos = BucketOutPosition;
+            if (gamepad2.right_trigger > 0.5) {
+                OuttakeClaw.setPosition(outOpen);
             }
-            //bucket and swing position
-            if (gamepad2.left_trigger > .5){
-                Bucket.setPosition(BucketInPosition);
-                sleep(100);
-                Swing.setPosition(SwingInPosition);
-                bucketPos = BucketInPosition;
-                swingOut = false;
-            }
-            telemetry.addData("BucketPos", Bucket.getPosition());
-            //bucket position to superUp
-            /*
-            if (gamepad2.left_bumper){
-                Turn.setPosition(clawFullOpen);
-            }
-
-            //changes swing position to swing out
-            if (gamepad2.right_bumper) {
-                Swing.setPosition(SwingOutPosition);
-                swingOut = true;
-            }
-            */
             //          ************************************************ GAMEPAD 1 CONTROLS ************************************************
             /**
              * Gamepad 1 Controls:
@@ -372,9 +289,6 @@ public class CyanCheetahOpBlue extends LinearOpMode
              * Right Bumper: Drone Linkage
              * Left Trigger: AprilTags
              */
-            //if (gamepad1.left_trigger > .5){
-            //   Bucket.setPosition(BucketOutPosition);
-            //}
             if (gamepad1.right_trigger > 0) {
                 triggerPowerAdjust = .4;
             } else {
@@ -393,34 +307,11 @@ public class CyanCheetahOpBlue extends LinearOpMode
                 leftHang.setPower(0);
                 rightHang.setPower(0);
             }
-            //minute adjustions for the bucket angle. The bucketPos double variable
-            //despite the game controller 2's bucket movement. The values are updated.
-            /*
-            if (gamepad1.dpad_up){
-                Bucket.setPosition(bucketPos + .001);
-                bucketPos=bucketPos+.001;
-                BucketInPosition = BucketInPosition + .001;
-                BucketOutPosition = BucketOutPosition + .001;
-
-
-            }
-            if (gamepad1.x) {
-                Bucket.setPosition(bucketPos - .001);
-                bucketPos=bucketPos-.001;
-                BucketInPosition = BucketInPosition - .001;
-                BucketOutPosition = BucketOutPosition - .001;
-
-            }
-             */
             //drone launch code.
             if(gamepad1.b) {
                 DroneLinkage.setPosition(1);
                 //DroneLinkage.setPosition(0.85);
             }
-            //if(gamepad1.dpad_right){
-            //   DroneLauncher.setPosition(0.3);
-            //DroneLinkage.setPosition(0.95);
-            //}
             if(gamepad1.left_bumper) {
                 double pos = 1.0;
                 //DroneLinkage.setPosition(.87);
@@ -431,6 +322,7 @@ public class CyanCheetahOpBlue extends LinearOpMode
                 }
 
             }
+
             telemetry.addData("Drone", DroneLinkage.getPosition());
             if(gamepad1.right_bumper) {
                 DroneLauncher.setPosition(0.3);
