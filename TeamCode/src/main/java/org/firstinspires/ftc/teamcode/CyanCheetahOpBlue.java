@@ -220,12 +220,12 @@ public class CyanCheetahOpBlue extends LinearOpMode
                 rightLift.setPower((0));
                 leftLift.setPower((0));
             }
-            if (gamepad2.x) {
+            if (gamepad1.x) {
                 IntakeUno.setPower((.8));
                 IntakeDos.setPower((-.8));
                 IntakeRoller.setPower((-1));
             }
-            else if (gamepad2.y) {
+            else if (gamepad1.left_trigger > 0.5) {
                 IntakeUno.setPower((-.8));
                 IntakeDos.setPower((.8));
                 IntakeRoller.setPower((1));
@@ -351,7 +351,7 @@ public class CyanCheetahOpBlue extends LinearOpMode
             }
 
             // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
-            if (gamepad1.left_trigger > 0.3 && targetFound) {
+            if (gamepad1.right_bumper && targetFound) {
 
                 // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
                 double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);

@@ -204,25 +204,9 @@ public class RedLeftCycle extends LinearOpMode
             //multiply this number by the inches needed to travel: 0.68571429
             if (ran) {
                 if (max == first) {
-                    telemetry.addData("1", first);
-                    Trajectory trajectoryFirst0 = drive.trajectoryBuilder(new Pose2d())
-                            .lineToLinearHeading(new Pose2d(27.5, 5, Math.toRadians(71)))
-                            .build();
-                    Trajectory trajectoryFirst1 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(4)
-                            .build();
-                    Trajectory trajectoryFirst2 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(4)
-                            .build();
-                    drive.followTrajectory(trajectoryFirst0);
-                    drive.followTrajectory(trajectoryFirst1);
-                    drive.followTrajectory(trajectoryFirst2);
-                    ran = false;
-
-                } else if (max == second) {
                     telemetry.addData("2", second);
                     TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
-                            .forward(23)
+                            .forward(23)//change to forward turn
                             .addTemporalMarker(0, () -> {
                                 IntakePos.setPosition(.92);
                             })
@@ -239,7 +223,7 @@ public class RedLeftCycle extends LinearOpMode
                             })
                             .build();
                     TrajectorySequence trajectoryMiddle2 = drive.trajectorySequenceBuilder(new Pose2d())
-                           // .splineTo(new Vector2d(-5, 24), Math.toRadians(0))
+                            // .splineTo(new Vector2d(-5, 24), Math.toRadians(0))
                             .splineTo(new Vector2d(10, 20), Math.toRadians(3))
                             .addTemporalMarker(0, () -> {
                                 IntakeUno.setPower((-.8));
@@ -274,21 +258,87 @@ public class RedLeftCycle extends LinearOpMode
                     //drive.followTrajectory(trajectoryMiddle5);
                     //drive.followTrajectory(trajectoryMiddle6);
                     ran = false;
+
+                } else if (max == second) {
+                    telemetry.addData("2", second);
+                    TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
+                            .forward(23)
+                            .addTemporalMarker(0, () -> {
+                                IntakePos.setPosition(.92);
+                            })
+                            .lineToLinearHeading(new Pose2d(17, 24, Math.toRadians(-75)))
+                            .addTemporalMarker(2, () -> {
+                                IntakeUno.setPower((-.8));
+                                IntakeDos.setPower((.8));
+                                IntakeRoller.setPower((1));
+                            })
+                            .addTemporalMarker(3.5, () -> {
+                                IntakeUno.setPower((0));
+                                IntakeDos.setPower((0));
+                                IntakeRoller.setPower((0));
+                            })
+                            .build();
+                    TrajectorySequence trajectoryMiddle2 = drive.trajectorySequenceBuilder(new Pose2d())
+                            .splineTo(new Vector2d(10, 20), Math.toRadians(3))
+                            .addTemporalMarker(0, () -> {
+                                IntakeUno.setPower((-.8));
+                                IntakeDos.setPower((.8));
+                                IntakeRoller.setPower((1));
+                            })
+                            .splineTo(new Vector2d(70, 20), Math.toRadians(0))
+                            .addTemporalMarker(1, () -> {
+                                IntakeUno.setPower((0));
+                                IntakeDos.setPower((0));
+                                IntakeRoller.setPower((0));
+                            })
+                            .splineTo(new Vector2d(95, 8), Math.toRadians(0))//ends when its in middle position
+                            .build();
+                    drive.followTrajectorySequence(trajSeq);
+                    drive.followTrajectorySequence(trajectoryMiddle2);
+                    ran = false;
                 } else if (max == third) {
-                    telemetry.addData("3", third);
-                    Trajectory trajectoryRight0 = drive.trajectoryBuilder(new Pose2d())
-                            .lineToLinearHeading(new Pose2d(26, -5, Math.toRadians(71)))
+                    telemetry.addData("2", second);
+                    TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
+                            .forward(23)
+                            .addTemporalMarker(0, () -> {
+                                IntakePos.setPosition(.92);
+                            })
+                            .lineToLinearHeading(new Pose2d(17, 24, Math.toRadians(-75)))
+                            .addTemporalMarker(2, () -> {
+                                IntakeUno.setPower((-.8));
+                                IntakeDos.setPower((.8));
+                                IntakeRoller.setPower((1));
+                            })
+                            .addTemporalMarker(3.5, () -> {
+                                IntakeUno.setPower((0));
+                                IntakeDos.setPower((0));
+                                IntakeRoller.setPower((0));
+                            })
                             .build();
-                    Trajectory trajectoryRight1 = drive.trajectoryBuilder(new Pose2d())
-                            .back(8)
+                    TrajectorySequence trajectoryMiddle2 = drive.trajectorySequenceBuilder(new Pose2d())
+                            // .splineTo(new Vector2d(-5, 24), Math.toRadians(0))
+                            .splineTo(new Vector2d(10, 20), Math.toRadians(3))
+                            .addTemporalMarker(0, () -> {
+                                IntakeUno.setPower((-.8));
+                                IntakeDos.setPower((.8));
+                                IntakeRoller.setPower((1));
+                            })
+                            .splineTo(new Vector2d(70, 20), Math.toRadians(0))
+                            .addTemporalMarker(1, () -> {
+                                IntakeUno.setPower((0));
+                                IntakeDos.setPower((0));
+                                IntakeRoller.setPower((0));
+                            })
+                            .splineTo(new Vector2d(95, 8), Math.toRadians(0))
                             .build();
-                    Trajectory trajectoryRight2 = drive.trajectoryBuilder(new Pose2d())
-                            .forward(4)
-                            .build();
-                    drive.followTrajectory(trajectoryRight0);
-                    drive.followTrajectory(trajectoryRight1);
-                    sleep(500);
-                    drive.followTrajectory(trajectoryRight2);
+                    drive.followTrajectorySequence(trajSeq);
+                    drive.followTrajectorySequence(trajectoryMiddle2);
+                    //drive.followTrajectory(trajectoryMiddle3);
+                    //drive.followTrajectory(trajectoryMiddle4);
+                    sleep(1000);
+                    //drive.followTrajectory(trajectoryMiddle5);
+                    //drive.followTrajectory(trajectoryMiddle6);
+                    ran = false;
                     //wow its cyancheetah
                 }
             }

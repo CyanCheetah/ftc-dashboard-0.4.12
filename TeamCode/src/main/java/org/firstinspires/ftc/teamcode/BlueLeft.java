@@ -98,10 +98,6 @@ public class BlueLeft extends LinearOpMode {
         /**
          * constants for the servos.
          */
-        double clawFullOpen = constants.getClawFullOpen();
-        double swingPos = constants.getSwingOutPosition();
-        double bucketPos = constants.getBucketOutPosition();
-        double bucketInPos = constants.getBucketInPosition();
         /**
          * declaring motor names
          */
@@ -208,15 +204,11 @@ public class BlueLeft extends LinearOpMode {
             if (ran) {
                 if (max == first) {
                     telemetry.addData("1", first);
-                    Bucket.setPosition(bucketInPos + .05);
                     Trajectory trajectoryFirst0 = drive.trajectoryBuilder(new Pose2d())
                             .lineToLinearHeading(new Pose2d(27.5, 5, Math.toRadians(71)))
                             .build();
                     Trajectory trajectoryFirst1 = drive.trajectoryBuilder(new Pose2d())
                             .forward(4)
-                            .addTemporalMarker(3, () -> {
-                                Turn.setPosition(clawFullOpen);
-                            })
                             .build();
                     Trajectory trajectoryFirst2 = drive.trajectoryBuilder(new Pose2d())
                             .strafeRight(25)
@@ -252,9 +244,7 @@ public class BlueLeft extends LinearOpMode {
                     sleep(2100);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                    Swing.setPosition(swingPos);
                     sleep(2000);
-                    Bucket.setPosition(bucketPos);
                     sleep(400);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
@@ -265,12 +255,8 @@ public class BlueLeft extends LinearOpMode {
                     drive.followTrajectory(first10);
                 } else if (max == second) {
                     telemetry.addData("2", second);
-                    Bucket.setPosition(bucketInPos + .05);
                     Trajectory trajectoryMiddle0 = drive.trajectoryBuilder(new Pose2d())
                             .forward(31.3)
-                            .addTemporalMarker(4, () -> {
-                                Turn.setPosition(clawFullOpen);
-                            })
                             .build();
                     Trajectory trajectoryMiddle1 = drive.trajectoryBuilder(new Pose2d())
                             .forward(3)
@@ -304,9 +290,7 @@ public class BlueLeft extends LinearOpMode {
                     sleep(1900);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                    Swing.setPosition(swingPos);
                     sleep(2000);
-                    Bucket.setPosition(bucketPos);
                     sleep(400);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
@@ -319,14 +303,12 @@ public class BlueLeft extends LinearOpMode {
                     ran = false;
                 } else if (max == third) {
                     telemetry.addData("3", third);
-                    Bucket.setPosition(bucketInPos + .05);
                     Trajectory trajectoryRight0 = drive.trajectoryBuilder(new Pose2d())
                             .lineToLinearHeading(new Pose2d(26, -5, Math.toRadians(71)))
                             .build();
                     Trajectory trajectoryRight1 = drive.trajectoryBuilder(new Pose2d())
                             .back(7)
                             .addTemporalMarker(4, () -> {
-                                Turn.setPosition(clawFullOpen);
                             })
                             .build();
                     Trajectory trajectoryRight2 = drive.trajectoryBuilder(new Pose2d())
@@ -358,9 +340,7 @@ public class BlueLeft extends LinearOpMode {
                     sleep(2000);
                     leftLift.setPower(0);
                     rightLift.setPower(0);
-                    Swing.setPosition(swingPos);
                     sleep(2000);
-                    Bucket.setPosition(bucketPos);
                     sleep(400);
                     leftLift.setPower(.3);
                     rightLift.setPower(-.3);
