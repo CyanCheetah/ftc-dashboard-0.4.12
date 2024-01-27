@@ -170,6 +170,7 @@ public class CyanCheetahOpBlue extends LinearOpMode
         telemetry.update();
         waitForStart();
         MotorConstantValues constants = new MotorConstantValues();
+        double liftPowerAdjust = 1;
         double triggerPowerAdjust = 1;
         double intakeUp = constants.getIntakeUp();
         double intakeDown = constants.getIntakeDown();
@@ -207,25 +208,31 @@ public class CyanCheetahOpBlue extends LinearOpMode
                     // This tag is NOT in the library, so we don't have enough information to track to it.
                     telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
                 }
+
             }
             if (gamepad2.dpad_down) {
-                rightLift.setPower((.65));
-                leftLift.setPower((-.65));
+                rightLift.setPower((.65*liftPowerAdjust));
+                leftLift.setPower((-.65*liftPowerAdjust));
             }
             else if (gamepad2.dpad_up) {
-                rightLift.setPower((-.65));
-                leftLift.setPower((.65));
+                rightLift.setPower((-.65*liftPowerAdjust));
+                leftLift.setPower((.65*liftPowerAdjust));
             }
             else {
                 rightLift.setPower((0));
                 leftLift.setPower((0));
             }
-            if (gamepad1.x) {
+            if (gamepad2.b) {
+                liftPowerAdjust = .4;
+            } else {
+                liftPowerAdjust = 1;
+            }
+            if (gamepad2.y) {
                 IntakeUno.setPower((.8));
                 IntakeDos.setPower((-.8));
                 IntakeRoller.setPower((-1));
             }
-            else if (gamepad1.left_trigger > 0.5) {
+            else if (gamepad2.x) {
                 IntakeUno.setPower((-.8));
                 IntakeDos.setPower((.8));
                 IntakeRoller.setPower((1));
@@ -248,7 +255,7 @@ public class CyanCheetahOpBlue extends LinearOpMode
                 OuttakeFlip.setPosition(flipOut);
             }
             //closes the claw
-            if (gamepad2.a){
+            if (gamepad1.dpad_right){
                 IntakePos.setPosition(intakeUp);
                 // sleep(200);
                 //if (gamepad2.a){
@@ -256,7 +263,7 @@ public class CyanCheetahOpBlue extends LinearOpMode
                 //}
             }
 
-            if (gamepad2.b){
+            if (gamepad1.dpad_left){
                 IntakePos.setPosition(intakeDown);
             }
             if (gamepad2.left_trigger > 0.5) {
@@ -327,6 +334,7 @@ public class CyanCheetahOpBlue extends LinearOpMode
             if(gamepad1.right_bumper) {
                 DroneLauncher.setPosition(0.3);
             }
+            /*
             if(gamepad1.dpad_left) {
                 DESIRED_TAG_ID = 1;
             }
@@ -336,6 +344,8 @@ public class CyanCheetahOpBlue extends LinearOpMode
             if (gamepad1.dpad_right) {
                 DESIRED_TAG_ID = 3;
             }
+
+             */
             // Tell the driver what we see, and what to do.
             if (targetFound) {
                 telemetry.addData("\n>","HOLD Left-Trigger to Drive to Target\n");
@@ -367,9 +377,9 @@ public class CyanCheetahOpBlue extends LinearOpMode
             } else {
 
                 // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
-                drive  = -gamepad1.left_stick_y  / 1.75 * triggerPowerAdjust;  // Reduce drive rate to 50%.
-                strafe = -gamepad1.left_stick_x  / 1.75 * triggerPowerAdjust;  // Reduce strafe rate to 50%.
-                turn   = -gamepad1.right_stick_x / 2.5 * triggerPowerAdjust;  // Reduce turn rate to 33%.
+                drive  = -gamepad1.left_stick_y  / 1.25 * triggerPowerAdjust;  // Reduce drive rate to 50%.
+                strafe = -gamepad1.left_stick_x  / 1.5 * triggerPowerAdjust;  // Reduce strafe rate to 50%.
+                turn   = -gamepad1.right_stick_x / 2 * triggerPowerAdjust;  // Reduce turn rate to 33%.
                 telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
             }
             telemetry.update();
