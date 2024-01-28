@@ -19,9 +19,17 @@ public class MotorConstantValues {
 
     private double flipIn = 0.245;
 
-    private double spinOne = 0.3125;
+    private double Top = .655;
 
-    private double spinTwo = 0.655;
+    private double Left = 0.3125;
+
+    private double topLeft = 0.48375;
+
+    private double bottomLeft = .14125;
+
+    private double topRight = .82625;
+
+    private double Right = 0.98;
     public double getIntakeUp(){
         return intakeUp;
     }
@@ -40,11 +48,23 @@ public class MotorConstantValues {
     public double getFlipIn(){
         return flipIn;
     }
-    public double getSpinOne(){
-        return spinOne;
+    public double getSpinTop(){
+        return Top;
     }
-    public double getSpinTwo(){
-        return spinTwo;
+    public double getSpinTopLeft(){
+        return topLeft;
+    }
+    public double getSpinBottomLeft(){
+        return bottomLeft;
+    }
+    public double getSpinTopRight(){
+        return topRight;
+    }
+    public double getSpinRight(){
+        return Right;
+    }
+    public double getSpinLeft(){
+        return Left;
     }
 
 
