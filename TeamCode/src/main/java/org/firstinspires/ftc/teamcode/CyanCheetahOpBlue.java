@@ -231,7 +231,7 @@ public class CyanCheetahOpBlue extends LinearOpMode
         double Top = constants.getSpinTop();
         double topLeft = constants.getSpinTopLeft();
         double left = constants.getSpinLeft();
-        double bottomLeft = constants.getSpinBottomLeft();
+        double bottomRight = constants.getSpinBottomRight();
         double right = constants.getSpinRight();
         double topRight = constants.getSpinTopRight();
         int stuff = 0;
@@ -304,11 +304,11 @@ public class CyanCheetahOpBlue extends LinearOpMode
             }
             if (gamepad2.right_stick_x < -0.55 && gamepad2.right_stick_y > 0.55){
                 telemetry.addData("BottomLeft", stuff);
-                OuttakeSpin.setPosition(bottomLeft);
 
             }
             if (gamepad2.right_stick_x > 0.55 && gamepad2.right_stick_y > 0.55){
                 telemetry.addData("BottomRight", stuff);
+                OuttakeSpin.setPosition(bottomRight);
 
             }
             if (gamepad2.right_stick_x > 0.55 && (gamepad2.right_stick_y >= -0.1 && gamepad2.right_stick_y <= 0.1)){
@@ -373,26 +373,8 @@ public class CyanCheetahOpBlue extends LinearOpMode
             if (gamepad2.right_bumper) {
                 OuttakeFlip.setPosition(flipOut);
             }
-            //places pixel from front claw to bucket
-            /*if (gamepad2.dpad_left){
-                if(Turn.getPosition() > .93){
-                    moveServos(servoOne, servoTwo, .2);
-                    sleep(300);
-                    Turn.setPosition(clawSemiOpen);
-                    sleep(400);
-                    moveServos(servoOne, servoTwo, -.3);
-                    sleep(300);
-                    Turn.setPosition(clawFullOpen);
-                }
-            }
-        */
-            //closes the claw
             if (gamepad2.a){
                 IntakePos.setPosition(intakeUp);
-                // sleep(200);
-                //if (gamepad2.a){
-                //  IntakePos.setPosition(intakeUp);
-                //}
             }
 
             if (gamepad2.b){
@@ -404,45 +386,6 @@ public class CyanCheetahOpBlue extends LinearOpMode
             if (gamepad2.right_trigger > 0.5) {
                 OuttakeClaw.setPosition(outOpen);
             }
-            /*
-            if (gamepad2.dpad_left) {
-                OuttakeClaw.setPosition(outOpen);
-            }
-            if (gamepad2.dpad_right) {
-                OuttakeClaw.setPosition(outClose);
-            }
-             */
-            //Bucket algorithm
-            /*
-            if (gamepad2.right_trigger > .5){
-                if(!swingOut) {
-                    sleep(10);
-                    Swing.setPosition((SwingScorePosition));
-                }
-                Bucket.setPosition(BucketOutPosition);
-                bucketPos = BucketOutPosition;
-            }
-            //bucket and swing position
-            if (gamepad2.left_trigger > .5){
-                Bucket.setPosition(BucketInPosition);
-                sleep(100);
-                Swing.setPosition(SwingInPosition);
-                bucketPos = BucketInPosition;
-                swingOut = false;
-            }
-            telemetry.addData("BucketPos", Bucket.getPosition());
-            //bucket position to superUp
-            /*
-            if (gamepad2.left_bumper){
-                Turn.setPosition(clawFullOpen);
-            }
-
-            //changes swing position to swing out
-            if (gamepad2.right_bumper) {
-                Swing.setPosition(SwingOutPosition);
-                swingOut = true;
-            }
-            */
             //          ************************************************ GAMEPAD 1 CONTROLS ************************************************
             /**
              * Gamepad 1 Controls:
@@ -467,9 +410,6 @@ public class CyanCheetahOpBlue extends LinearOpMode
              * Right Bumper: Drone Linkage
              * Left Trigger: AprilTags
              */
-            //if (gamepad1.left_trigger > .5){
-            //   Bucket.setPosition(BucketOutPosition);
-            //}
             if (gamepad1.right_trigger > 0) {
                 triggerPowerAdjust = .4;
             } else {
@@ -490,32 +430,11 @@ public class CyanCheetahOpBlue extends LinearOpMode
             }
             //minute adjustions for the bucket angle. The bucketPos double variable
             //despite the game controller 2's bucket movement. The values are updated.
-            /*
-            if (gamepad1.dpad_up){
-                Bucket.setPosition(bucketPos + .001);
-                bucketPos=bucketPos+.001;
-                BucketInPosition = BucketInPosition + .001;
-                BucketOutPosition = BucketOutPosition + .001;
-
-
-            }
-            if (gamepad1.x) {
-                Bucket.setPosition(bucketPos - .001);
-                bucketPos=bucketPos-.001;
-                BucketInPosition = BucketInPosition - .001;
-                BucketOutPosition = BucketOutPosition - .001;
-
-            }
-             */
             //drone launch code.
             if(gamepad1.b) {
                 DroneLinkage.setPosition(1);
                 //DroneLinkage.setPosition(0.85);
             }
-            //if(gamepad1.dpad_right){
-            //   DroneLauncher.setPosition(0.3);
-            //DroneLinkage.setPosition(0.95);
-            //}
             if(gamepad1.left_bumper) {
                 double pos = 1.0;
                 //DroneLinkage.setPosition(.87);
