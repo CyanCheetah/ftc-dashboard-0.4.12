@@ -203,8 +203,9 @@ public class RedLeftCycle extends LinearOpMode
             SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
             //multiply this number by the inches needed to travel: 0.68571429
             if (ran) {
+
                 if (max == first) {
-                    telemetry.addData("2", second);
+                    telemetry.addData("1", first);
                     TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
                             .forward(23)//change to forward turn
                             .addTemporalMarker(0, () -> {
@@ -294,10 +295,10 @@ public class RedLeftCycle extends LinearOpMode
                             .splineTo(new Vector2d(95, 8), Math.toRadians(0))//ends when its in middle position
                             .build();
                     drive.followTrajectorySequence(trajSeq);
-                    drive.followTrajectorySequence(trajectoryMiddle2);
+                   // drive.followTrajectorySequence(trajectoryMiddle2);
                     ran = false;
                 } else if (max == third) {
-                    telemetry.addData("2", second);
+                    telemetry.addData("3", third);
                     TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
                             .forward(23)
                             .addTemporalMarker(0, () -> {
