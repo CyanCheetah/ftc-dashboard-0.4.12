@@ -112,7 +112,7 @@ public class CyanCheetahOpBlue extends LinearOpMode
     private static Servo OuttakeFlip = null;
 
     private static Servo OuttakeSpin = null;
-
+    private static double MOTOR_ADJUST = 0.75;
     @Override public void runOpMode()
     {
         double  drive           = 0;        // Desired forward power/speed (-1 to +1)
@@ -367,15 +367,22 @@ public class CyanCheetahOpBlue extends LinearOpMode
                 IntakePos.setPosition(intakeUp);
             }
 
+            double r = Math.hypot(-gamepad1.left_stick_x, gamepad1.left_stick_y);
+            double robotAngle = Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4;
+            double rightX = -gamepad1.right_stick_x * 0.5;
+            double v1 = r * Math.cos(robotAngle) + rightX;
+            double v2 = r * Math.sin(robotAngle) - rightX;
+            double v3 = r * Math.sin(robotAngle) + rightX;
+            double v4 = r * Math.cos(robotAngle) - rightX;
 
-            //drive code
-                // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
-                drive  = -gamepad1.left_stick_y / speedAdjust * triggerPowerAdjust;  // Reduce drive rate to 50%.
-                strafe = -gamepad1.left_stick_x / speedAdjust * triggerPowerAdjust;  // Reduce strafe rate to 50%.
-                turn   = -gamepad1.right_stick_x / 2 * triggerPowerAdjust;  // Reduce turn rate to 33%.
-
-            // Apply desired axes motions to the drivetrain.
-            moveRobot(drive, strafe, turn);
+            v1 = v1 * MOTOR_ADJUST * triggerPowerAdjust;
+            v2 = v2 * MOTOR_ADJUST * triggerPowerAdjust;
+            v3 = v3 * MOTOR_ADJUST * triggerPowerAdjust;
+            v4 = v4 * MOTOR_ADJUST * triggerPowerAdjust;
+            frontl.setPower(v1 * .95);
+            frontr.setPower(v2 * .95);
+            bottoml.setPower(v3 * .95);
+            bottomr.setPower(v4 * .95);
         }
     }
 
