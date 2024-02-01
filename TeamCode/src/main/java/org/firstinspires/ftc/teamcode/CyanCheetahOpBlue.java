@@ -42,6 +42,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.teamcode.util.MotorConstantValues;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -92,20 +93,6 @@ import java.util.concurrent.TimeUnit;
 @TeleOp
 public class CyanCheetahOpBlue extends LinearOpMode
 {
-    // Adjust these numbers to suit your robot.
-    final double DESIRED_DISTANCE = 2; //  this is how close the camera should get to the target (inches)
-
-    //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
-    //  applied to the drive motors to correct the error.
-    //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
-    final double SPEED_GAIN  =  0.02  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
-    final double STRAFE_GAIN =  0.015 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
-    final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
-
-    final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
-
     private DcMotor frontl   = null;  //  Used to control the left front drive wheel
     private DcMotor frontr  = null;  //  Used to control the right front drive wheel
     private DcMotor bottoml    = null;  //  Used to control the left back drive wheel
@@ -113,11 +100,6 @@ public class CyanCheetahOpBlue extends LinearOpMode
     private DcMotor rightLift = null;
     private DcMotor leftLift = null;
     private DcMotor rightHang = null;
-    private Servo servoOne = null;
-    private Servo servoTwo = null;
-    //private Servo Bucket = null;
-    // private Servo Swing = null;
-    // private Servo Turn = null;
     private DcMotor leftHang = null;//  Used to control the right back drive wheel
     private static Servo DroneLauncher = null;
     private static Servo DroneLinkage = null;
@@ -131,28 +113,12 @@ public class CyanCheetahOpBlue extends LinearOpMode
 
     private static Servo OuttakeSpin = null;
 
-    private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
-    public int DESIRED_TAG_ID = 2;     // Choose the tag you want to approach or set to -1 for ANY tag.
-    private VisionPortal visionPortal;               // Used to manage the video source.
-    private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
-    private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
-    public void moveServos (Servo right, Servo left, double position){
-        left.setPosition(.5 + position);
-        right.setPosition(.51 - position);
-    }
     @Override public void runOpMode()
     {
-        boolean targetFound     = false;    // Set to true when an AprilTag target is detected
         double  drive           = 0;        // Desired forward power/speed (-1 to +1)
         double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
         double  turn            = 0;        // Desired turning power/speed (-1 to +1)
 
-        // Initialize the Apriltag Detection process
-        initAprilTag();
-
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must match the names assigned during the robot configuration.
-        // step (using the FTC Robot Controller app on the phone).
         frontl = hardwareMap.get(DcMotor.class, "leftUpper");
         frontr = hardwareMap.get(DcMotor.class, "rightUpper");
         bottoml = hardwareMap.get(DcMotor.class, "leftLower");
@@ -161,11 +127,6 @@ public class CyanCheetahOpBlue extends LinearOpMode
         rightLift = hardwareMap.get(DcMotor.class,"rightLift");
         rightHang = hardwareMap.get(DcMotor.class,"rightHang");
         leftHang = hardwareMap.get(DcMotor.class,"leftHang");
-        //Turn = hardwareMap.get(Servo.class, "Turn");
-        //Servo servoOne = hardwareMap.servo.get("servoOne");
-        //Servo servoTwo = hardwareMap.servo.get("servoTwo");
-        //Bucket = hardwareMap.get(Servo.class, "Bucket");
-        //Swing = hardwareMap.get(Servo.class, "Swing");
         DroneLauncher = hardwareMap.get(Servo.class, "DroneLauncher");
         DroneLinkage = hardwareMap.get(Servo.class, "DroneLinkage");
         IntakeUno = hardwareMap.get(CRServo.class, "IntakeUno");
@@ -194,34 +155,10 @@ public class CyanCheetahOpBlue extends LinearOpMode
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightHang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftHang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-
-
-        if (USE_WEBCAM) {
-            setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
-        }
-        // Wait for driver to press start
-        telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch Play to start OpMode");
-        telemetry.update();
         waitForStart();
-        //MotorConstantValues constants = new MotorConstantValues();
-        //double SwingOutPosition = constants.getSwingOutPosition();
-        //double SwingScorePosition = constants.getSwingScorePosition();
-        //double SwingInPosition = constants.getSwingInPosition();
-        //double BucketOutPosition = constants.getBucketOutPosition();
-        //double BucketInPosition = constants.getBucketInPosition();
-        //double BucketSuperUp = BucketInPosition + .025;
-        //double mainLiftPower = 0;
-        // ------ the values above may change often
-        //double clawClose = constants.getClawClose();
-        //double clawSemiOpen = constants.getClawSemiOpen();
-        //double clawFullOpen = constants.getClawFullOpen();
         MotorConstantValues constants = new MotorConstantValues();
         double triggerPowerAdjust = 1;
+        double speedAdjust = 1.4;
         double intakeUp = constants.getIntakeUp();
         double intakeDown = constants.getIntakeDown();
         double outClose = constants.getOutClose();
@@ -234,37 +171,14 @@ public class CyanCheetahOpBlue extends LinearOpMode
         double bottomRight = constants.getSpinBottomRight();
         double right = constants.getSpinRight();
         double topRight = constants.getSpinTopRight();
+        double bottomLeft = constants.getSpinBottomLeft();
+        double intakeSemiUp = constants.getIntakeSemiUp();
+        double intakeSemiDown = constants.getIntakeSemiDown();
         int stuff = 0;
-        //double intakeUp = 0.92; GOOD STACK 5
-        //double intakeDown = .93; GOOD STACK 4
-        //double bucketPos = 0.37 ;
-        //boolean swingOut = false;
         while (opModeIsActive())
         {
-            targetFound = false;
-            desiredTag  = null;
 
-            // Step through the list of detected tags and look for a matching tag
-            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-            for (AprilTagDetection detection : currentDetections) {
-                // Look to see if we have size info on this tag.
-                if (detection.metadata != null) {
-                    //  Check to see if we want to track towards this tag.
-                    if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
-                        // Yes, we want to use this tag.
-                        targetFound = true;
-                        desiredTag = detection;
-                        break;  // don't look any further.
-                    } else {
-                        // This tag is in the library, but we do not want to track it right now.
-                        telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
-                    }
-                } else {
-                    // This tag is NOT in the library, so we don't have enough information to track to it.
-                    telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
-                }
-            }
-
+            //elevator height code
             if (gamepad2.left_stick_y > 0.3) {
                 rightLift.setPower((.2));
                 leftLift.setPower((-.2));
@@ -287,6 +201,7 @@ public class CyanCheetahOpBlue extends LinearOpMode
             }
 
 
+            //pixels position code
 
             if (gamepad2.right_stick_y < -0.5 && (gamepad2.right_stick_x >= -0.1 && gamepad2.right_stick_x <= 0.1)){
                 telemetry.addData("Top", stuff);
@@ -300,10 +215,6 @@ public class CyanCheetahOpBlue extends LinearOpMode
             if (gamepad2.right_stick_x < -0.5 && (gamepad2.right_stick_y >= -0.1 && gamepad2.right_stick_y <= 0.1)){
                 telemetry.addData("Left", stuff);
                 OuttakeSpin.setPosition(left);
-
-            }
-            if (gamepad2.right_stick_x < -0.55 && gamepad2.right_stick_y > 0.55){
-                telemetry.addData("BottomLeft", stuff);
 
             }
             if (gamepad2.right_stick_x > 0.55 && gamepad2.right_stick_y > 0.55){
@@ -321,29 +232,18 @@ public class CyanCheetahOpBlue extends LinearOpMode
                 OuttakeSpin.setPosition(topRight);
 
             }
+            if (gamepad2.right_stick_x < -0.55 && gamepad2.right_stick_y > 0.55){
+                telemetry.addData("BottomLeft", stuff);
+                OuttakeSpin.setPosition(bottomLeft);
+
+            }
             if (true) {
                 telemetry.addData("rightX", gamepad2.right_stick_x);
                 telemetry.addData("rightY", gamepad2.right_stick_y);
             }
-            /*if(gamepad1.dpad_up) {
-                index1 += 1;
-                IntakePos.setPosition(hello[index1]);
-            }*/
 
-            //movement to the bucket stuff
-            /* if (gamepad2.x) {
-                moveServos(servoOne, servoTwo, -.375);
-            }
-            if (gamepad2.b) {
-                moveServos(servoOne, servoTwo, -.3);
-            }
-            if (gamepad2.y) {
-                moveServos(servoOne, servoTwo, -.32);
-            }
-            if (gamepad2.a) {
-                moveServos(servoOne, servoTwo, -.395);
-            }
-             */
+
+            //intake code
             if (gamepad2.x) {
                 IntakeUno.setPower((.8));
                 IntakeDos.setPower((-.8));
@@ -359,12 +259,27 @@ public class CyanCheetahOpBlue extends LinearOpMode
                 IntakeDos.setPower((0));
                 IntakeRoller.setPower((0));
             }
+            //hang code
+            if (gamepad2.a) {
+                leftHang.setPower(-.4);
+                rightHang.setPower(.4);
+            }
+            else if (gamepad2.b) {
+                leftHang.setPower(.6);
+                rightHang.setPower(-.6);
+            }
+            else {
+                leftHang.setPower(0);
+                rightHang.setPower(0);
+            }
+            //outtake position
             if (gamepad2.dpad_left) {
                 OuttakeSpin.setPosition(left);
             }
             if (gamepad2.dpad_right) {
                 OuttakeSpin.setPosition(Top);
             }
+            //sequence for the outtake flipping
             if (gamepad2.left_bumper) {
                 OuttakeFlip.setPosition(flipIn);
                 OuttakeSpin.setPosition(Top);
@@ -373,13 +288,7 @@ public class CyanCheetahOpBlue extends LinearOpMode
             if (gamepad2.right_bumper) {
                 OuttakeFlip.setPosition(flipOut);
             }
-            if (gamepad2.a){
-                IntakePos.setPosition(intakeUp);
-            }
 
-            if (gamepad2.b){
-                IntakePos.setPosition(intakeDown);
-            }
             if (gamepad2.left_trigger > 0.5) {
                 OuttakeClaw.setPosition(outClose);
             }
@@ -389,10 +298,10 @@ public class CyanCheetahOpBlue extends LinearOpMode
             //          ************************************************ GAMEPAD 1 CONTROLS ************************************************
             /**
              * Gamepad 1 Controls:
-             * Dpad Up: Nothing
-             * Dpad Down: April Tags
-             * Dpad Left: April Tags
-             * Dpad Right: April Tags
+             * Dpad Up: DroneLinkageup
+             * Dpad Down: NOTHING
+             * Dpad Left: NOTHING
+             * Dpad Right: NOTHING
              * Left Joystick: NOTHING
              * - Up: Forward
              * - Down: Backwards
@@ -401,37 +310,31 @@ public class CyanCheetahOpBlue extends LinearOpMode
              * Right Joystick:
              * - Left: Turn in position left
              * - Right: Turn in position right
-             * X: NOTHING
-             * Y: Hang goes Down
-             * A: Hang goes Up
-             * B: Drone Launcher
+             * X: intakeUp
+             * Y: intakeSemiUp
+             * A: IntakePosDown
+             * B: intakeSemiDown
              * Left Bumper: Drone Linkage
              * Right Trigger: Trigger Power Adjust: Slows the robot down by given amount
              * Right Bumper: Drone Linkage
-             * Left Trigger: AprilTags
+             * Left Trigger: Makes Robot Faster
              */
+
+            //slows down
             if (gamepad1.right_trigger > 0) {
                 triggerPowerAdjust = .4;
             } else {
                 triggerPowerAdjust = 1;
             }
-            //left and right hang code
-            if (gamepad1.y) {
-                leftHang.setPower(-.4);
-                rightHang.setPower(.4);
+            //speeds up
+            if (gamepad1.left_trigger > 0) {
+                speedAdjust = 1;
+            } else {
+                speedAdjust = 1.4;
             }
-            else if (gamepad1.a) {
-                leftHang.setPower(.6);
-                rightHang.setPower(-.6);
-            }
-            else {
-                leftHang.setPower(0);
-                rightHang.setPower(0);
-            }
-            //minute adjustions for the bucket angle. The bucketPos double variable
-            //despite the game controller 2's bucket movement. The values are updated.
-            //drone launch code.
-            if(gamepad1.b) {
+
+            //drone position
+            if(gamepad1.dpad_up) {
                 DroneLinkage.setPosition(1);
                 //DroneLinkage.setPosition(0.85);
             }
@@ -441,7 +344,7 @@ public class CyanCheetahOpBlue extends LinearOpMode
                 for (int i = 0; i < 6; i++) {
                     DroneLinkage.setPosition(pos);
                     pos = pos - .01;
-                    sleep(200);
+                    sleep(100);
                 }
 
             }
@@ -450,56 +353,29 @@ public class CyanCheetahOpBlue extends LinearOpMode
             if(gamepad1.right_bumper) {
                 DroneLauncher.setPosition(0.3);
             }
-            if(gamepad1.dpad_left) {
-                DESIRED_TAG_ID = 1;
+
+            if(gamepad1.a){
+                IntakePos.setPosition(intakeDown);
             }
-            if (gamepad1.dpad_down) {
-                DESIRED_TAG_ID = 2;
+            if(gamepad1.b){
+                IntakePos.setPosition(intakeSemiDown);
             }
-            if (gamepad1.dpad_right) {
-                DESIRED_TAG_ID = 3;
+            if(gamepad1.y){
+                IntakePos.setPosition(intakeSemiUp);
             }
-            // Tell the driver what we see, and what to do.
-            if (targetFound) {
-                telemetry.addData("\n>","HOLD Left-Trigger to Drive to Target\n");
-                telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-                telemetry.addData("X",  "%5.1f inches", desiredTag.ftcPose.x);
-                telemetry.addData("Y","%5.1f inches", desiredTag.ftcPose.y);
-                telemetry.addData("Z","%5.1f inches", desiredTag.ftcPose.z);
-                telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
-                telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
-                telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
-            } else {
-                telemetry.addData("\n>","Drive using joysticks to find valid target\n");
+            if(gamepad1.x){
+                IntakePos.setPosition(intakeUp);
             }
 
-            // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
-            if (gamepad1.left_trigger > 0.3 && targetFound) {
 
-                // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-                double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-                double  headingError    = desiredTag.ftcPose.bearing;
-                double  yawError        = desiredTag.ftcPose.yaw;
-
-                // Use the speed and turn "gains" to calculate how we want the robot to move.
-                drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-                strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-
-                telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
-            } else {
-
+            //drive code
                 // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
-                drive  = -gamepad1.left_stick_y  / 1.4 * triggerPowerAdjust;  // Reduce drive rate to 50%.
-                strafe = -gamepad1.left_stick_x  / 1.4 * triggerPowerAdjust;  // Reduce strafe rate to 50%.
+                drive  = -gamepad1.left_stick_y / speedAdjust * triggerPowerAdjust;  // Reduce drive rate to 50%.
+                strafe = -gamepad1.left_stick_x / speedAdjust * triggerPowerAdjust;  // Reduce strafe rate to 50%.
                 turn   = -gamepad1.right_stick_x / 2 * triggerPowerAdjust;  // Reduce turn rate to 33%.
-                telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
-            }
-            telemetry.update();
 
             // Apply desired axes motions to the drivetrain.
             moveRobot(drive, strafe, turn);
-            sleep(10);
         }
     }
 
@@ -538,71 +414,4 @@ public class CyanCheetahOpBlue extends LinearOpMode
         bottomr.setPower(rightBackPower);
     }
 
-    /**
-     * Initialize the AprilTag processor.
-     */
-    private void initAprilTag() {
-        // Create the AprilTag processor by using a builder.
-        aprilTag = new AprilTagProcessor.Builder().build();
-
-        // Adjust Image Decimation to trade-off detection-range for detection-rate.
-        // eg: Some typical detection data using a Logitech C920 WebCam
-        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
-        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
-        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
-        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
-        // Note: Decimation can be changed on-the-fly to adapt during a match.
-        aprilTag.setDecimation(2);
-
-        // Create the vision portal by using a builder.
-        if (USE_WEBCAM) {
-            visionPortal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "cameraMonitorViewId"))
-                    .addProcessor(aprilTag)
-                    .build();
-        } else {
-            visionPortal = new VisionPortal.Builder()
-                    .setCamera(BuiltinCameraDirection.BACK)
-                    .addProcessor(aprilTag)
-                    .build();
-        }
-    }
-
-    /*
-     Manually set the camera gain and exposure.
-     This can only be called AFTER calling initAprilTag(), and only works for Webcams;
-    */
-    private void setManualExposure(int exposureMS, int gain) {
-        // Wait for the camera to be open, then use the controls
-
-        if (visionPortal == null) {
-            return;
-        }
-
-        // Make sure camera is streaming before we try to set the exposure controls
-        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
-            telemetry.addData("Camera", "Waiting");
-            telemetry.update();
-            while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
-                sleep(20);
-            }
-            telemetry.addData("Camera", "Ready");
-            telemetry.update();
-        }
-
-        // Set camera controls unless we are stopping.
-        if (!isStopRequested())
-        {
-            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
-            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
-                exposureControl.setMode(ExposureControl.Mode.Manual);
-                sleep(50);
-            }
-            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
-            sleep(20);
-            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
-            gainControl.setGain(gain);
-            sleep(20);
-        }
-    }
 }
