@@ -298,8 +298,8 @@ public class CyanCheetahOpBlue extends LinearOpMode
             //          ************************************************ GAMEPAD 1 CONTROLS ************************************************
             /**
              * Gamepad 1 Controls:
-             * Dpad Up: DroneLinkageup
-             * Dpad Down: NOTHING
+             * Dpad Up: DrownUp
+             * Dpad Down: DroneDown
              * Dpad Left: NOTHING
              * Dpad Right: NOTHING
              * Left Joystick: NOTHING
@@ -314,9 +314,8 @@ public class CyanCheetahOpBlue extends LinearOpMode
              * Y: intakeSemiUp
              * A: IntakePosDown
              * B: intakeSemiDown
-             * Left Bumper: Drone Linkage
+             * Left Bumper & Right Bumper: Drone Shoot
              * Right Trigger: Trigger Power Adjust: Slows the robot down by given amount
-             * Right Bumper: Drone Linkage
              * Left Trigger: Makes Robot Faster
              */
 
@@ -328,17 +327,13 @@ public class CyanCheetahOpBlue extends LinearOpMode
             }
             //speeds up
             if (gamepad1.left_trigger > 0) {
-                speedAdjust = 1;
+                speedAdjust = 1.5;
             } else {
-                speedAdjust = 1.4;
+                speedAdjust = 1;
             }
 
             //drone position
             if(gamepad1.dpad_up) {
-                DroneLinkage.setPosition(1);
-                //DroneLinkage.setPosition(0.85);
-            }
-            if(gamepad1.left_bumper) {
                 double pos = 1.0;
                 //DroneLinkage.setPosition(.87);
                 for (int i = 0; i < 6; i++) {
@@ -346,11 +341,14 @@ public class CyanCheetahOpBlue extends LinearOpMode
                     pos = pos - .01;
                     sleep(100);
                 }
-
+                //DroneLinkage.setPosition(0.85);
+            }
+            if(gamepad1.dpad_down) {
+                DroneLinkage.setPosition(1);
             }
 
             telemetry.addData("Drone", DroneLinkage.getPosition());
-            if(gamepad1.right_bumper) {
+            if(gamepad1.left_bumper && gamepad1.right_bumper) {
                 DroneLauncher.setPosition(0.3);
             }
 
@@ -375,14 +373,14 @@ public class CyanCheetahOpBlue extends LinearOpMode
             double v3 = r * Math.sin(robotAngle) + rightX;
             double v4 = r * Math.cos(robotAngle) - rightX;
 
-            v1 = v1 * MOTOR_ADJUST * triggerPowerAdjust;
-            v2 = v2 * MOTOR_ADJUST * triggerPowerAdjust;
-            v3 = v3 * MOTOR_ADJUST * triggerPowerAdjust;
-            v4 = v4 * MOTOR_ADJUST * triggerPowerAdjust;
-            frontl.setPower(v1 * .95);
-            frontr.setPower(v2 * .95);
-            bottoml.setPower(v3 * .95);
-            bottomr.setPower(v4 * .95);
+            v1 = (v1 * triggerPowerAdjust * -1) * speedAdjust;
+            v2 = (v2 * triggerPowerAdjust * -1) * speedAdjust;
+            v3 = (v3 * triggerPowerAdjust * -1) * speedAdjust;
+            v4 = (v4 * triggerPowerAdjust * -1) * speedAdjust;
+            frontl.setPower(v1 * 1);
+            frontr.setPower(v2 * 1);
+            bottoml.setPower(v3 * 1);
+            bottomr.setPower(v4 * 1);
         }
     }
 

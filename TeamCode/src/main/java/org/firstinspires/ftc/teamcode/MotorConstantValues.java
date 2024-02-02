@@ -9,8 +9,8 @@ public class MotorConstantValues {
 
     private double intakeUp = 0.925;
 
-    private double intakeSemiUp = 0.938;
-    private double intakeSemiDown = 0.95;
+    private double intakeSemiUp = 0.94;
+    private double intakeSemiDown = 0.965;
 
     private double intakeDown = 0.99;
 
