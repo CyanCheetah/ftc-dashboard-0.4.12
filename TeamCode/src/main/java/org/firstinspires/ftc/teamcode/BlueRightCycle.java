@@ -61,17 +61,17 @@ public class BlueRightCycle extends LinearOpMode
     private static Servo IntakePos = null;
     private static Servo servoOne = null;
 
-  //  private static Servo servoTwo = null;
-  //  private static Servo Turn = null;
+    //  private static Servo servoTwo = null;
+    //  private static Servo Turn = null;
     OpenCvWebcam webcam;
     private static DcMotor frontl = null;
     private static DcMotor frontr = null;
     private static DcMotor bottoml = null;
     private static DcMotor bottomr = null;
-    SkystoneDeterminationPipeline pipeline = new SkystoneDeterminationPipeline();
+    BlueSightPipeline pipeline = new BlueSightPipeline(telemetry);
     private static DcMotor rightLift = null;
     private static DcMotor leftLift = null;
-  //  private static Servo Bucket = null;
+    //  private static Servo Bucket = null;
     @Override
     public void runOpMode()
 
@@ -88,10 +88,7 @@ public class BlueRightCycle extends LinearOpMode
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cameraMonitorViewId"), cameraMonitorViewId);
-        pipeline = new SkystoneDeterminationPipeline();
         webcam.setPipeline(pipeline);
-        // OR...  Do Not Activate the Camera Monitor View
-        //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
         /*
          * Specify the image processing pipeline we wish to invoke upon receipt
@@ -144,76 +141,37 @@ public class BlueRightCycle extends LinearOpMode
 
         telemetry.addLine("Waiting for start");
         telemetry.update();
-        // leftLift = hardwareMap.get(DcMotor.class,"leftLift");
-        // rightLift = hardwareMap.get(DcMotor.class,"rightLift");
-     //   Servo servoOne = hardwareMap.servo.get("servoOne");
-     //   Servo servoTwo = hardwareMap.servo.get("servoTwo");
-      //  Servo Swing = hardwareMap.servo.get("Swing");
-
-        //Bucket = hardwareMap.get(Servo.class, "Bucket");
-        //Swing = hardwareMap.get(Servo.class, "Swing");
-        //Setting Directions of motors.
 
         //leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         /*
          * Wait for the user to press start on the Driver Station
          */
-       IntakeUno = hardwareMap.get(CRServo.class, "IntakeUno");
-       IntakeDos = hardwareMap.get(CRServo.class, "IntakeDos");
-       IntakeRoller = hardwareMap.get(CRServo.class, "IntakeRoller");
+        IntakeUno = hardwareMap.get(CRServo.class, "IntakeUno");
+        IntakeDos = hardwareMap.get(CRServo.class, "IntakeDos");
+        IntakeRoller = hardwareMap.get(CRServo.class, "IntakeRoller");
         IntakePos = hardwareMap.get(Servo.class, "IntakePos");
-        int first,second,third;
-    //    Turn = hardwareMap.get(Servo.class, "Turn");
-     //   Turn.setPosition(.95);
+        leftLift = hardwareMap.get(DcMotor.class,"leftLift");
+        rightLift = hardwareMap.get(DcMotor.class,"rightLift");
+
+        BlueSightPipeline.SkystonePosition pos;
+        while (!isStarted() && !isStopRequested()) {
+            pos = pipeline.getAnalysis();
+            telemetry.addData("Color", pos);
+            telemetry.update();
+        }
+        pos = pipeline.getAnalysis();
         waitForStart();
-
-
-
         if (opModeIsActive())
 
         {
-            while (pipeline.isPos1() == 0 && pipeline.isPos2() == 0 && pipeline.isPos3() == 0)  {
 
-                sleep(1000);
-
-                first = pipeline.isPos1();
-                second = pipeline.isPos2();
-                third = pipeline.isPos3();
-                telemetry.addData("1", first);
-                telemetry.addData("2", second);
-                telemetry.addData("3", third);
-                telemetry.update();
-
-            }
-            int sum1 = 0, sum2 = 0, sum3 = 0;
-            for (int i = 0; i < 4; i++) {
-                first = pipeline.isPos1();
-                second = pipeline.isPos2();
-                third = pipeline.isPos3();
-                sum1 += first;
-                sum2 += second;
-                sum3 += third;
-                sleep(500);
-            }
-            first = sum1 / 4;
-            second = sum2 / 4;
-            third = sum3 / 4;
-            telemetry.addData("1", first);
-            telemetry.addData("2", second);
-            telemetry.addData("3", third);
-            leftLift = hardwareMap.get(DcMotor.class,"leftLift");
-            rightLift = hardwareMap.get(DcMotor.class,"rightLift");
-         //   Bucket = hardwareMap.get(Servo.class, "Bucket");
-            int maxOneTwo = Math.max(first, second);
-            int max = Math.max(maxOneTwo, third);
             boolean ran = true;
-            double clawFullOpen = .775;
             SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
             //multiply this number by the inches needed to travel: 0.68571429
             if (ran) {
-                if (max == first) {
-                    telemetry.addData("1", first);
+                if (pos == BlueSightPipeline.SkystonePosition.LEFT) {
+                    telemetry.addData("1", pos);
                     Trajectory trajectoryFirst0 = drive.trajectoryBuilder(new Pose2d())
                             .forward(20)
                             .build();
@@ -223,7 +181,7 @@ public class BlueRightCycle extends LinearOpMode
                     Trajectory trajectoryFirst2 = drive.trajectoryBuilder(new Pose2d())
                             .back(4)
                             .addTemporalMarker(3, () -> {
-                               // Turn.setPosition(.75);
+                                // Turn.setPosition(.75);
                             })
                             .build();
                     Trajectory trajectoryFirst3 = drive.trajectoryBuilder(new Pose2d())
@@ -234,8 +192,8 @@ public class BlueRightCycle extends LinearOpMode
                     drive.followTrajectory(trajectoryFirst2);
                     sleep(1000);
                     drive.followTrajectory(trajectoryFirst3);
-                } else if (max == second) {
-                    telemetry.addData("2", second);
+                } else if (pos == BlueSightPipeline.SkystonePosition.CENTER) {
+                    telemetry.addData("2", pos);
                     TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
                             .forward(24)
                             .addTemporalMarker(0, () -> {
@@ -280,8 +238,8 @@ public class BlueRightCycle extends LinearOpMode
                     ran = false;
 
 
-                } else if (max == third) {
-                    telemetry.addData("3", third);
+                } else if (pos == BlueSightPipeline.SkystonePosition.RIGHT) {
+                    telemetry.addData("3", pos);
                     Trajectory trajectoryRight0 = drive.trajectoryBuilder(new Pose2d())
                             .forward(25)
                             .build();
@@ -291,7 +249,7 @@ public class BlueRightCycle extends LinearOpMode
                     Trajectory trajectoryRight1 = drive.trajectoryBuilder(new Pose2d())
                             .back(4)
                             .addTemporalMarker(4, () -> {
-                               // Turn.setPosition(.75);
+                                // Turn.setPosition(.75);
                             })
                             .build();
                     Trajectory trajectoryRight2 = drive.trajectoryBuilder(new Pose2d())
