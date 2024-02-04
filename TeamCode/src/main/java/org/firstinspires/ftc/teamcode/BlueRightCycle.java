@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.util.MotorConstantValues;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -59,15 +60,13 @@ public class BlueRightCycle extends LinearOpMode
     private static CRServo IntakeDos = null;
     private static CRServo IntakeRoller = null;
     private static Servo IntakePos = null;
-    private static Servo servoOne = null;
+    private static Servo OuttakeClaw = null;
+    private static Servo OuttakeFlip = null;
+    private static Servo OuttakeSpin = null;
 
     //  private static Servo servoTwo = null;
     //  private static Servo Turn = null;
     OpenCvWebcam webcam;
-    private static DcMotor frontl = null;
-    private static DcMotor frontr = null;
-    private static DcMotor bottoml = null;
-    private static DcMotor bottomr = null;
     BlueSightPipeline pipeline = new BlueSightPipeline(telemetry);
     private static DcMotor rightLift = null;
     private static DcMotor leftLift = null;
@@ -153,6 +152,9 @@ public class BlueRightCycle extends LinearOpMode
         IntakePos = hardwareMap.get(Servo.class, "IntakePos");
         leftLift = hardwareMap.get(DcMotor.class,"leftLift");
         rightLift = hardwareMap.get(DcMotor.class,"rightLift");
+        OuttakeClaw = hardwareMap.get(Servo.class, "OuttakeClaw");
+        OuttakeFlip = hardwareMap.get(Servo.class, "OuttakeFlip");
+        OuttakeSpin = hardwareMap.get(Servo.class, "OuttakeSpin");
 
         BlueSightPipeline.SkystonePosition pos;
         while (!isStarted() && !isStopRequested()) {
@@ -165,7 +167,7 @@ public class BlueRightCycle extends LinearOpMode
         if (opModeIsActive())
 
         {
-
+            pos = pipeline.getAnalysis();
             boolean ran = true;
             SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
             //multiply this number by the inches needed to travel: 0.68571429
@@ -195,44 +197,69 @@ public class BlueRightCycle extends LinearOpMode
                 } else if (pos == BlueSightPipeline.SkystonePosition.CENTER) {
                     telemetry.addData("2", pos);
                     TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
-                            .forward(24)
+                            .forward(22.1)
                             .addTemporalMarker(0, () -> {
-                                IntakePos.setPosition(.92);
+                                IntakePos.setPosition(.88);
+                                IntakePos.setPosition(.913);
                             })
-                            .lineToLinearHeading(new Pose2d(20, -24, Math.toRadians(70)))
-                            .addTemporalMarker(3, () -> {
+                            .lineToLinearHeading(new Pose2d(20, -26.6, Math.toRadians(70)))
+                            .addTemporalMarker(2.5, () -> {
                                 IntakeUno.setPower((-.8));
                                 IntakeDos.setPower((.8));
                                 IntakeRoller.setPower((1));
-                            })
-                            .addTemporalMarker(2, () -> {
-                                IntakeUno.setPower((0));
-                                IntakeDos.setPower((0));
-                                IntakeRoller.setPower((0));
                             })
                             .build();
                     TrajectorySequence trajectoryMiddle2 = drive.trajectorySequenceBuilder(new Pose2d())
                             // .splineTo(new Vector2d(-5, 24), Math.toRadians(0))
-                            .splineTo(new Vector2d(10, -20), Math.toRadians(3))
-                            .addTemporalMarker(0, () -> {
+                            .addTemporalMarker(3, () -> {
+                                IntakeUno.setPower((0));
+                                IntakeDos.setPower((0));
+                                IntakeRoller.setPower((0));
+                                IntakePos.setPosition(.93);
+                            })
+                            .addTemporalMarker(4, () -> {
                                 IntakeUno.setPower((-.8));
                                 IntakeDos.setPower((.8));
                                 IntakeRoller.setPower((1));
                             })
-                            .splineTo(new Vector2d(70, -15), Math.toRadians(0))
-                            .addTemporalMarker(1, () -> {
+                            .addTemporalMarker(5, () -> {
                                 IntakeUno.setPower((0));
                                 IntakeDos.setPower((0));
                                 IntakeRoller.setPower((0));
                             })
-                            .splineTo(new Vector2d(90, 8), Math.toRadians(0))
-                            //.lineToLinearHeading(new Pose2d(15, -20, Math.toRadians(0)))
+                            .addTemporalMarker(6, () -> {
+                                OuttakeClaw.setPosition(0);
+                            })
+                            .splineTo(new Vector2d(10.0, -20.0), Math.toRadians(0))
+                            .waitSeconds(2)
+                            .forward(60)
+                            .splineTo(new Vector2d(92.0, -0.5), Math.toRadians(0))
+                            .build();
+                    Trajectory park = drive.trajectoryBuilder(new Pose2d())
+                            .strafeRight(30)
                             .build();
 
                     drive.followTrajectorySequence(trajSeq);
                     drive.followTrajectorySequence(trajectoryMiddle2);
+                    OuttakeClaw.setPosition(0);
+                    sleep(100);
+                    rightLift.setPower((-.65));
+                    leftLift.setPower((.65));
+                    sleep(200);
+                    rightLift.setPower((0));
+                    leftLift.setPower((0));
+                    sleep(100);
+                    OuttakeFlip.setPosition(0.78);
+                    sleep(100);
+                    OuttakeSpin.setPosition(1-.185);
                     sleep(1000);
-                    ran = false;
+                    OuttakeClaw.setPosition(0.275);
+                    sleep(100);
+                    OuttakeSpin.setPosition(.489);
+                    sleep(100);
+                    OuttakeFlip.setPosition(0.245);
+                    drive.followTrajectory(park);
+
 
 
                     ran = false;
@@ -266,3 +293,26 @@ public class BlueRightCycle extends LinearOpMode
         }
     }
 }
+
+/*
+Trajectory trajectoryMiddle3 = drive.trajectoryBuilder(new Pose2d())
+                            .back(10)
+                            .build();
+                    Trajectory trajectoryMiddle4 = drive.trajectoryBuilder(new Pose2d())
+                            .strafeLeft(20)
+                            .build();
+                    Trajectory trajectoryMiddle5 = drive.trajectoryBuilder(new Pose2d())
+                            .forward(4)
+                            .addTemporalMarker(3, () -> {
+                                OuttakeClaw.setPosition(0);
+                                sleep(100);
+                                rightLift.setPower((-.65));
+                                leftLift.setPower((.65));
+                                sleep(300);
+                                rightLift.setPower((0));
+                                leftLift.setPower((0));
+                                sleep(100);
+
+                            })
+                            .build();
+ */
