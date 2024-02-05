@@ -29,6 +29,7 @@ package org.firstinspires.ftc.teamcode;
 // TODO: remove Actions from the core module?
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -53,6 +54,11 @@ public class RedLeftCycle extends LinearOpMode {
     private static CRServo IntakeDos = null;
     private static CRServo IntakeRoller = null;
     private static Servo IntakePos = null;
+    private static Servo OuttakeClaw = null;
+    private static DcMotor rightLift = null;
+    private static DcMotor leftLift = null;
+    private static Servo OuttakeFlip = null;
+    private static Servo OuttakeSpin = null;
     OpenCvWebcam webcam;
     private static DcMotor frontl = null;
     private static DcMotor frontr = null;
@@ -144,6 +150,12 @@ public class RedLeftCycle extends LinearOpMode {
         IntakeDos = hardwareMap.get(CRServo.class, "IntakeDos");
         IntakeRoller = hardwareMap.get(CRServo.class, "IntakeRoller");
         IntakePos = hardwareMap.get(Servo.class, "IntakePos");
+
+        leftLift = hardwareMap.get(DcMotor.class,"leftLift");
+        rightLift = hardwareMap.get(DcMotor.class,"rightLift");
+        OuttakeClaw = hardwareMap.get(Servo.class, "OuttakeClaw");
+        OuttakeFlip = hardwareMap.get(Servo.class, "OuttakeFlip");
+        OuttakeSpin = hardwareMap.get(Servo.class, "OuttakeSpin");
         RedSightPipeline.SkystonePosition pos;
         while (!isStarted() && !isStopRequested()) {
             pos = pipeline.getAnalysis();
@@ -164,7 +176,7 @@ public class RedLeftCycle extends LinearOpMode {
                             .addTemporalMarker(0, () -> {
                                 IntakePos.setPosition(.92);
                             })
-                            .lineToLinearHeading(new Pose2d(17, 24, Math.toRadians(-75)))
+                            .lineToLinearHeading(new Pose2d(17, 24, Math.toRadians(75)))
                             .addTemporalMarker(2, () -> {
                                 IntakeUno.setPower((-.8));
                                 IntakeDos.setPower((.8));
@@ -176,7 +188,7 @@ public class RedLeftCycle extends LinearOpMode {
                                 IntakeRoller.setPower((0));
                             })
                             .build();
-                    TrajectorySequence trajectoryMiddle2 = drive.trajectorySequenceBuilder(new Pose2d())
+                  /*  TrajectorySequence trajectoryMiddle2 = drive.trajectorySequenceBuilder(new Pose2d())
                             // .splineTo(new Vector2d(-5, 24), Math.toRadians(0))
                             .splineTo(new Vector2d(10, 20), Math.toRadians(3))
                             .addTemporalMarker(0, () -> {
@@ -205,7 +217,7 @@ public class RedLeftCycle extends LinearOpMode {
                     drive.followTrajectorySequence(trajSeq);
                     //drive.followTrajectory(trajectoryMiddle1);
                     //drive.followTrajectory(trajectoryMiddle9);
-                    drive.followTrajectorySequence(trajectoryMiddle2);
+                   // drive.followTrajectorySequence(trajectoryMiddle2);
                     //drive.followTrajectory(trajectoryMiddle3);
                     //drive.followTrajectory(trajectoryMiddle4);
                     sleep(1000);
@@ -216,39 +228,73 @@ public class RedLeftCycle extends LinearOpMode {
                 } else if (pos == RedSightPipeline.SkystonePosition.CENTER) {
                     telemetry.addData("2", pos);
                     TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
-                            .forward(21)
+                            .forward(22.1)
                             .addTemporalMarker(0, () -> {
-                                IntakePos.setPosition(.925);
+                                IntakePos.setPosition(.88);
+                                IntakePos.setPosition(.913);
                             })
-                            .lineToLinearHeading(new Pose2d(17, 24, Math.toRadians(-75)))
-                            .addTemporalMarker(2, () -> {
+                            .lineToLinearHeading(new Pose2d(20, -26.6, Math.toRadians(70)))
+                            .addTemporalMarker(2.5, () -> {
                                 IntakeUno.setPower((-.8));
                                 IntakeDos.setPower((.8));
                                 IntakeRoller.setPower((1));
-                            })
-                            .addTemporalMarker(3.5, () -> {
-                                IntakeUno.setPower((0));
-                                IntakeDos.setPower((0));
-                                IntakeRoller.setPower((0));
                             })
                             .build();
                     TrajectorySequence trajectoryMiddle2 = drive.trajectorySequenceBuilder(new Pose2d())
-                            .splineTo(new Vector2d(10, 20), Math.toRadians(3))
-                            .addTemporalMarker(0, () -> {
+                            // .splineTo(new Vector2d(-5, 24), Math.toRadians(0))
+                            .addTemporalMarker(3, () -> {
+                                IntakeUno.setPower((0));
+                                IntakeDos.setPower((0));
+                                IntakeRoller.setPower((0));
+                                IntakePos.setPosition(.93);
+                            })
+                            .addTemporalMarker(4, () -> {
                                 IntakeUno.setPower((-.8));
                                 IntakeDos.setPower((.8));
                                 IntakeRoller.setPower((1));
                             })
-                            .splineTo(new Vector2d(70, 20), Math.toRadians(0))
-                            .addTemporalMarker(1, () -> {
+                            .addTemporalMarker(5, () -> {
                                 IntakeUno.setPower((0));
                                 IntakeDos.setPower((0));
                                 IntakeRoller.setPower((0));
                             })
-                            .splineTo(new Vector2d(95, 8), Math.toRadians(0))//ends when its in middle position
+                            .addTemporalMarker(6, () -> {
+                                OuttakeClaw.setPosition(0);
+                            })
+                            .splineTo(new Vector2d(10.0, -20.0), Math.toRadians(0))
+                            .waitSeconds(1)
+                            .forward(60)
+                            .splineTo(new Vector2d(92.0, -0.5), Math.toRadians(0))
                             .build();
+                    Trajectory park = drive.trajectoryBuilder(new Pose2d())
+                            .strafeRight(30)
+                            .build();
+
                     drive.followTrajectorySequence(trajSeq);
-                    // drive.followTrajectorySequence(trajectoryMiddle2);
+                    drive.followTrajectorySequence(trajectoryMiddle2);
+                    OuttakeClaw.setPosition(0);
+                    sleep(100);
+                    rightLift.setPower((-.65));
+                    leftLift.setPower((.65));
+                    sleep(200);
+                    rightLift.setPower((0));
+                    leftLift.setPower((0));
+                    sleep(100);
+                    OuttakeFlip.setPosition(0.78);
+                    sleep(100);
+                    OuttakeSpin.setPosition(.155);
+                    sleep(1000);
+                    OuttakeClaw.setPosition(0.275);
+                    sleep(100);
+                    OuttakeSpin.setPosition(.489);
+                    sleep(100);
+                    OuttakeFlip.setPosition(0.245);
+                    drive.followTrajectory(park);
+
+
+
+                    ran = false;
+
                     ran = false;
                 } else if (pos == RedSightPipeline.SkystonePosition.RIGHT) {
                     telemetry.addData("3", pos);
