@@ -175,7 +175,7 @@ public class BlueLeft extends LinearOpMode
                 if (pos == BlueSightPipeline.SkystonePosition.LEFT) {
                     telemetry.addData("1", pos);
                     TrajectorySequence Left = drive.trajectorySequenceBuilder(new Pose2d())
-                            .lineToLinearHeading(new Pose2d(28, 15.5, Math.toRadians(71)))
+                            .lineToLinearHeading(new Pose2d(29, 14.5, Math.toRadians(71)))
                             .addTemporalMarker(0, () -> {
                                 IntakePos.setPosition(.913);
                             })
@@ -200,9 +200,10 @@ public class BlueLeft extends LinearOpMode
                                 OuttakeClaw.setPosition(0);
                                 rightLift.setPower((-.65));
                                 leftLift.setPower((.65));
-                                sleep(40);
+                                sleep(10);
                                 rightLift.setPower((0));
                                 leftLift.setPower((0));
+                                OuttakeFlip.setPosition(0.78);
                             })
                             .forward(5)
                             .build();
@@ -218,13 +219,9 @@ public class BlueLeft extends LinearOpMode
                             .build();
 
                     drive.followTrajectorySequence(Left);
-                    //  drive.followTrajectorySequence(trajectoryMiddle2);
-
-                    OuttakeFlip.setPosition(0.78);
-                    sleep(1000);
+                    sleep(200);
                     OuttakeClaw.setPosition(0.275);
-                    sleep(500);
-
+                    sleep(200);
                     drive.followTrajectory(park2L);
                     drive.followTrajectory(parkL);
 
@@ -235,7 +232,8 @@ public class BlueLeft extends LinearOpMode
                 } else if (pos == BlueSightPipeline.SkystonePosition.CENTER) {
                     telemetry.addData("2", pos);
                     TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
-                            .lineToLinearHeading(new Pose2d(34, 0, Math.toRadians(140)))
+                            .lineToLinearHeading(new Pose2d(29, -1, Math.toRadians(144)))
+                            .back(3)
 
                             .addTemporalMarker(0, () -> {
                                 IntakePos.setPosition(.913);
@@ -243,7 +241,7 @@ public class BlueLeft extends LinearOpMode
                             .addTemporalMarker(2.5, () -> {
                                 IntakePos.setPosition(0.925);
                             })
-                            .addTemporalMarker(2.35, () -> {
+                            .addTemporalMarker(2, () -> {
                                 IntakePos.setPosition(0.93);
                                 IntakeUno.setPower((.8));
                                 IntakeDos.setPower((-.8));
@@ -255,15 +253,10 @@ public class BlueLeft extends LinearOpMode
                                 IntakeDos.setPower((0));
                                 IntakeRoller.setPower((0));
                             })
-                            .waitSeconds(1)
-                            .lineToLinearHeading(new Pose2d(64, 43, Math.toRadians(71)))
+                            .lineToLinearHeading(new Pose2d(54, 42, Math.toRadians(71)))
                             .addTemporalMarker(5, () -> {
                                 OuttakeClaw.setPosition(0);
-                                rightLift.setPower((-.65));
-                                leftLift.setPower((.65));
-                                sleep(40);
-                                rightLift.setPower((0));
-                                leftLift.setPower((0));
+                                OuttakeFlip.setPosition(0.78);
                             })
                             .forward(5)
 
@@ -281,10 +274,9 @@ public class BlueLeft extends LinearOpMode
                             .build();
 
                     drive.followTrajectorySequence(trajSeq);
-                    OuttakeFlip.setPosition(0.78);//try adding to temporal marker
-                    sleep(1000);
+                    sleep(200);
                     OuttakeClaw.setPosition(0.275);
-                    sleep(400);
+                    sleep(200);
                     drive.followTrajectory(park2);
                     drive.followTrajectory(park);
 
@@ -297,8 +289,7 @@ public class BlueLeft extends LinearOpMode
                 } else if (pos == BlueSightPipeline.SkystonePosition.RIGHT) {
                     telemetry.addData("1", pos);
                     TrajectorySequence Left = drive.trajectorySequenceBuilder(new Pose2d())
-                            .forward(19)
-                            .turn(Math.toRadians(71))
+                            .lineToLinearHeading(new Pose2d(30, 0, Math.toRadians(80)))
                             .back(8)
                             .addTemporalMarker(0, () -> {
                                 IntakePos.setPosition(.913);
@@ -306,7 +297,7 @@ public class BlueLeft extends LinearOpMode
                             .addTemporalMarker(2.5, () -> {
                                 IntakePos.setPosition(0.9);
                             })
-                            .addTemporalMarker(2.3, () -> {
+                            .addTemporalMarker(2, () -> {
                                 IntakePos.setPosition(0.89);
                                 IntakeUno.setPower((.8));
                                 IntakeDos.setPower((-.8));
@@ -318,35 +309,28 @@ public class BlueLeft extends LinearOpMode
                                 IntakeDos.setPower((0));
                                 IntakeRoller.setPower((0));
                             })
-                            .waitSeconds(1)
-                            .lineToLinearHeading(new Pose2d(16, 43, Math.toRadians(71)))
+                            .lineToLinearHeading(new Pose2d(55, 43, Math.toRadians(80)))
                             .addTemporalMarker(5, () -> {
                                 OuttakeClaw.setPosition(0);
-                                rightLift.setPower((-.65));
-                                leftLift.setPower((.65));
-                                sleep(40);
-                                rightLift.setPower((0));
-                                leftLift.setPower((0));
+                                OuttakeFlip.setPosition(0.78);
                             })
-                            .forward(5)
+                            .forward(4)
                             .build();
 
                     Trajectory parkL = drive.trajectoryBuilder(new Pose2d())
-                            .strafeLeft(20)
+                            .strafeLeft(35)
                             .build();
                     Trajectory park2L = drive.trajectoryBuilder(new Pose2d())
                             .addTemporalMarker(0, () -> {
                                 OuttakeFlip.setPosition(0.245);
                             })
-                            .back(3)
+                            .back(5)
                             .build();
 
                     drive.followTrajectorySequence(Left);
-
-                    OuttakeFlip.setPosition(0.78);
-                    sleep(1000);
+                    sleep(200);
                     OuttakeClaw.setPosition(0.275);
-                    sleep(500);
+                    sleep(200);
 
                     drive.followTrajectory(park2L);
                     drive.followTrajectory(parkL);

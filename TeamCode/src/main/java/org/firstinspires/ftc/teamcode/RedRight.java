@@ -28,7 +28,6 @@ package org.firstinspires.ftc.teamcode;
 
 // TODO: remove Actions from the core module?
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -48,7 +47,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 
 @Autonomous
-public class RedLeftCycle extends LinearOpMode {
+public class RedRight extends LinearOpMode {
     private int region;
     private static CRServo IntakeUno = null;
     private static CRServo IntakeDos = null;
@@ -172,7 +171,8 @@ public class RedLeftCycle extends LinearOpMode {
                 if (pos == RedSightPipeline.SkystonePosition.LEFT) {
                     telemetry.addData("1", pos);
                     TrajectorySequence Left = drive.trajectorySequenceBuilder(new Pose2d())
-                            .lineToLinearHeading(new Pose2d(28, 15.5, Math.toRadians(71)))
+                            .lineToLinearHeading(new Pose2d(30, -3, Math.toRadians(-80)))
+                            .back(9)
                             .addTemporalMarker(0, () -> {
                                 IntakePos.setPosition(.913);
                             })
@@ -192,7 +192,7 @@ public class RedLeftCycle extends LinearOpMode {
                                 IntakeRoller.setPower((0));
                             })
                             .waitSeconds(1)
-                            .lineToLinearHeading(new Pose2d(12, 43, Math.toRadians(71)))
+                            .lineToLinearHeading(new Pose2d(12, -43, Math.toRadians(-71)))
                             .addTemporalMarker(5, () -> {
                                 OuttakeClaw.setPosition(0);
                                 rightLift.setPower((-.65));
@@ -253,7 +253,7 @@ public class RedLeftCycle extends LinearOpMode {
                                 IntakeRoller.setPower((0));
                             })
                             .waitSeconds(1)
-                            .lineToLinearHeading(new Pose2d(64, -43, Math.toRadians(-71)))
+                            .lineToLinearHeading(new Pose2d(34, -43, Math.toRadians(-71)))
                             .addTemporalMarker(5, () -> {
                                 OuttakeClaw.setPosition(0);
                                 rightLift.setPower((-.65));
@@ -312,7 +312,7 @@ public class RedLeftCycle extends LinearOpMode {
                                 IntakeRoller.setPower((0));
                             })
                             .waitSeconds(1)
-                            .lineToLinearHeading(new Pose2d(12, 43, Math.toRadians(71)))
+                            .lineToLinearHeading(new Pose2d(11, -43, Math.toRadians(-71)))
                             .addTemporalMarker(5, () -> {
                                 OuttakeClaw.setPosition(0);
                                 rightLift.setPower((-.65));
