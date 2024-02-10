@@ -164,9 +164,9 @@ public class BlueRightCycle extends LinearOpMode
         }
         pos = pipeline.getAnalysis();
         OuttakeClaw.setPosition(0.275);
+
         waitForStart();
         if (opModeIsActive())
-
         {
             pos = pipeline.getAnalysis();
             boolean ran = true;
@@ -203,7 +203,7 @@ public class BlueRightCycle extends LinearOpMode
                                 IntakePos.setPosition(.88);
                                 IntakePos.setPosition(.913);
                             })
-                            .lineToLinearHeading(new Pose2d(20, -27.4, Math.toRadians(71)))
+                            .lineToLinearHeading(new Pose2d(20, -27.8, Math.toRadians(71)))
                             .addTemporalMarker(2.5, () -> {
                                 IntakePos.setPosition(0.80);
 
