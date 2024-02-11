@@ -47,7 +47,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 
 @Autonomous
-public class RedRight extends LinearOpMode {
+public class RedLeftCycle extends LinearOpMode {
     private int region;
     private static CRServo IntakeUno = null;
     private static CRServo IntakeDos = null;
@@ -162,7 +162,7 @@ public class RedRight extends LinearOpMode {
             telemetry.update();
         }
         pos = pipeline.getAnalysis();
-        OuttakeClaw.setPosition(0);
+        OuttakeClaw.setPosition(0.275);
         waitForStart();
         if (opModeIsActive()) {
             telemetry.addData("Color", pos);
@@ -230,57 +230,87 @@ public class RedRight extends LinearOpMode {
                 } else if (pos == RedSightPipeline.SkystonePosition.CENTER) {
                     telemetry.addData("2", pos);
                     TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
-                            .lineToLinearHeading(new Pose2d(30, -1, Math.toRadians(-145)))
+                            .lineToLinearHeading(new Pose2d(29, -3, Math.toRadians(160)))
                             .back(3)
-
+                            .forward(6)
                             .addTemporalMarker(0, () -> {
-                                IntakePos.setPosition(.913);
+                                IntakePos.setPosition(.88);
                             })
-                            .addTemporalMarker(2.5, () -> {
-                                IntakePos.setPosition(0.925);
-                            })
-                            .addTemporalMarker(2.35, () -> {
-                                IntakePos.setPosition(0.93);
+                            .strafeRight(10)
+                            .lineToLinearHeading(new Pose2d(60, 0, Math.toRadians(-125)))
+                            .back(10)
+                            .waitSeconds(0.5)
+                            .forward(75)
+                            //.lineToLinearHeading(new Pose2d(-47, -40, Math.toRadians(-71)))
+                            //.lineToLinearHeading(new Pose2d(-22, -50, Math.toRadians(-71)))
+                            .addTemporalMarker(2, () -> {
                                 IntakeUno.setPower((.8));
                                 IntakeDos.setPower((-.8));
-                                IntakeRoller.setPower((-1));
+                                IntakeRoller.setPower(-1);
                             })
-                            .addTemporalMarker(6, () -> {
-                                IntakePos.setPosition(0.913);
+                            .addTemporalMarker(3, () -> {
+                                IntakeUno.setPower((0));
+                                IntakeDos.setPower((0));
+                                IntakeRoller.setPower(0);
+                            })
+                            .addTemporalMarker(4, () -> {
+                                IntakePos.setPosition(.92);
+                                IntakeUno.setPower((-.8));
+                                IntakeDos.setPower((.8));
+                                IntakeRoller.setPower(1);
+                            })
+                            .addTemporalMarker(7.5, () -> {
                                 IntakeUno.setPower((0));
                                 IntakeDos.setPower((0));
                                 IntakeRoller.setPower((0));
                             })
-                            .lineToLinearHeading(new Pose2d(57, -43, Math.toRadians(-71)))
-                            .addTemporalMarker(3, () -> {
-                                sleep(300);
-                                OuttakeFlip.setPosition(0.78);
-                                sleep(300);
-                                OuttakeSpin.setPosition(1-.185);
+                            .addTemporalMarker(9, () -> {
+                                IntakeUno.setPower((-.8));
+                                IntakeDos.setPower((.8));
+                                IntakeRoller.setPower((1));
                             })
-                            .forward(8)
-
-
+                            .addTemporalMarker(12, () -> {
+                                IntakeUno.setPower((0));
+                                IntakeDos.setPower((0));
+                                IntakeRoller.setPower((0));
+                            })
+                            .addTemporalMarker(13, () -> {
+                                OuttakeClaw.setPosition(0);
+                            })
+                            .forward(7)
                             .build();
-
                     Trajectory park = drive.trajectoryBuilder(new Pose2d())
-                            .strafeRight(29)
+                            .strafeLeft(30)
                             .build();
                     Trajectory park2 = drive.trajectoryBuilder(new Pose2d())
-                            .addTemporalMarker(2, () -> {
-                                OuttakeSpin.setPosition(0.489);
-                                sleep(200);
-                                OuttakeFlip.setPosition(0.245);
-                            })
                             .back(3)
                             .build();
 
                     drive.followTrajectorySequence(trajSeq);
+                    OuttakeClaw.setPosition(0);
+                    rightLift.setPower((-.65));
+                    leftLift.setPower((.65));
                     sleep(200);
+                    rightLift.setPower((0));
+                    leftLift.setPower((0));
+                    sleep(400);
+                    OuttakeFlip.setPosition(0.78);
+                    sleep(400);
+                    OuttakeSpin.setPosition(.155);
+                    sleep(500);
+                    rightLift.setPower((.65));
+                    leftLift.setPower((-.65));
+                    sleep(200);
+                    rightLift.setPower((0));
+                    leftLift.setPower((0));
+                    sleep(600);
                     OuttakeClaw.setPosition(0.275);
-                    sleep(200);
-                    drive.followTrajectory(park2);
-                    drive.followTrajectory(park);
+                    sleep(500);
+                    OuttakeSpin.setPosition(.489);
+                    sleep(100);
+                    OuttakeFlip.setPosition(0.245);
+                    /*drive.followTrajectory(park2);
+                    drive.followTrajectory(park);*/
 
 
 
