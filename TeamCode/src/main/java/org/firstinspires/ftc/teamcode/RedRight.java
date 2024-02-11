@@ -329,7 +329,7 @@ public class RedRight extends LinearOpMode {
                             })
                             .back(3)
                             .build();
-
+//k
                     drive.followTrajectorySequence(Left);
                     sleep(200);
                     OuttakeClaw.setPosition(0.275);
