@@ -294,7 +294,7 @@ public class RedRight extends LinearOpMode {
                             .addTemporalMarker(0, () -> {
                                 IntakePos.setPosition(.92);
                             })
-                            .addTemporalMarker(1.3, () -> {
+                            .addTemporalMarker(1.8, () -> {
                                 IntakePos.setPosition(0.89);
                                 IntakeUno.setPower((.8));
                                 IntakeDos.setPower((-.8));
@@ -307,16 +307,12 @@ public class RedRight extends LinearOpMode {
                                 IntakeRoller.setPower((0));
                             })
                             .waitSeconds(1)
-                            .lineToLinearHeading(new Pose2d(18, -35, Math.toRadians(-71)))
-                            .addTemporalMarker(3, () -> {
+                            .lineToLinearHeading(new Pose2d(18.4, -35, Math.toRadians(-71)))
+                            .addTemporalMarker(5, () -> {
                                 sleep(300);
                                 OuttakeFlip.setPosition(0.78);
                                 sleep(300);
-                                OuttakeSpin.setPosition(0);
-                            })
-                            .addTemporalMarker(5.6, () -> {
-                                OuttakeClaw.setPosition(0.275);
-                                OuttakeSpin.setPosition(.489);
+                                OuttakeSpin.setPosition(.155);
                             })
                             .forward(5)
                             .waitSeconds(1)
@@ -326,14 +322,18 @@ public class RedRight extends LinearOpMode {
                             .strafeRight(25)
                             .build();
                     Trajectory park2L = drive.trajectoryBuilder(new Pose2d())
-                            .addTemporalMarker(0, () -> {
+                            .addTemporalMarker(2, () -> {
+                                OuttakeSpin.setPosition(0.489);
+                                sleep(200);
                                 OuttakeFlip.setPosition(0.245);
                             })
                             .back(3)
                             .build();
 
                     drive.followTrajectorySequence(Left);
-
+                    sleep(200);
+                    OuttakeClaw.setPosition(0.275);
+                    sleep(200);
 
                     drive.followTrajectory(park2L);
                     drive.followTrajectory(parkL);
