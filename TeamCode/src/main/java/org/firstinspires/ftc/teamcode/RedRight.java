@@ -253,9 +253,9 @@ public class RedRight extends LinearOpMode {
                             })
                             .lineToLinearHeading(new Pose2d(57, -43, Math.toRadians(-71)))
                             .addTemporalMarker(3, () -> {
-                                sleep(300);
+                                sleep(100);
                                 OuttakeFlip.setPosition(0.78);
-                                sleep(300);
+                                sleep(100);
                                 OuttakeSpin.setPosition(1-.185);
                             })
                             .forward(8)
@@ -269,16 +269,16 @@ public class RedRight extends LinearOpMode {
                     Trajectory park2 = drive.trajectoryBuilder(new Pose2d())
                             .addTemporalMarker(2, () -> {
                                 OuttakeSpin.setPosition(0.489);
-                                sleep(200);
+                                sleep(100);
                                 OuttakeFlip.setPosition(0.245);
                             })
                             .back(3)
                             .build();
 
                     drive.followTrajectorySequence(trajSeq);
-                    sleep(200);
+                    //sleep(100);
                     OuttakeClaw.setPosition(0.275);
-                    sleep(200);
+                    //sleep(100);
                     drive.followTrajectory(park2);
                     drive.followTrajectory(park);
 
