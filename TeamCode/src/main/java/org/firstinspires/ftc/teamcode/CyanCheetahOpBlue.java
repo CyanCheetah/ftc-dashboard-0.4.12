@@ -180,12 +180,12 @@ public class CyanCheetahOpBlue extends LinearOpMode
 
             //elevator height code
             if (gamepad2.left_stick_y > 0.3) {
-                rightLift.setPower((.2));
-                leftLift.setPower((-.2));
+                rightLift.setPower((.25));
+                leftLift.setPower((-.25));
             }
             else if (gamepad2.left_stick_y < -0.3) {
-                rightLift.setPower((-.2));
-                leftLift.setPower((.2));
+                rightLift.setPower((-.25));
+                leftLift.setPower((.25));
             }
             else if (gamepad2.dpad_down) {
                 rightLift.setPower((.65));

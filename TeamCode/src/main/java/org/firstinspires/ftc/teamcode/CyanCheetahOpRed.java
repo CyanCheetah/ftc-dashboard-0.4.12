@@ -91,7 +91,8 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TeleOp
-public class CyanCheetahOpRed extends LinearOpMode
+public class
+CyanCheetahOpRed extends LinearOpMode
 {
     private DcMotor frontl   = null;  //  Used to control the left front drive wheel
     private DcMotor frontr  = null;  //  Used to control the right front drive wheel

@@ -31,10 +31,10 @@ public class RedSightPipeline extends OpenCvPipeline {
      * The core values which define the location and size of the sample regions
      */
     static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(320,530);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(850,530);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1500,530);
-    static final int REGION_WIDTH = 160;
-    static final int REGION_HEIGHT = 100;
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(900,460);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1600,530);
+    static final int REGION_WIDTH = 200;
+    static final int REGION_HEIGHT = 150;
 
     /*
      * Points which actually define the sample region rectangles, derived from above values

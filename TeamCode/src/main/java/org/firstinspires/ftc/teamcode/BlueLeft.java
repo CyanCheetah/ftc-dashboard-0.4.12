@@ -195,15 +195,13 @@ public class BlueLeft extends LinearOpMode
                                 IntakeRoller.setPower((0));
                             })
                             .waitSeconds(1)
-                            .lineToLinearHeading(new Pose2d(12, 43, Math.toRadians(71)))
+                            .lineToLinearHeading(new Pose2d(14, 43, Math.toRadians(71)))
                             .addTemporalMarker(5, () -> {
                                 OuttakeClaw.setPosition(0);
-                                rightLift.setPower((-.65));
-                                leftLift.setPower((.65));
-                                sleep(10);
-                                rightLift.setPower((0));
-                                leftLift.setPower((0));
                                 OuttakeFlip.setPosition(0.78);
+                                sleep(200);
+                                OuttakeSpin.setPosition(1-.185);
+                                sleep(200);
                             })
                             .forward(5)
                             .build();
@@ -213,6 +211,8 @@ public class BlueLeft extends LinearOpMode
                             .build();
                     Trajectory park2L = drive.trajectoryBuilder(new Pose2d())
                             .addTemporalMarker(0, () -> {
+                                OuttakeSpin.setPosition(.489);
+                                sleep(200);
                                 OuttakeFlip.setPosition(0.245);
                             })
                             .back(3)
@@ -257,6 +257,9 @@ public class BlueLeft extends LinearOpMode
                             .addTemporalMarker(5, () -> {
                                 OuttakeClaw.setPosition(0);
                                 OuttakeFlip.setPosition(0.78);
+                                sleep(200);
+                                OuttakeSpin.setPosition(1-.185);
+                                sleep(200);
                             })
                             .forward(5)
 
@@ -268,6 +271,8 @@ public class BlueLeft extends LinearOpMode
                             .build();
                     Trajectory park2 = drive.trajectoryBuilder(new Pose2d())
                             .addTemporalMarker(0, () -> {
+                                OuttakeSpin.setPosition(.489);
+                                sleep(200);
                                 OuttakeFlip.setPosition(0.245);
                             })
                             .back(3)
@@ -313,6 +318,9 @@ public class BlueLeft extends LinearOpMode
                             .addTemporalMarker(5, () -> {
                                 OuttakeClaw.setPosition(0);
                                 OuttakeFlip.setPosition(0.78);
+                                sleep(200);
+                                OuttakeSpin.setPosition(1-.185);
+                                sleep(200);
                             })
                             .forward(4)
                             .build();
@@ -322,6 +330,8 @@ public class BlueLeft extends LinearOpMode
                             .build();
                     Trajectory park2L = drive.trajectoryBuilder(new Pose2d())
                             .addTemporalMarker(0, () -> {
+                                OuttakeSpin.setPosition(.489);
+                                sleep(200);
                                 OuttakeFlip.setPosition(0.245);
                             })
                             .back(5)
