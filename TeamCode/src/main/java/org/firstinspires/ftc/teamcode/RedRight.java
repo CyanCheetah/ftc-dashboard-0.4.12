@@ -172,8 +172,8 @@ public class RedRight extends LinearOpMode {
                 if (pos == RedSightPipeline.SkystonePosition.LEFT) {
                     telemetry.addData("1", pos);
                     TrajectorySequence Left = drive.trajectorySequenceBuilder(new Pose2d())
-                            .lineToLinearHeading(new Pose2d(30, -3, Math.toRadians(-83)))
-                            .back(9)
+                            .lineToLinearHeading(new Pose2d(29, -3, Math.toRadians(-83)))
+                            .back(10.2)
                             .addTemporalMarker(0, () -> {
                                 IntakePos.setPosition(.913);
                             })
@@ -193,7 +193,7 @@ public class RedRight extends LinearOpMode {
                                 IntakeRoller.setPower((0));
                             })
                             .waitSeconds(1)
-                            .lineToLinearHeading(new Pose2d(55, -38, Math.toRadians(-71)))
+                            .lineToLinearHeading(new Pose2d(60.2, -38, Math.toRadians(-71)))
                             .addTemporalMarker(6, () -> {
                                 sleep(300);
                                 OuttakeFlip.setPosition(0.78);
@@ -204,7 +204,7 @@ public class RedRight extends LinearOpMode {
                             .build();
 
                     Trajectory parkL = drive.trajectoryBuilder(new Pose2d())
-                            .strafeRight(30)
+                            .strafeRight(37)
                             .build();
                     Trajectory park2L = drive.trajectoryBuilder(new Pose2d())
                             .addTemporalMarker(2, () -> {
@@ -214,7 +214,9 @@ public class RedRight extends LinearOpMode {
                             })
                             .back(3)
                             .build();
-
+                    Trajectory park3 = drive.trajectoryBuilder(new Pose2d())
+                            .forward(10)
+                            .build();
                     drive.followTrajectorySequence(Left);
                     sleep(200);
                     OuttakeClaw.setPosition(0.275);
@@ -222,7 +224,7 @@ public class RedRight extends LinearOpMode {
 
                     drive.followTrajectory(park2L);
                     drive.followTrajectory(parkL);
-
+                    drive.followTrajectory(park3);
 
 
 
@@ -274,13 +276,16 @@ public class RedRight extends LinearOpMode {
                             })
                             .back(3)
                             .build();
-
+                    Trajectory park3 = drive.trajectoryBuilder(new Pose2d())
+                            .forward(10)
+                            .build();
                     drive.followTrajectorySequence(trajSeq);
                     //sleep(100);
                     OuttakeClaw.setPosition(0.275);
                     //sleep(100);
                     drive.followTrajectory(park2);
                     drive.followTrajectory(park);
+                    drive.followTrajectory(park3);
 
 
 
@@ -290,7 +295,7 @@ public class RedRight extends LinearOpMode {
                     telemetry.addData("3", pos);
                     TrajectorySequence Left = drive.trajectorySequenceBuilder(new Pose2d())
                             .lineToLinearHeading(new Pose2d(30, -15.5, Math.toRadians(-71)))
-                            .back(2)
+                            .back(1)
                             .addTemporalMarker(0, () -> {
                                 IntakePos.setPosition(.92);
                             })
@@ -307,7 +312,7 @@ public class RedRight extends LinearOpMode {
                                 IntakeRoller.setPower((0));
                             })
                             .waitSeconds(1)
-                            .lineToLinearHeading(new Pose2d(18.4, -35, Math.toRadians(-71)))
+                            .lineToLinearHeading(new Pose2d(17, -35, Math.toRadians(-71)))
                             .addTemporalMarker(5, () -> {
                                 sleep(300);
                                 OuttakeFlip.setPosition(0.78);
@@ -319,7 +324,10 @@ public class RedRight extends LinearOpMode {
                             .build();
 
                     Trajectory parkL = drive.trajectoryBuilder(new Pose2d())
-                            .strafeRight(25)
+                            .strafeRight(30)
+                            .build();
+                    Trajectory park3 = drive.trajectoryBuilder(new Pose2d())
+                            .forward(10)
                             .build();
                     Trajectory park2L = drive.trajectoryBuilder(new Pose2d())
                             .addTemporalMarker(2, () -> {
@@ -337,6 +345,7 @@ public class RedRight extends LinearOpMode {
 
                     drive.followTrajectory(park2L);
                     drive.followTrajectory(parkL);
+                    drive.followTrajectory(park3);
 
 
 

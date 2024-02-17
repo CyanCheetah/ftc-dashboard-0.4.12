@@ -175,29 +175,32 @@ public class BlueLeft extends LinearOpMode
                 if (pos == BlueSightPipeline.SkystonePosition.LEFT) {
                     telemetry.addData("1", pos);
                     TrajectorySequence Left = drive.trajectorySequenceBuilder(new Pose2d())
-                            .lineToLinearHeading(new Pose2d(29, 14.5, Math.toRadians(71)))
+                            .lineToLinearHeading(new Pose2d(29, 18, Math.toRadians(71)))
+                            .waitSeconds(0.5)
+                            .back(4)
                             .addTemporalMarker(0, () -> {
                                 IntakePos.setPosition(.913);
                             })
                             .addTemporalMarker(2.5, () -> {
                                 IntakePos.setPosition(0.9);
                             })
-                            .addTemporalMarker(2.3, () -> {
+                            .addTemporalMarker(2, () -> {
                                 IntakePos.setPosition(0.89);
                                 IntakeUno.setPower((.8));
                                 IntakeDos.setPower((-.8));
                                 IntakeRoller.setPower((-1));
                             })
+                            .waitSeconds(0.5)
                             .addTemporalMarker(6, () -> {
                                 IntakePos.setPosition(0.913);
                                 IntakeUno.setPower((0));
                                 IntakeDos.setPower((0));
                                 IntakeRoller.setPower((0));
                             })
-                            .waitSeconds(1)
-                            .lineToLinearHeading(new Pose2d(14, 43, Math.toRadians(71)))
+                            .lineToLinearHeading(new Pose2d(14.5, 43, Math.toRadians(71)))
                             .addTemporalMarker(5, () -> {
                                 OuttakeClaw.setPosition(0);
+                                sleep(200);
                                 OuttakeFlip.setPosition(0.78);
                                 sleep(200);
                                 OuttakeSpin.setPosition(1-.185);
@@ -207,7 +210,7 @@ public class BlueLeft extends LinearOpMode
                             .build();
 
                     Trajectory parkL = drive.trajectoryBuilder(new Pose2d())
-                            .strafeLeft(20)
+                            .strafeLeft(25)
                             .build();
                     Trajectory park2L = drive.trajectoryBuilder(new Pose2d())
                             .addTemporalMarker(0, () -> {
@@ -219,9 +222,9 @@ public class BlueLeft extends LinearOpMode
                             .build();
 
                     drive.followTrajectorySequence(Left);
-                    sleep(200);
+                    sleep(350);
                     OuttakeClaw.setPosition(0.275);
-                    sleep(200);
+                    sleep(350);
                     drive.followTrajectory(park2L);
                     drive.followTrajectory(parkL);
 
@@ -232,8 +235,8 @@ public class BlueLeft extends LinearOpMode
                 } else if (pos == BlueSightPipeline.SkystonePosition.CENTER) {
                     telemetry.addData("2", pos);
                     TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
-                            .lineToLinearHeading(new Pose2d(29, -1, Math.toRadians(144)))
-                            .back(3)
+                            .lineToLinearHeading(new Pose2d(29, -1, Math.toRadians(150)))
+                            .back(5)
 
                             .addTemporalMarker(0, () -> {
                                 IntakePos.setPosition(.913);
@@ -253,7 +256,7 @@ public class BlueLeft extends LinearOpMode
                                 IntakeDos.setPower((0));
                                 IntakeRoller.setPower((0));
                             })
-                            .lineToLinearHeading(new Pose2d(54, 42, Math.toRadians(71)))
+                            .lineToLinearHeading(new Pose2d(50, 42, Math.toRadians(71)))
                             .addTemporalMarker(5, () -> {
                                 OuttakeClaw.setPosition(0);
                                 OuttakeFlip.setPosition(0.78);
@@ -267,7 +270,7 @@ public class BlueLeft extends LinearOpMode
                             .build();
 
                     Trajectory park = drive.trajectoryBuilder(new Pose2d())
-                            .strafeLeft(29)
+                            .strafeLeft(34)
                             .build();
                     Trajectory park2 = drive.trajectoryBuilder(new Pose2d())
                             .addTemporalMarker(0, () -> {
@@ -294,8 +297,8 @@ public class BlueLeft extends LinearOpMode
                 } else if (pos == BlueSightPipeline.SkystonePosition.RIGHT) {
                     telemetry.addData("1", pos);
                     TrajectorySequence Left = drive.trajectorySequenceBuilder(new Pose2d())
-                            .lineToLinearHeading(new Pose2d(30, 0, Math.toRadians(80)))
-                            .back(8)
+                            .lineToLinearHeading(new Pose2d(33, 0, Math.toRadians(80)))
+                            .back(9)
                             .addTemporalMarker(0, () -> {
                                 IntakePos.setPosition(.913);
                             })
@@ -319,7 +322,7 @@ public class BlueLeft extends LinearOpMode
                                 OuttakeClaw.setPosition(0);
                                 OuttakeFlip.setPosition(0.78);
                                 sleep(200);
-                                OuttakeSpin.setPosition(1-.185);
+                                OuttakeSpin.setPosition(0);
                                 sleep(200);
                             })
                             .forward(4)
