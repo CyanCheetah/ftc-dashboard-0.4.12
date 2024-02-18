@@ -30,9 +30,9 @@ public class BlueSightPipeline extends OpenCvPipeline {
     /*
      * The core values which define the location and size of the sample regions
      */
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(320,530);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(900,460);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1600,530);
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(320,460);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(900,420);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1600,460);
     static final int REGION_WIDTH = 200;
     static final int REGION_HEIGHT = 150;
 

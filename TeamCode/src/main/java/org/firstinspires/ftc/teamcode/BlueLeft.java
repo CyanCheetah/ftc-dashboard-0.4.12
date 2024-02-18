@@ -197,7 +197,7 @@ public class BlueLeft extends LinearOpMode
                                 IntakeDos.setPower((0));
                                 IntakeRoller.setPower((0));
                             })
-                            .lineToLinearHeading(new Pose2d(14.5, 43, Math.toRadians(71)))
+                            .lineToLinearHeading(new Pose2d(15, 43, Math.toRadians(71)))
                             .addTemporalMarker(5, () -> {
                                 OuttakeClaw.setPosition(0);
                                 sleep(200);
@@ -256,7 +256,7 @@ public class BlueLeft extends LinearOpMode
                                 IntakeDos.setPower((0));
                                 IntakeRoller.setPower((0));
                             })
-                            .lineToLinearHeading(new Pose2d(50, 42, Math.toRadians(71)))
+                            .lineToLinearHeading(new Pose2d(54, 42, Math.toRadians(71)))
                             .addTemporalMarker(5, () -> {
                                 OuttakeClaw.setPosition(0);
                                 OuttakeFlip.setPosition(0.78);
@@ -298,7 +298,7 @@ public class BlueLeft extends LinearOpMode
                     telemetry.addData("1", pos);
                     TrajectorySequence Left = drive.trajectorySequenceBuilder(new Pose2d())
                             .lineToLinearHeading(new Pose2d(33, 0, Math.toRadians(80)))
-                            .back(9)
+                            .back(10.3)
                             .addTemporalMarker(0, () -> {
                                 IntakePos.setPosition(.913);
                             })
@@ -317,7 +317,7 @@ public class BlueLeft extends LinearOpMode
                                 IntakeDos.setPower((0));
                                 IntakeRoller.setPower((0));
                             })
-                            .lineToLinearHeading(new Pose2d(55, 43, Math.toRadians(80)))
+                            .lineToLinearHeading(new Pose2d(56, 43, Math.toRadians(80)))
                             .addTemporalMarker(5, () -> {
                                 OuttakeClaw.setPosition(0);
                                 OuttakeFlip.setPosition(0.78);
